@@ -1,0 +1,4 @@
+Bundle-Name: OSPIcacap-web
+Bundle-SymbolicName: com.osp.icecap.web.datatype.definer
+Bundle-Version: 1.0.0
+Export-Package: com.osp.icecap.web.datatype.definer.constants
