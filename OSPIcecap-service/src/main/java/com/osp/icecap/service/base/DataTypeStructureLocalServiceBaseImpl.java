@@ -39,9 +39,13 @@ import com.liferay.portal.kernel.util.PortalUtil;
 
 import com.osp.icecap.model.DataTypeStructure;
 import com.osp.icecap.service.DataTypeStructureLocalService;
-import com.osp.icecap.service.persistence.DataCollectionLayoutPersistence;
+import com.osp.icecap.service.persistence.DataAnalysisLayoutPersistence;
 import com.osp.icecap.service.persistence.DataCollectionPersistence;
 import com.osp.icecap.service.persistence.DataEntryPersistence;
+import com.osp.icecap.service.persistence.DataPackPersistence;
+import com.osp.icecap.service.persistence.DataSectionPersistence;
+import com.osp.icecap.service.persistence.DataSetPersistence;
+import com.osp.icecap.service.persistence.DataTypeLinkPersistence;
 import com.osp.icecap.service.persistence.DataTypePersistence;
 import com.osp.icecap.service.persistence.DataTypeStructurePersistence;
 import com.osp.icecap.service.persistence.DataTypeVisualizerLinkPersistence;
@@ -399,16 +403,28 @@ public abstract class DataTypeStructureLocalServiceBaseImpl
 	}
 
 	@Reference
-	protected DataCollectionPersistence dataCollectionPersistence;
+	protected DataAnalysisLayoutPersistence dataAnalysisLayoutPersistence;
 
 	@Reference
-	protected DataCollectionLayoutPersistence dataCollectionLayoutPersistence;
+	protected DataCollectionPersistence dataCollectionPersistence;
 
 	@Reference
 	protected DataEntryPersistence dataEntryPersistence;
 
 	@Reference
+	protected DataPackPersistence dataPackPersistence;
+
+	@Reference
+	protected DataSectionPersistence dataSectionPersistence;
+
+	@Reference
+	protected DataSetPersistence dataSetPersistence;
+
+	@Reference
 	protected DataTypePersistence dataTypePersistence;
+
+	@Reference
+	protected DataTypeLinkPersistence dataTypeLinkPersistence;
 
 	protected DataTypeStructureLocalService dataTypeStructureLocalService;
 

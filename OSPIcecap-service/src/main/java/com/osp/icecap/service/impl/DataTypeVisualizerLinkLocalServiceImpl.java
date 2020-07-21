@@ -15,6 +15,8 @@
 package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.osp.icecap.exception.NoSuchDataTypeVisualizerLinkException;
 import com.osp.icecap.model.DataTypeVisualizerLink;
 import com.osp.icecap.service.base.DataTypeVisualizerLinkLocalServiceBaseImpl;
 
@@ -42,7 +44,7 @@ import org.osgi.service.component.annotations.Component;
 public class DataTypeVisualizerLinkLocalServiceImpl
 	extends DataTypeVisualizerLinkLocalServiceBaseImpl {
 
-	public DataTypeVisualizerLink addLink( long dataTypeId, String visualizerName, String visualizerVersion, boolean editable ) {
+	public DataTypeVisualizerLink addDataTypeVisualizerLink( long dataTypeId, String visualizerName, String visualizerVersion, boolean editable ) {
 		long linkId = super.counterLocalService.increment();
 		DataTypeVisualizerLink link = super.createDataTypeVisualizerLink(linkId);
 		
@@ -54,18 +56,37 @@ public class DataTypeVisualizerLinkLocalServiceImpl
 		return link;
 	}
 	
-	public DataTypeVisualizerLink removeLink( String visualizerName, String visualizerVersion ) {
-		DataTypeVisualizerLink link = super.dataTypeVisualizerLinkPersistence.fetchByVisualizerVersion(visualizerName, visualizerVersion);
-		super.deleteDataTypeVisualizerLink(link);
+	public void removeDataTypeVisualizerLinks( long dataTypeId ) {
+		super.dataTypeVisualizerLinkPersistence.removeByDataTypeId(dataTypeId);
 		
-		return link;
+		return;
 	}
 	
-	public void removeLinks( long dataTypeId ) {
-		List<DataTypeVisualizerLink> links = super.dataTypeVisualizerLinkPersistence.findByDataTypeId(dataTypeId);
+	public void removeDataTypeVisualizerLinks( String visualizerName, String visualizerVersion ) throws NoSuchDataTypeVisualizerLinkException {
+		super.dataTypeVisualizerLinkPersistence.removeByVisualizerNameVersion(visualizerName, visualizerVersion);
 		
-		for( DataTypeVisualizerLink link : links ) {
-			super.deleteDataTypeVisualizerLink(link);
-		}
+		return;
 	}
+
+	public void removeDataTypeVisualizerLinks( String visualizerName ) throws NoSuchDataTypeVisualizerLinkException {
+		super.dataTypeVisualizerLinkPersistence.removeByVisualizerName(visualizerName);
+		
+		return;
+	}
+	
+	public DataTypeVisualizerLink removeDataTypeVisualizerLink( long dataTypeVisualizerLinkId ) throws PortalException {
+		return super.deleteDataTypeVisualizerLink(dataTypeVisualizerLinkId);
+	}
+
+	public DataTypeVisualizerLink updateDataTypeVisualizerLink( long dataTypeVisualizerLinkId,  long dataTypeId, String visualizerName, String visualizerVersion, boolean editable ) throws PortalException {
+		DataTypeVisualizerLink link = super.getDataTypeVisualizerLink(dataTypeVisualizerLinkId);
+		
+		link.setDataTypeId(dataTypeId);
+		link.setVisualizerName(visualizerName);
+		link.setVisualizerVersion(visualizerVersion);
+		link.setEditable(editable);
+		
+		return super.updateDataTypeVisualizerLink(link);
+	}
+
 }

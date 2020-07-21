@@ -34,16 +34,25 @@ public class DataEntrySoap implements Serializable {
 	public static DataEntrySoap toSoapModel(DataEntry model) {
 		DataEntrySoap soapModel = new DataEntrySoap();
 
+		soapModel.setUuid(model.getUuid());
 		soapModel.setDataEntryId(model.getDataEntryId());
-		soapModel.setDataCollectionName(model.getDataCollectionName());
 		soapModel.setCompanyId(model.getCompanyId());
 		soapModel.setGroupId(model.getGroupId());
 		soapModel.setUserId(model.getUserId());
+		soapModel.setUserName(model.getUserName());
 		soapModel.setCreateDate(model.getCreateDate());
-		soapModel.setPath(model.getPath());
-		soapModel.setSequenceNo(model.getSequenceNo());
-		soapModel.setRecordCount(model.getRecordCount());
-		soapModel.setSequenceDelimeter(model.getSequenceDelimeter());
+		soapModel.setModifiedDate(model.getModifiedDate());
+		soapModel.setStatus(model.getStatus());
+		soapModel.setStatusByUserId(model.getStatusByUserId());
+		soapModel.setStatusByUserName(model.getStatusByUserName());
+		soapModel.setStatusDate(model.getStatusDate());
+		soapModel.setDataPackId(model.getDataPackId());
+		soapModel.setDataSectionId(model.getDataSectionId());
+		soapModel.setDataSetId(model.getDataSetId());
+		soapModel.setDataCollectionId(model.getDataCollectionId());
+		soapModel.setAccessURL(model.getAccessURL());
+		soapModel.setPathType(model.getPathType());
+		soapModel.setCopiedFrom(model.getCopiedFrom());
 
 		return soapModel;
 	}
@@ -97,20 +106,20 @@ public class DataEntrySoap implements Serializable {
 		setDataEntryId(pk);
 	}
 
+	public String getUuid() {
+		return _uuid;
+	}
+
+	public void setUuid(String uuid) {
+		_uuid = uuid;
+	}
+
 	public long getDataEntryId() {
 		return _dataEntryId;
 	}
 
 	public void setDataEntryId(long dataEntryId) {
 		_dataEntryId = dataEntryId;
-	}
-
-	public String getDataCollectionName() {
-		return _dataCollectionName;
-	}
-
-	public void setDataCollectionName(String dataCollectionName) {
-		_dataCollectionName = dataCollectionName;
 	}
 
 	public long getCompanyId() {
@@ -137,6 +146,14 @@ public class DataEntrySoap implements Serializable {
 		_userId = userId;
 	}
 
+	public String getUserName() {
+		return _userName;
+	}
+
+	public void setUserName(String userName) {
+		_userName = userName;
+	}
+
 	public Date getCreateDate() {
 		return _createDate;
 	}
@@ -145,47 +162,120 @@ public class DataEntrySoap implements Serializable {
 		_createDate = createDate;
 	}
 
-	public String getPath() {
-		return _path;
+	public Date getModifiedDate() {
+		return _modifiedDate;
 	}
 
-	public void setPath(String path) {
-		_path = path;
+	public void setModifiedDate(Date modifiedDate) {
+		_modifiedDate = modifiedDate;
 	}
 
-	public int getSequenceNo() {
-		return _sequenceNo;
+	public int getStatus() {
+		return _status;
 	}
 
-	public void setSequenceNo(int sequenceNo) {
-		_sequenceNo = sequenceNo;
+	public void setStatus(int status) {
+		_status = status;
 	}
 
-	public int getRecordCount() {
-		return _recordCount;
+	public long getStatusByUserId() {
+		return _statusByUserId;
 	}
 
-	public void setRecordCount(int recordCount) {
-		_recordCount = recordCount;
+	public void setStatusByUserId(long statusByUserId) {
+		_statusByUserId = statusByUserId;
 	}
 
-	public String getSequenceDelimeter() {
-		return _sequenceDelimeter;
+	public String getStatusByUserName() {
+		return _statusByUserName;
 	}
 
-	public void setSequenceDelimeter(String sequenceDelimeter) {
-		_sequenceDelimeter = sequenceDelimeter;
+	public void setStatusByUserName(String statusByUserName) {
+		_statusByUserName = statusByUserName;
 	}
 
+	public Date getStatusDate() {
+		return _statusDate;
+	}
+
+	public void setStatusDate(Date statusDate) {
+		_statusDate = statusDate;
+	}
+
+	public long getDataPackId() {
+		return _dataPackId;
+	}
+
+	public void setDataPackId(long dataPackId) {
+		_dataPackId = dataPackId;
+	}
+
+	public long getDataSectionId() {
+		return _dataSectionId;
+	}
+
+	public void setDataSectionId(long dataSectionId) {
+		_dataSectionId = dataSectionId;
+	}
+
+	public long getDataSetId() {
+		return _dataSetId;
+	}
+
+	public void setDataSetId(long dataSetId) {
+		_dataSetId = dataSetId;
+	}
+
+	public long getDataCollectionId() {
+		return _dataCollectionId;
+	}
+
+	public void setDataCollectionId(long dataCollectionId) {
+		_dataCollectionId = dataCollectionId;
+	}
+
+	public String getAccessURL() {
+		return _accessURL;
+	}
+
+	public void setAccessURL(String accessURL) {
+		_accessURL = accessURL;
+	}
+
+	public String getPathType() {
+		return _pathType;
+	}
+
+	public void setPathType(String pathType) {
+		_pathType = pathType;
+	}
+
+	public long getCopiedFrom() {
+		return _copiedFrom;
+	}
+
+	public void setCopiedFrom(long copiedFrom) {
+		_copiedFrom = copiedFrom;
+	}
+
+	private String _uuid;
 	private long _dataEntryId;
-	private String _dataCollectionName;
 	private long _companyId;
 	private long _groupId;
 	private long _userId;
+	private String _userName;
 	private Date _createDate;
-	private String _path;
-	private int _sequenceNo;
-	private int _recordCount;
-	private String _sequenceDelimeter;
+	private Date _modifiedDate;
+	private int _status;
+	private long _statusByUserId;
+	private String _statusByUserName;
+	private Date _statusDate;
+	private long _dataPackId;
+	private long _dataSectionId;
+	private long _dataSetId;
+	private long _dataCollectionId;
+	private String _accessURL;
+	private String _pathType;
+	private long _copiedFrom;
 
 }

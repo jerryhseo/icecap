@@ -55,13 +55,15 @@ public class DataCollectionWrapper
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("status", getStatus());
+		attributes.put("statusByUserId", getStatusByUserId());
+		attributes.put("statusByUserName", getStatusByUserName());
+		attributes.put("statusDate", getStatusDate());
 		attributes.put("name", getName());
-		attributes.put("variantFrom", getVariantFrom());
+		attributes.put("version", getVersion());
+		attributes.put("copiedFrom", getCopiedFrom());
 		attributes.put("title", getTitle());
 		attributes.put("description", getDescription());
-		attributes.put("storageType", getStorageType());
-		attributes.put("dataTypeName", getDataTypeName());
-		attributes.put("dataTypeVersion", getDataTypeVersion());
+		attributes.put("organizationId", getOrganizationId());
 
 		return attributes;
 	}
@@ -122,16 +124,40 @@ public class DataCollectionWrapper
 			setStatus(status);
 		}
 
+		Long statusByUserId = (Long)attributes.get("statusByUserId");
+
+		if (statusByUserId != null) {
+			setStatusByUserId(statusByUserId);
+		}
+
+		String statusByUserName = (String)attributes.get("statusByUserName");
+
+		if (statusByUserName != null) {
+			setStatusByUserName(statusByUserName);
+		}
+
+		Date statusDate = (Date)attributes.get("statusDate");
+
+		if (statusDate != null) {
+			setStatusDate(statusDate);
+		}
+
 		String name = (String)attributes.get("name");
 
 		if (name != null) {
 			setName(name);
 		}
 
-		Long variantFrom = (Long)attributes.get("variantFrom");
+		String version = (String)attributes.get("version");
 
-		if (variantFrom != null) {
-			setVariantFrom(variantFrom);
+		if (version != null) {
+			setVersion(version);
+		}
+
+		Long copiedFrom = (Long)attributes.get("copiedFrom");
+
+		if (copiedFrom != null) {
+			setCopiedFrom(copiedFrom);
 		}
 
 		String title = (String)attributes.get("title");
@@ -146,22 +172,10 @@ public class DataCollectionWrapper
 			setDescription(description);
 		}
 
-		String storageType = (String)attributes.get("storageType");
+		Long organizationId = (Long)attributes.get("organizationId");
 
-		if (storageType != null) {
-			setStorageType(storageType);
-		}
-
-		Long dataTypeName = (Long)attributes.get("dataTypeName");
-
-		if (dataTypeName != null) {
-			setDataTypeName(dataTypeName);
-		}
-
-		Long dataTypeVersion = (Long)attributes.get("dataTypeVersion");
-
-		if (dataTypeVersion != null) {
-			setDataTypeVersion(dataTypeVersion);
+		if (organizationId != null) {
+			setOrganizationId(organizationId);
 		}
 	}
 
@@ -178,6 +192,16 @@ public class DataCollectionWrapper
 	@Override
 	public long getCompanyId() {
 		return model.getCompanyId();
+	}
+
+	/**
+	 * Returns the copied from of this data collection.
+	 *
+	 * @return the copied from of this data collection
+	 */
+	@Override
+	public long getCopiedFrom() {
+		return model.getCopiedFrom();
 	}
 
 	/**
@@ -198,26 +222,6 @@ public class DataCollectionWrapper
 	@Override
 	public long getDataCollectionId() {
 		return model.getDataCollectionId();
-	}
-
-	/**
-	 * Returns the data type name of this data collection.
-	 *
-	 * @return the data type name of this data collection
-	 */
-	@Override
-	public long getDataTypeName() {
-		return model.getDataTypeName();
-	}
-
-	/**
-	 * Returns the data type version of this data collection.
-	 *
-	 * @return the data type version of this data collection
-	 */
-	@Override
-	public long getDataTypeVersion() {
-		return model.getDataTypeVersion();
 	}
 
 	@Override
@@ -332,6 +336,16 @@ public class DataCollectionWrapper
 	}
 
 	/**
+	 * Returns the organization ID of this data collection.
+	 *
+	 * @return the organization ID of this data collection
+	 */
+	@Override
+	public long getOrganizationId() {
+		return model.getOrganizationId();
+	}
+
+	/**
 	 * Returns the primary key of this data collection.
 	 *
 	 * @return the primary key of this data collection
@@ -352,13 +366,43 @@ public class DataCollectionWrapper
 	}
 
 	/**
-	 * Returns the storage type of this data collection.
+	 * Returns the status by user ID of this data collection.
 	 *
-	 * @return the storage type of this data collection
+	 * @return the status by user ID of this data collection
 	 */
 	@Override
-	public String getStorageType() {
-		return model.getStorageType();
+	public long getStatusByUserId() {
+		return model.getStatusByUserId();
+	}
+
+	/**
+	 * Returns the status by user name of this data collection.
+	 *
+	 * @return the status by user name of this data collection
+	 */
+	@Override
+	public String getStatusByUserName() {
+		return model.getStatusByUserName();
+	}
+
+	/**
+	 * Returns the status by user uuid of this data collection.
+	 *
+	 * @return the status by user uuid of this data collection
+	 */
+	@Override
+	public String getStatusByUserUuid() {
+		return model.getStatusByUserUuid();
+	}
+
+	/**
+	 * Returns the status date of this data collection.
+	 *
+	 * @return the status date of this data collection
+	 */
+	@Override
+	public Date getStatusDate() {
+		return model.getStatusDate();
 	}
 
 	/**
@@ -478,13 +522,93 @@ public class DataCollectionWrapper
 	}
 
 	/**
-	 * Returns the variant from of this data collection.
+	 * Returns the version of this data collection.
 	 *
-	 * @return the variant from of this data collection
+	 * @return the version of this data collection
 	 */
 	@Override
-	public long getVariantFrom() {
-		return model.getVariantFrom();
+	public String getVersion() {
+		return model.getVersion();
+	}
+
+	/**
+	 * Returns <code>true</code> if this data collection is approved.
+	 *
+	 * @return <code>true</code> if this data collection is approved; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isApproved() {
+		return model.isApproved();
+	}
+
+	/**
+	 * Returns <code>true</code> if this data collection is denied.
+	 *
+	 * @return <code>true</code> if this data collection is denied; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isDenied() {
+		return model.isDenied();
+	}
+
+	/**
+	 * Returns <code>true</code> if this data collection is a draft.
+	 *
+	 * @return <code>true</code> if this data collection is a draft; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isDraft() {
+		return model.isDraft();
+	}
+
+	/**
+	 * Returns <code>true</code> if this data collection is expired.
+	 *
+	 * @return <code>true</code> if this data collection is expired; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isExpired() {
+		return model.isExpired();
+	}
+
+	/**
+	 * Returns <code>true</code> if this data collection is inactive.
+	 *
+	 * @return <code>true</code> if this data collection is inactive; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isInactive() {
+		return model.isInactive();
+	}
+
+	/**
+	 * Returns <code>true</code> if this data collection is incomplete.
+	 *
+	 * @return <code>true</code> if this data collection is incomplete; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isIncomplete() {
+		return model.isIncomplete();
+	}
+
+	/**
+	 * Returns <code>true</code> if this data collection is pending.
+	 *
+	 * @return <code>true</code> if this data collection is pending; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isPending() {
+		return model.isPending();
+	}
+
+	/**
+	 * Returns <code>true</code> if this data collection is scheduled.
+	 *
+	 * @return <code>true</code> if this data collection is scheduled; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isScheduled() {
+		return model.isScheduled();
 	}
 
 	@Override
@@ -518,6 +642,16 @@ public class DataCollectionWrapper
 	}
 
 	/**
+	 * Sets the copied from of this data collection.
+	 *
+	 * @param copiedFrom the copied from of this data collection
+	 */
+	@Override
+	public void setCopiedFrom(long copiedFrom) {
+		model.setCopiedFrom(copiedFrom);
+	}
+
+	/**
 	 * Sets the create date of this data collection.
 	 *
 	 * @param createDate the create date of this data collection
@@ -535,26 +669,6 @@ public class DataCollectionWrapper
 	@Override
 	public void setDataCollectionId(long dataCollectionId) {
 		model.setDataCollectionId(dataCollectionId);
-	}
-
-	/**
-	 * Sets the data type name of this data collection.
-	 *
-	 * @param dataTypeName the data type name of this data collection
-	 */
-	@Override
-	public void setDataTypeName(long dataTypeName) {
-		model.setDataTypeName(dataTypeName);
-	}
-
-	/**
-	 * Sets the data type version of this data collection.
-	 *
-	 * @param dataTypeVersion the data type version of this data collection
-	 */
-	@Override
-	public void setDataTypeVersion(long dataTypeVersion) {
-		model.setDataTypeVersion(dataTypeVersion);
 	}
 
 	/**
@@ -655,6 +769,16 @@ public class DataCollectionWrapper
 	}
 
 	/**
+	 * Sets the organization ID of this data collection.
+	 *
+	 * @param organizationId the organization ID of this data collection
+	 */
+	@Override
+	public void setOrganizationId(long organizationId) {
+		model.setOrganizationId(organizationId);
+	}
+
+	/**
 	 * Sets the primary key of this data collection.
 	 *
 	 * @param primaryKey the primary key of this data collection
@@ -675,13 +799,43 @@ public class DataCollectionWrapper
 	}
 
 	/**
-	 * Sets the storage type of this data collection.
+	 * Sets the status by user ID of this data collection.
 	 *
-	 * @param storageType the storage type of this data collection
+	 * @param statusByUserId the status by user ID of this data collection
 	 */
 	@Override
-	public void setStorageType(String storageType) {
-		model.setStorageType(storageType);
+	public void setStatusByUserId(long statusByUserId) {
+		model.setStatusByUserId(statusByUserId);
+	}
+
+	/**
+	 * Sets the status by user name of this data collection.
+	 *
+	 * @param statusByUserName the status by user name of this data collection
+	 */
+	@Override
+	public void setStatusByUserName(String statusByUserName) {
+		model.setStatusByUserName(statusByUserName);
+	}
+
+	/**
+	 * Sets the status by user uuid of this data collection.
+	 *
+	 * @param statusByUserUuid the status by user uuid of this data collection
+	 */
+	@Override
+	public void setStatusByUserUuid(String statusByUserUuid) {
+		model.setStatusByUserUuid(statusByUserUuid);
+	}
+
+	/**
+	 * Sets the status date of this data collection.
+	 *
+	 * @param statusDate the status date of this data collection
+	 */
+	@Override
+	public void setStatusDate(Date statusDate) {
+		model.setStatusDate(statusDate);
 	}
 
 	/**
@@ -789,13 +943,13 @@ public class DataCollectionWrapper
 	}
 
 	/**
-	 * Sets the variant from of this data collection.
+	 * Sets the version of this data collection.
 	 *
-	 * @param variantFrom the variant from of this data collection
+	 * @param version the version of this data collection
 	 */
 	@Override
-	public void setVariantFrom(long variantFrom) {
-		model.setVariantFrom(variantFrom);
+	public void setVersion(String version) {
+		model.setVersion(version);
 	}
 
 	@Override

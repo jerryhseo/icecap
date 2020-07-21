@@ -27,6 +27,7 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public class DataTypeImpl extends DataTypeBaseImpl {
+	private static final long serialVersionUID = 1301614843057359099L;
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -35,5 +36,4 @@ public class DataTypeImpl extends DataTypeBaseImpl {
 	 */
 	public DataTypeImpl() {
 	}
-
 }

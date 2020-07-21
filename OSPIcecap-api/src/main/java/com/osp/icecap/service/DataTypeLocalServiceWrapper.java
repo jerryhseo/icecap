@@ -48,6 +48,27 @@ public class DataTypeLocalServiceWrapper
 		return _dataTypeLocalService.addDataType(dataType);
 	}
 
+	@Override
+	public com.osp.icecap.model.DataType addDataType(
+			String dataTypeName, String dataTypeVersion,
+			java.util.Map<java.util.Locale, String> descriptionMap,
+			String samplePath,
+			com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _dataTypeLocalService.addDataType(
+			dataTypeName, dataTypeVersion, descriptionMap, samplePath, sc);
+	}
+
+	@Override
+	public com.osp.icecap.model.DataType copyDataType(
+			long dataTypeId,
+			com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _dataTypeLocalService.copyDataType(dataTypeId, sc);
+	}
+
 	/**
 	 * Creates a new data type with the primary key. Does not add the data type to the database.
 	 *
@@ -57,16 +78,6 @@ public class DataTypeLocalServiceWrapper
 	@Override
 	public com.osp.icecap.model.DataType createDataType(long dataTypeId) {
 		return _dataTypeLocalService.createDataType(dataTypeId);
-	}
-
-	@Override
-	public com.osp.icecap.model.DataType createDataType(
-			String dataTypeName, String dataTypeVersion,
-			com.liferay.portal.kernel.service.ServiceContext sc)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return _dataTypeLocalService.createDataType(
-			dataTypeName, dataTypeVersion, sc);
 	}
 
 	/**
@@ -355,7 +366,8 @@ public class DataTypeLocalServiceWrapper
 
 	@Override
 	public com.osp.icecap.model.DataType removeDataType(
-		com.osp.icecap.model.DataType dataType) {
+			com.osp.icecap.model.DataType dataType)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataTypeLocalService.removeDataType(dataType);
 	}
@@ -368,13 +380,16 @@ public class DataTypeLocalServiceWrapper
 	}
 
 	@Override
-	public int removeDataType(String dataTypeName) {
+	public int removeDataType(String dataTypeName)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
 		return _dataTypeLocalService.removeDataType(dataTypeName);
 	}
 
 	@Override
 	public com.osp.icecap.model.DataType removeDataType(
-		String dataTypeName, String dataTypeVersion) {
+			String dataTypeName, String dataTypeVersion)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataTypeLocalService.removeDataType(
 			dataTypeName, dataTypeVersion);
@@ -391,6 +406,18 @@ public class DataTypeLocalServiceWrapper
 		com.osp.icecap.model.DataType dataType) {
 
 		return _dataTypeLocalService.updateDataType(dataType);
+	}
+
+	@Override
+	public com.osp.icecap.model.DataType updateDataType(
+		long dataTypeId, String dataTypeName, String dataTypeVersion,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		String samplePath,
+		com.liferay.portal.kernel.service.ServiceContext sc) {
+
+		return _dataTypeLocalService.updateDataType(
+			dataTypeId, dataTypeName, dataTypeVersion, descriptionMap,
+			samplePath, sc);
 	}
 
 	@Override

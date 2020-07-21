@@ -65,28 +65,46 @@ public class DataEntryCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(39);
 
-		sb.append("{dataEntryId=");
+		sb.append("{uuid=");
+		sb.append(uuid);
+		sb.append(", dataEntryId=");
 		sb.append(dataEntryId);
-		sb.append(", dataCollectionName=");
-		sb.append(dataCollectionName);
 		sb.append(", companyId=");
 		sb.append(companyId);
 		sb.append(", groupId=");
 		sb.append(groupId);
 		sb.append(", userId=");
 		sb.append(userId);
+		sb.append(", userName=");
+		sb.append(userName);
 		sb.append(", createDate=");
 		sb.append(createDate);
-		sb.append(", path=");
-		sb.append(path);
-		sb.append(", sequenceNo=");
-		sb.append(sequenceNo);
-		sb.append(", recordCount=");
-		sb.append(recordCount);
-		sb.append(", sequenceDelimeter=");
-		sb.append(sequenceDelimeter);
+		sb.append(", modifiedDate=");
+		sb.append(modifiedDate);
+		sb.append(", status=");
+		sb.append(status);
+		sb.append(", statusByUserId=");
+		sb.append(statusByUserId);
+		sb.append(", statusByUserName=");
+		sb.append(statusByUserName);
+		sb.append(", statusDate=");
+		sb.append(statusDate);
+		sb.append(", dataPackId=");
+		sb.append(dataPackId);
+		sb.append(", dataSectionId=");
+		sb.append(dataSectionId);
+		sb.append(", dataSetId=");
+		sb.append(dataSetId);
+		sb.append(", dataCollectionId=");
+		sb.append(dataCollectionId);
+		sb.append(", accessURL=");
+		sb.append(accessURL);
+		sb.append(", pathType=");
+		sb.append(pathType);
+		sb.append(", copiedFrom=");
+		sb.append(copiedFrom);
 		sb.append("}");
 
 		return sb.toString();
@@ -96,18 +114,24 @@ public class DataEntryCacheModel
 	public DataEntry toEntityModel() {
 		DataEntryImpl dataEntryImpl = new DataEntryImpl();
 
-		dataEntryImpl.setDataEntryId(dataEntryId);
-
-		if (dataCollectionName == null) {
-			dataEntryImpl.setDataCollectionName("");
+		if (uuid == null) {
+			dataEntryImpl.setUuid("");
 		}
 		else {
-			dataEntryImpl.setDataCollectionName(dataCollectionName);
+			dataEntryImpl.setUuid(uuid);
 		}
 
+		dataEntryImpl.setDataEntryId(dataEntryId);
 		dataEntryImpl.setCompanyId(companyId);
 		dataEntryImpl.setGroupId(groupId);
 		dataEntryImpl.setUserId(userId);
+
+		if (userName == null) {
+			dataEntryImpl.setUserName("");
+		}
+		else {
+			dataEntryImpl.setUserName(userName);
+		}
 
 		if (createDate == Long.MIN_VALUE) {
 			dataEntryImpl.setCreateDate(null);
@@ -116,22 +140,50 @@ public class DataEntryCacheModel
 			dataEntryImpl.setCreateDate(new Date(createDate));
 		}
 
-		if (path == null) {
-			dataEntryImpl.setPath("");
+		if (modifiedDate == Long.MIN_VALUE) {
+			dataEntryImpl.setModifiedDate(null);
 		}
 		else {
-			dataEntryImpl.setPath(path);
+			dataEntryImpl.setModifiedDate(new Date(modifiedDate));
 		}
 
-		dataEntryImpl.setSequenceNo(sequenceNo);
-		dataEntryImpl.setRecordCount(recordCount);
+		dataEntryImpl.setStatus(status);
+		dataEntryImpl.setStatusByUserId(statusByUserId);
 
-		if (sequenceDelimeter == null) {
-			dataEntryImpl.setSequenceDelimeter("");
+		if (statusByUserName == null) {
+			dataEntryImpl.setStatusByUserName("");
 		}
 		else {
-			dataEntryImpl.setSequenceDelimeter(sequenceDelimeter);
+			dataEntryImpl.setStatusByUserName(statusByUserName);
 		}
+
+		if (statusDate == Long.MIN_VALUE) {
+			dataEntryImpl.setStatusDate(null);
+		}
+		else {
+			dataEntryImpl.setStatusDate(new Date(statusDate));
+		}
+
+		dataEntryImpl.setDataPackId(dataPackId);
+		dataEntryImpl.setDataSectionId(dataSectionId);
+		dataEntryImpl.setDataSetId(dataSetId);
+		dataEntryImpl.setDataCollectionId(dataCollectionId);
+
+		if (accessURL == null) {
+			dataEntryImpl.setAccessURL("");
+		}
+		else {
+			dataEntryImpl.setAccessURL(accessURL);
+		}
+
+		if (pathType == null) {
+			dataEntryImpl.setPathType("");
+		}
+		else {
+			dataEntryImpl.setPathType(pathType);
+		}
+
+		dataEntryImpl.setCopiedFrom(copiedFrom);
 
 		dataEntryImpl.resetOriginalValues();
 
@@ -140,69 +192,121 @@ public class DataEntryCacheModel
 
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
+		uuid = objectInput.readUTF();
+
 		dataEntryId = objectInput.readLong();
-		dataCollectionName = objectInput.readUTF();
 
 		companyId = objectInput.readLong();
 
 		groupId = objectInput.readLong();
 
 		userId = objectInput.readLong();
+		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
-		path = objectInput.readUTF();
+		modifiedDate = objectInput.readLong();
 
-		sequenceNo = objectInput.readInt();
+		status = objectInput.readInt();
 
-		recordCount = objectInput.readInt();
-		sequenceDelimeter = objectInput.readUTF();
+		statusByUserId = objectInput.readLong();
+		statusByUserName = objectInput.readUTF();
+		statusDate = objectInput.readLong();
+
+		dataPackId = objectInput.readLong();
+
+		dataSectionId = objectInput.readLong();
+
+		dataSetId = objectInput.readLong();
+
+		dataCollectionId = objectInput.readLong();
+		accessURL = objectInput.readUTF();
+		pathType = objectInput.readUTF();
+
+		copiedFrom = objectInput.readLong();
 	}
 
 	@Override
 	public void writeExternal(ObjectOutput objectOutput) throws IOException {
-		objectOutput.writeLong(dataEntryId);
-
-		if (dataCollectionName == null) {
+		if (uuid == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(dataCollectionName);
+			objectOutput.writeUTF(uuid);
 		}
+
+		objectOutput.writeLong(dataEntryId);
 
 		objectOutput.writeLong(companyId);
 
 		objectOutput.writeLong(groupId);
 
 		objectOutput.writeLong(userId);
+
+		if (userName == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(userName);
+		}
+
 		objectOutput.writeLong(createDate);
+		objectOutput.writeLong(modifiedDate);
 
-		if (path == null) {
+		objectOutput.writeInt(status);
+
+		objectOutput.writeLong(statusByUserId);
+
+		if (statusByUserName == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(path);
+			objectOutput.writeUTF(statusByUserName);
 		}
 
-		objectOutput.writeInt(sequenceNo);
+		objectOutput.writeLong(statusDate);
 
-		objectOutput.writeInt(recordCount);
+		objectOutput.writeLong(dataPackId);
 
-		if (sequenceDelimeter == null) {
+		objectOutput.writeLong(dataSectionId);
+
+		objectOutput.writeLong(dataSetId);
+
+		objectOutput.writeLong(dataCollectionId);
+
+		if (accessURL == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(sequenceDelimeter);
+			objectOutput.writeUTF(accessURL);
 		}
+
+		if (pathType == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(pathType);
+		}
+
+		objectOutput.writeLong(copiedFrom);
 	}
 
+	public String uuid;
 	public long dataEntryId;
-	public String dataCollectionName;
 	public long companyId;
 	public long groupId;
 	public long userId;
+	public String userName;
 	public long createDate;
-	public String path;
-	public int sequenceNo;
-	public int recordCount;
-	public String sequenceDelimeter;
+	public long modifiedDate;
+	public int status;
+	public long statusByUserId;
+	public String statusByUserName;
+	public long statusDate;
+	public long dataPackId;
+	public long dataSectionId;
+	public long dataSetId;
+	public long dataCollectionId;
+	public String accessURL;
+	public String pathType;
+	public long copiedFrom;
 
 }

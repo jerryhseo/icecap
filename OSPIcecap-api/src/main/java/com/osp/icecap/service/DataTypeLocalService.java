@@ -38,6 +38,8 @@ import com.osp.icecap.model.DataType;
 import java.io.Serializable;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -74,6 +76,16 @@ public interface DataTypeLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataType addDataType(DataType dataType);
 
+	@Indexable(type = IndexableType.REINDEX)
+	public DataType addDataType(
+			String dataTypeName, String dataTypeVersion,
+			Map<Locale, String> descriptionMap, String samplePath,
+			ServiceContext sc)
+		throws PortalException;
+
+	public DataType copyDataType(long dataTypeId, ServiceContext sc)
+		throws PortalException;
+
 	/**
 	 * Creates a new data type with the primary key. Does not add the data type to the database.
 	 *
@@ -82,10 +94,6 @@ public interface DataTypeLocalService
 	 */
 	@Transactional(enabled = false)
 	public DataType createDataType(long dataTypeId);
-
-	public DataType createDataType(
-			String dataTypeName, String dataTypeVersion, ServiceContext sc)
-		throws PortalException;
 
 	/**
 	 * Deletes the data type from the database. Also notifies the appropriate model listeners.
@@ -284,13 +292,15 @@ public interface DataTypeLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	public DataType removeDataType(DataType dataType);
+	public DataType removeDataType(DataType dataType) throws PortalException;
 
+	@Indexable(type = IndexableType.DELETE)
 	public DataType removeDataType(long dataTypeId) throws PortalException;
 
-	public int removeDataType(String dataTypeName);
+	public int removeDataType(String dataTypeName) throws PortalException;
 
-	public DataType removeDataType(String dataTypeName, String dataTypeVersion);
+	public DataType removeDataType(String dataTypeName, String dataTypeVersion)
+		throws PortalException;
 
 	/**
 	 * Updates the data type in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
@@ -300,5 +310,11 @@ public interface DataTypeLocalService
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public DataType updateDataType(DataType dataType);
+
+	@Indexable(type = IndexableType.REINDEX)
+	public DataType updateDataType(
+		long dataTypeId, String dataTypeName, String dataTypeVersion,
+		Map<Locale, String> descriptionMap, String samplePath,
+		ServiceContext sc);
 
 }

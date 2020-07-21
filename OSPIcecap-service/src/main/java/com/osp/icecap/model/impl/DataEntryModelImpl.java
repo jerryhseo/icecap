@@ -16,6 +16,7 @@ package com.osp.icecap.model.impl;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -26,7 +27,10 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.model.DataEntryModel;
@@ -75,31 +79,45 @@ public class DataEntryModelImpl
 	public static final String TABLE_NAME = "ICECAP_DataEntry";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"dataEntryId", Types.BIGINT}, {"dataCollectionName", Types.VARCHAR},
+		{"uuid_", Types.VARCHAR}, {"dataEntryId", Types.BIGINT},
 		{"companyId", Types.BIGINT}, {"groupId", Types.BIGINT},
-		{"userId", Types.BIGINT}, {"createDate", Types.TIMESTAMP},
-		{"path_", Types.VARCHAR}, {"sequenceNo", Types.INTEGER},
-		{"recordCount", Types.INTEGER}, {"sequenceDelimeter", Types.VARCHAR}
+		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
+		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
+		{"status", Types.INTEGER}, {"statusByUserId", Types.BIGINT},
+		{"statusByUserName", Types.VARCHAR}, {"statusDate", Types.TIMESTAMP},
+		{"dataPackId", Types.BIGINT}, {"dataSectionId", Types.BIGINT},
+		{"dataSetId", Types.BIGINT}, {"dataCollectionId", Types.BIGINT},
+		{"accessURL", Types.VARCHAR}, {"pathType", Types.VARCHAR},
+		{"copiedFrom", Types.BIGINT}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
 		new HashMap<String, Integer>();
 
 	static {
+		TABLE_COLUMNS_MAP.put("uuid_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("dataEntryId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("dataCollectionName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
-		TABLE_COLUMNS_MAP.put("path_", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("sequenceNo", Types.INTEGER);
-		TABLE_COLUMNS_MAP.put("recordCount", Types.INTEGER);
-		TABLE_COLUMNS_MAP.put("sequenceDelimeter", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("status", Types.INTEGER);
+		TABLE_COLUMNS_MAP.put("statusByUserId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("statusByUserName", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("dataPackId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("dataSectionId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("dataSetId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("dataCollectionId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("accessURL", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("pathType", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("copiedFrom", Types.BIGINT);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataEntry (dataEntryId LONG not null primary key,dataCollectionName VARCHAR(75) null,companyId LONG,groupId LONG,userId LONG,createDate DATE null,path_ VARCHAR(75) null,sequenceNo INTEGER,recordCount INTEGER,sequenceDelimeter VARCHAR(75) null)";
+		"create table ICECAP_DataEntry (uuid_ VARCHAR(75) null,dataEntryId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,dataPackId LONG,dataSectionId LONG,dataSetId LONG,dataCollectionId LONG,accessURL VARCHAR(75) null,pathType VARCHAR(75) null,copiedFrom LONG)";
 
 	public static final String TABLE_SQL_DROP = "drop table ICECAP_DataEntry";
 
@@ -114,6 +132,28 @@ public class DataEntryModelImpl
 	public static final String SESSION_FACTORY = "liferaySessionFactory";
 
 	public static final String TX_MANAGER = "liferayTransactionManager";
+
+	public static final long COMPANYID_COLUMN_BITMASK = 1L;
+
+	public static final long COPIEDFROM_COLUMN_BITMASK = 2L;
+
+	public static final long DATACOLLECTIONID_COLUMN_BITMASK = 4L;
+
+	public static final long DATAPACKID_COLUMN_BITMASK = 8L;
+
+	public static final long DATASECTIONID_COLUMN_BITMASK = 16L;
+
+	public static final long DATASETID_COLUMN_BITMASK = 32L;
+
+	public static final long GROUPID_COLUMN_BITMASK = 64L;
+
+	public static final long STATUS_COLUMN_BITMASK = 128L;
+
+	public static final long USERID_COLUMN_BITMASK = 256L;
+
+	public static final long UUID_COLUMN_BITMASK = 512L;
+
+	public static final long DATAENTRYID_COLUMN_BITMASK = 1024L;
 
 	public static void setEntityCacheEnabled(boolean entityCacheEnabled) {
 		_entityCacheEnabled = entityCacheEnabled;
@@ -136,16 +176,25 @@ public class DataEntryModelImpl
 
 		DataEntry model = new DataEntryImpl();
 
+		model.setUuid(soapModel.getUuid());
 		model.setDataEntryId(soapModel.getDataEntryId());
-		model.setDataCollectionName(soapModel.getDataCollectionName());
 		model.setCompanyId(soapModel.getCompanyId());
 		model.setGroupId(soapModel.getGroupId());
 		model.setUserId(soapModel.getUserId());
+		model.setUserName(soapModel.getUserName());
 		model.setCreateDate(soapModel.getCreateDate());
-		model.setPath(soapModel.getPath());
-		model.setSequenceNo(soapModel.getSequenceNo());
-		model.setRecordCount(soapModel.getRecordCount());
-		model.setSequenceDelimeter(soapModel.getSequenceDelimeter());
+		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setStatus(soapModel.getStatus());
+		model.setStatusByUserId(soapModel.getStatusByUserId());
+		model.setStatusByUserName(soapModel.getStatusByUserName());
+		model.setStatusDate(soapModel.getStatusDate());
+		model.setDataPackId(soapModel.getDataPackId());
+		model.setDataSectionId(soapModel.getDataSectionId());
+		model.setDataSetId(soapModel.getDataSetId());
+		model.setDataCollectionId(soapModel.getDataCollectionId());
+		model.setAccessURL(soapModel.getAccessURL());
+		model.setPathType(soapModel.getPathType());
+		model.setCopiedFrom(soapModel.getCopiedFrom());
 
 		return model;
 	}
@@ -294,15 +343,13 @@ public class DataEntryModelImpl
 		Map<String, BiConsumer<DataEntry, ?>> attributeSetterBiConsumers =
 			new LinkedHashMap<String, BiConsumer<DataEntry, ?>>();
 
+		attributeGetterFunctions.put("uuid", DataEntry::getUuid);
+		attributeSetterBiConsumers.put(
+			"uuid", (BiConsumer<DataEntry, String>)DataEntry::setUuid);
 		attributeGetterFunctions.put("dataEntryId", DataEntry::getDataEntryId);
 		attributeSetterBiConsumers.put(
 			"dataEntryId",
 			(BiConsumer<DataEntry, Long>)DataEntry::setDataEntryId);
-		attributeGetterFunctions.put(
-			"dataCollectionName", DataEntry::getDataCollectionName);
-		attributeSetterBiConsumers.put(
-			"dataCollectionName",
-			(BiConsumer<DataEntry, String>)DataEntry::setDataCollectionName);
 		attributeGetterFunctions.put("companyId", DataEntry::getCompanyId);
 		attributeSetterBiConsumers.put(
 			"companyId", (BiConsumer<DataEntry, Long>)DataEntry::setCompanyId);
@@ -312,31 +359,94 @@ public class DataEntryModelImpl
 		attributeGetterFunctions.put("userId", DataEntry::getUserId);
 		attributeSetterBiConsumers.put(
 			"userId", (BiConsumer<DataEntry, Long>)DataEntry::setUserId);
+		attributeGetterFunctions.put("userName", DataEntry::getUserName);
+		attributeSetterBiConsumers.put(
+			"userName", (BiConsumer<DataEntry, String>)DataEntry::setUserName);
 		attributeGetterFunctions.put("createDate", DataEntry::getCreateDate);
 		attributeSetterBiConsumers.put(
 			"createDate",
 			(BiConsumer<DataEntry, Date>)DataEntry::setCreateDate);
-		attributeGetterFunctions.put("path", DataEntry::getPath);
-		attributeSetterBiConsumers.put(
-			"path", (BiConsumer<DataEntry, String>)DataEntry::setPath);
-		attributeGetterFunctions.put("sequenceNo", DataEntry::getSequenceNo);
-		attributeSetterBiConsumers.put(
-			"sequenceNo",
-			(BiConsumer<DataEntry, Integer>)DataEntry::setSequenceNo);
-		attributeGetterFunctions.put("recordCount", DataEntry::getRecordCount);
-		attributeSetterBiConsumers.put(
-			"recordCount",
-			(BiConsumer<DataEntry, Integer>)DataEntry::setRecordCount);
 		attributeGetterFunctions.put(
-			"sequenceDelimeter", DataEntry::getSequenceDelimeter);
+			"modifiedDate", DataEntry::getModifiedDate);
 		attributeSetterBiConsumers.put(
-			"sequenceDelimeter",
-			(BiConsumer<DataEntry, String>)DataEntry::setSequenceDelimeter);
+			"modifiedDate",
+			(BiConsumer<DataEntry, Date>)DataEntry::setModifiedDate);
+		attributeGetterFunctions.put("status", DataEntry::getStatus);
+		attributeSetterBiConsumers.put(
+			"status", (BiConsumer<DataEntry, Integer>)DataEntry::setStatus);
+		attributeGetterFunctions.put(
+			"statusByUserId", DataEntry::getStatusByUserId);
+		attributeSetterBiConsumers.put(
+			"statusByUserId",
+			(BiConsumer<DataEntry, Long>)DataEntry::setStatusByUserId);
+		attributeGetterFunctions.put(
+			"statusByUserName", DataEntry::getStatusByUserName);
+		attributeSetterBiConsumers.put(
+			"statusByUserName",
+			(BiConsumer<DataEntry, String>)DataEntry::setStatusByUserName);
+		attributeGetterFunctions.put("statusDate", DataEntry::getStatusDate);
+		attributeSetterBiConsumers.put(
+			"statusDate",
+			(BiConsumer<DataEntry, Date>)DataEntry::setStatusDate);
+		attributeGetterFunctions.put("dataPackId", DataEntry::getDataPackId);
+		attributeSetterBiConsumers.put(
+			"dataPackId",
+			(BiConsumer<DataEntry, Long>)DataEntry::setDataPackId);
+		attributeGetterFunctions.put(
+			"dataSectionId", DataEntry::getDataSectionId);
+		attributeSetterBiConsumers.put(
+			"dataSectionId",
+			(BiConsumer<DataEntry, Long>)DataEntry::setDataSectionId);
+		attributeGetterFunctions.put("dataSetId", DataEntry::getDataSetId);
+		attributeSetterBiConsumers.put(
+			"dataSetId", (BiConsumer<DataEntry, Long>)DataEntry::setDataSetId);
+		attributeGetterFunctions.put(
+			"dataCollectionId", DataEntry::getDataCollectionId);
+		attributeSetterBiConsumers.put(
+			"dataCollectionId",
+			(BiConsumer<DataEntry, Long>)DataEntry::setDataCollectionId);
+		attributeGetterFunctions.put("accessURL", DataEntry::getAccessURL);
+		attributeSetterBiConsumers.put(
+			"accessURL",
+			(BiConsumer<DataEntry, String>)DataEntry::setAccessURL);
+		attributeGetterFunctions.put("pathType", DataEntry::getPathType);
+		attributeSetterBiConsumers.put(
+			"pathType", (BiConsumer<DataEntry, String>)DataEntry::setPathType);
+		attributeGetterFunctions.put("copiedFrom", DataEntry::getCopiedFrom);
+		attributeSetterBiConsumers.put(
+			"copiedFrom",
+			(BiConsumer<DataEntry, Long>)DataEntry::setCopiedFrom);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
 		_attributeSetterBiConsumers = Collections.unmodifiableMap(
 			(Map)attributeSetterBiConsumers);
+	}
+
+	@JSON
+	@Override
+	public String getUuid() {
+		if (_uuid == null) {
+			return "";
+		}
+		else {
+			return _uuid;
+		}
+	}
+
+	@Override
+	public void setUuid(String uuid) {
+		_columnBitmask |= UUID_COLUMN_BITMASK;
+
+		if (_originalUuid == null) {
+			_originalUuid = _uuid;
+		}
+
+		_uuid = uuid;
+	}
+
+	public String getOriginalUuid() {
+		return GetterUtil.getString(_originalUuid);
 	}
 
 	@JSON
@@ -352,29 +462,25 @@ public class DataEntryModelImpl
 
 	@JSON
 	@Override
-	public String getDataCollectionName() {
-		if (_dataCollectionName == null) {
-			return "";
-		}
-		else {
-			return _dataCollectionName;
-		}
-	}
-
-	@Override
-	public void setDataCollectionName(String dataCollectionName) {
-		_dataCollectionName = dataCollectionName;
-	}
-
-	@JSON
-	@Override
 	public long getCompanyId() {
 		return _companyId;
 	}
 
 	@Override
 	public void setCompanyId(long companyId) {
+		_columnBitmask |= COMPANYID_COLUMN_BITMASK;
+
+		if (!_setOriginalCompanyId) {
+			_setOriginalCompanyId = true;
+
+			_originalCompanyId = _companyId;
+		}
+
 		_companyId = companyId;
+	}
+
+	public long getOriginalCompanyId() {
+		return _originalCompanyId;
 	}
 
 	@JSON
@@ -385,7 +491,19 @@ public class DataEntryModelImpl
 
 	@Override
 	public void setGroupId(long groupId) {
+		_columnBitmask |= GROUPID_COLUMN_BITMASK;
+
+		if (!_setOriginalGroupId) {
+			_setOriginalGroupId = true;
+
+			_originalGroupId = _groupId;
+		}
+
 		_groupId = groupId;
+	}
+
+	public long getOriginalGroupId() {
+		return _originalGroupId;
 	}
 
 	@JSON
@@ -396,6 +514,14 @@ public class DataEntryModelImpl
 
 	@Override
 	public void setUserId(long userId) {
+		_columnBitmask |= USERID_COLUMN_BITMASK;
+
+		if (!_setOriginalUserId) {
+			_setOriginalUserId = true;
+
+			_originalUserId = _userId;
+		}
+
 		_userId = userId;
 	}
 
@@ -415,6 +541,26 @@ public class DataEntryModelImpl
 	public void setUserUuid(String userUuid) {
 	}
 
+	public long getOriginalUserId() {
+		return _originalUserId;
+	}
+
+	@JSON
+	@Override
+	public String getUserName() {
+		if (_userName == null) {
+			return "";
+		}
+		else {
+			return _userName;
+		}
+	}
+
+	@Override
+	public void setUserName(String userName) {
+		_userName = userName;
+	}
+
 	@JSON
 	@Override
 	public Date getCreateDate() {
@@ -428,56 +574,333 @@ public class DataEntryModelImpl
 
 	@JSON
 	@Override
-	public String getPath() {
-		if (_path == null) {
+	public Date getModifiedDate() {
+		return _modifiedDate;
+	}
+
+	public boolean hasSetModifiedDate() {
+		return _setModifiedDate;
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		_setModifiedDate = true;
+
+		_modifiedDate = modifiedDate;
+	}
+
+	@JSON
+	@Override
+	public int getStatus() {
+		return _status;
+	}
+
+	@Override
+	public void setStatus(int status) {
+		_columnBitmask |= STATUS_COLUMN_BITMASK;
+
+		if (!_setOriginalStatus) {
+			_setOriginalStatus = true;
+
+			_originalStatus = _status;
+		}
+
+		_status = status;
+	}
+
+	public int getOriginalStatus() {
+		return _originalStatus;
+	}
+
+	@JSON
+	@Override
+	public long getStatusByUserId() {
+		return _statusByUserId;
+	}
+
+	@Override
+	public void setStatusByUserId(long statusByUserId) {
+		_statusByUserId = statusByUserId;
+	}
+
+	@Override
+	public String getStatusByUserUuid() {
+		try {
+			User user = UserLocalServiceUtil.getUserById(getStatusByUserId());
+
+			return user.getUuid();
+		}
+		catch (PortalException pe) {
+			return "";
+		}
+	}
+
+	@Override
+	public void setStatusByUserUuid(String statusByUserUuid) {
+	}
+
+	@JSON
+	@Override
+	public String getStatusByUserName() {
+		if (_statusByUserName == null) {
 			return "";
 		}
 		else {
-			return _path;
+			return _statusByUserName;
 		}
 	}
 
 	@Override
-	public void setPath(String path) {
-		_path = path;
+	public void setStatusByUserName(String statusByUserName) {
+		_statusByUserName = statusByUserName;
 	}
 
 	@JSON
 	@Override
-	public int getSequenceNo() {
-		return _sequenceNo;
+	public Date getStatusDate() {
+		return _statusDate;
 	}
 
 	@Override
-	public void setSequenceNo(int sequenceNo) {
-		_sequenceNo = sequenceNo;
-	}
-
-	@JSON
-	@Override
-	public int getRecordCount() {
-		return _recordCount;
-	}
-
-	@Override
-	public void setRecordCount(int recordCount) {
-		_recordCount = recordCount;
+	public void setStatusDate(Date statusDate) {
+		_statusDate = statusDate;
 	}
 
 	@JSON
 	@Override
-	public String getSequenceDelimeter() {
-		if (_sequenceDelimeter == null) {
+	public long getDataPackId() {
+		return _dataPackId;
+	}
+
+	@Override
+	public void setDataPackId(long dataPackId) {
+		_columnBitmask |= DATAPACKID_COLUMN_BITMASK;
+
+		if (!_setOriginalDataPackId) {
+			_setOriginalDataPackId = true;
+
+			_originalDataPackId = _dataPackId;
+		}
+
+		_dataPackId = dataPackId;
+	}
+
+	public long getOriginalDataPackId() {
+		return _originalDataPackId;
+	}
+
+	@JSON
+	@Override
+	public long getDataSectionId() {
+		return _dataSectionId;
+	}
+
+	@Override
+	public void setDataSectionId(long dataSectionId) {
+		_columnBitmask |= DATASECTIONID_COLUMN_BITMASK;
+
+		if (!_setOriginalDataSectionId) {
+			_setOriginalDataSectionId = true;
+
+			_originalDataSectionId = _dataSectionId;
+		}
+
+		_dataSectionId = dataSectionId;
+	}
+
+	public long getOriginalDataSectionId() {
+		return _originalDataSectionId;
+	}
+
+	@JSON
+	@Override
+	public long getDataSetId() {
+		return _dataSetId;
+	}
+
+	@Override
+	public void setDataSetId(long dataSetId) {
+		_columnBitmask |= DATASETID_COLUMN_BITMASK;
+
+		if (!_setOriginalDataSetId) {
+			_setOriginalDataSetId = true;
+
+			_originalDataSetId = _dataSetId;
+		}
+
+		_dataSetId = dataSetId;
+	}
+
+	public long getOriginalDataSetId() {
+		return _originalDataSetId;
+	}
+
+	@JSON
+	@Override
+	public long getDataCollectionId() {
+		return _dataCollectionId;
+	}
+
+	@Override
+	public void setDataCollectionId(long dataCollectionId) {
+		_columnBitmask |= DATACOLLECTIONID_COLUMN_BITMASK;
+
+		if (!_setOriginalDataCollectionId) {
+			_setOriginalDataCollectionId = true;
+
+			_originalDataCollectionId = _dataCollectionId;
+		}
+
+		_dataCollectionId = dataCollectionId;
+	}
+
+	public long getOriginalDataCollectionId() {
+		return _originalDataCollectionId;
+	}
+
+	@JSON
+	@Override
+	public String getAccessURL() {
+		if (_accessURL == null) {
 			return "";
 		}
 		else {
-			return _sequenceDelimeter;
+			return _accessURL;
 		}
 	}
 
 	@Override
-	public void setSequenceDelimeter(String sequenceDelimeter) {
-		_sequenceDelimeter = sequenceDelimeter;
+	public void setAccessURL(String accessURL) {
+		_accessURL = accessURL;
+	}
+
+	@JSON
+	@Override
+	public String getPathType() {
+		if (_pathType == null) {
+			return "";
+		}
+		else {
+			return _pathType;
+		}
+	}
+
+	@Override
+	public void setPathType(String pathType) {
+		_pathType = pathType;
+	}
+
+	@JSON
+	@Override
+	public long getCopiedFrom() {
+		return _copiedFrom;
+	}
+
+	@Override
+	public void setCopiedFrom(long copiedFrom) {
+		_columnBitmask |= COPIEDFROM_COLUMN_BITMASK;
+
+		if (!_setOriginalCopiedFrom) {
+			_setOriginalCopiedFrom = true;
+
+			_originalCopiedFrom = _copiedFrom;
+		}
+
+		_copiedFrom = copiedFrom;
+	}
+
+	public long getOriginalCopiedFrom() {
+		return _originalCopiedFrom;
+	}
+
+	@Override
+	public StagedModelType getStagedModelType() {
+		return new StagedModelType(
+			PortalUtil.getClassNameId(DataEntry.class.getName()));
+	}
+
+	@Override
+	public boolean isApproved() {
+		if (getStatus() == WorkflowConstants.STATUS_APPROVED) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isDenied() {
+		if (getStatus() == WorkflowConstants.STATUS_DENIED) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isDraft() {
+		if (getStatus() == WorkflowConstants.STATUS_DRAFT) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isExpired() {
+		if (getStatus() == WorkflowConstants.STATUS_EXPIRED) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isInactive() {
+		if (getStatus() == WorkflowConstants.STATUS_INACTIVE) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isIncomplete() {
+		if (getStatus() == WorkflowConstants.STATUS_INCOMPLETE) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isPending() {
+		if (getStatus() == WorkflowConstants.STATUS_PENDING) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isScheduled() {
+		if (getStatus() == WorkflowConstants.STATUS_SCHEDULED) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public long getColumnBitmask() {
+		return _columnBitmask;
 	}
 
 	@Override
@@ -496,7 +919,12 @@ public class DataEntryModelImpl
 	@Override
 	public DataEntry toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, DataEntry>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -507,16 +935,25 @@ public class DataEntryModelImpl
 	public Object clone() {
 		DataEntryImpl dataEntryImpl = new DataEntryImpl();
 
+		dataEntryImpl.setUuid(getUuid());
 		dataEntryImpl.setDataEntryId(getDataEntryId());
-		dataEntryImpl.setDataCollectionName(getDataCollectionName());
 		dataEntryImpl.setCompanyId(getCompanyId());
 		dataEntryImpl.setGroupId(getGroupId());
 		dataEntryImpl.setUserId(getUserId());
+		dataEntryImpl.setUserName(getUserName());
 		dataEntryImpl.setCreateDate(getCreateDate());
-		dataEntryImpl.setPath(getPath());
-		dataEntryImpl.setSequenceNo(getSequenceNo());
-		dataEntryImpl.setRecordCount(getRecordCount());
-		dataEntryImpl.setSequenceDelimeter(getSequenceDelimeter());
+		dataEntryImpl.setModifiedDate(getModifiedDate());
+		dataEntryImpl.setStatus(getStatus());
+		dataEntryImpl.setStatusByUserId(getStatusByUserId());
+		dataEntryImpl.setStatusByUserName(getStatusByUserName());
+		dataEntryImpl.setStatusDate(getStatusDate());
+		dataEntryImpl.setDataPackId(getDataPackId());
+		dataEntryImpl.setDataSectionId(getDataSectionId());
+		dataEntryImpl.setDataSetId(getDataSetId());
+		dataEntryImpl.setDataCollectionId(getDataCollectionId());
+		dataEntryImpl.setAccessURL(getAccessURL());
+		dataEntryImpl.setPathType(getPathType());
+		dataEntryImpl.setCopiedFrom(getCopiedFrom());
 
 		dataEntryImpl.resetOriginalValues();
 
@@ -577,29 +1014,80 @@ public class DataEntryModelImpl
 
 	@Override
 	public void resetOriginalValues() {
+		DataEntryModelImpl dataEntryModelImpl = this;
+
+		dataEntryModelImpl._originalUuid = dataEntryModelImpl._uuid;
+
+		dataEntryModelImpl._originalCompanyId = dataEntryModelImpl._companyId;
+
+		dataEntryModelImpl._setOriginalCompanyId = false;
+
+		dataEntryModelImpl._originalGroupId = dataEntryModelImpl._groupId;
+
+		dataEntryModelImpl._setOriginalGroupId = false;
+
+		dataEntryModelImpl._originalUserId = dataEntryModelImpl._userId;
+
+		dataEntryModelImpl._setOriginalUserId = false;
+
+		dataEntryModelImpl._setModifiedDate = false;
+
+		dataEntryModelImpl._originalStatus = dataEntryModelImpl._status;
+
+		dataEntryModelImpl._setOriginalStatus = false;
+
+		dataEntryModelImpl._originalDataPackId = dataEntryModelImpl._dataPackId;
+
+		dataEntryModelImpl._setOriginalDataPackId = false;
+
+		dataEntryModelImpl._originalDataSectionId =
+			dataEntryModelImpl._dataSectionId;
+
+		dataEntryModelImpl._setOriginalDataSectionId = false;
+
+		dataEntryModelImpl._originalDataSetId = dataEntryModelImpl._dataSetId;
+
+		dataEntryModelImpl._setOriginalDataSetId = false;
+
+		dataEntryModelImpl._originalDataCollectionId =
+			dataEntryModelImpl._dataCollectionId;
+
+		dataEntryModelImpl._setOriginalDataCollectionId = false;
+
+		dataEntryModelImpl._originalCopiedFrom = dataEntryModelImpl._copiedFrom;
+
+		dataEntryModelImpl._setOriginalCopiedFrom = false;
+
+		dataEntryModelImpl._columnBitmask = 0;
 	}
 
 	@Override
 	public CacheModel<DataEntry> toCacheModel() {
 		DataEntryCacheModel dataEntryCacheModel = new DataEntryCacheModel();
 
-		dataEntryCacheModel.dataEntryId = getDataEntryId();
+		dataEntryCacheModel.uuid = getUuid();
 
-		dataEntryCacheModel.dataCollectionName = getDataCollectionName();
+		String uuid = dataEntryCacheModel.uuid;
 
-		String dataCollectionName = dataEntryCacheModel.dataCollectionName;
-
-		if ((dataCollectionName != null) &&
-			(dataCollectionName.length() == 0)) {
-
-			dataEntryCacheModel.dataCollectionName = null;
+		if ((uuid != null) && (uuid.length() == 0)) {
+			dataEntryCacheModel.uuid = null;
 		}
+
+		dataEntryCacheModel.dataEntryId = getDataEntryId();
 
 		dataEntryCacheModel.companyId = getCompanyId();
 
 		dataEntryCacheModel.groupId = getGroupId();
 
 		dataEntryCacheModel.userId = getUserId();
+
+		dataEntryCacheModel.userName = getUserName();
+
+		String userName = dataEntryCacheModel.userName;
+
+		if ((userName != null) && (userName.length() == 0)) {
+			dataEntryCacheModel.userName = null;
+		}
 
 		Date createDate = getCreateDate();
 
@@ -610,25 +1098,61 @@ public class DataEntryModelImpl
 			dataEntryCacheModel.createDate = Long.MIN_VALUE;
 		}
 
-		dataEntryCacheModel.path = getPath();
+		Date modifiedDate = getModifiedDate();
 
-		String path = dataEntryCacheModel.path;
-
-		if ((path != null) && (path.length() == 0)) {
-			dataEntryCacheModel.path = null;
+		if (modifiedDate != null) {
+			dataEntryCacheModel.modifiedDate = modifiedDate.getTime();
+		}
+		else {
+			dataEntryCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
-		dataEntryCacheModel.sequenceNo = getSequenceNo();
+		dataEntryCacheModel.status = getStatus();
 
-		dataEntryCacheModel.recordCount = getRecordCount();
+		dataEntryCacheModel.statusByUserId = getStatusByUserId();
 
-		dataEntryCacheModel.sequenceDelimeter = getSequenceDelimeter();
+		dataEntryCacheModel.statusByUserName = getStatusByUserName();
 
-		String sequenceDelimeter = dataEntryCacheModel.sequenceDelimeter;
+		String statusByUserName = dataEntryCacheModel.statusByUserName;
 
-		if ((sequenceDelimeter != null) && (sequenceDelimeter.length() == 0)) {
-			dataEntryCacheModel.sequenceDelimeter = null;
+		if ((statusByUserName != null) && (statusByUserName.length() == 0)) {
+			dataEntryCacheModel.statusByUserName = null;
 		}
+
+		Date statusDate = getStatusDate();
+
+		if (statusDate != null) {
+			dataEntryCacheModel.statusDate = statusDate.getTime();
+		}
+		else {
+			dataEntryCacheModel.statusDate = Long.MIN_VALUE;
+		}
+
+		dataEntryCacheModel.dataPackId = getDataPackId();
+
+		dataEntryCacheModel.dataSectionId = getDataSectionId();
+
+		dataEntryCacheModel.dataSetId = getDataSetId();
+
+		dataEntryCacheModel.dataCollectionId = getDataCollectionId();
+
+		dataEntryCacheModel.accessURL = getAccessURL();
+
+		String accessURL = dataEntryCacheModel.accessURL;
+
+		if ((accessURL != null) && (accessURL.length() == 0)) {
+			dataEntryCacheModel.accessURL = null;
+		}
+
+		dataEntryCacheModel.pathType = getPathType();
+
+		String pathType = dataEntryCacheModel.pathType;
+
+		if ((pathType != null) && (pathType.length() == 0)) {
+			dataEntryCacheModel.pathType = null;
+		}
+
+		dataEntryCacheModel.copiedFrom = getCopiedFrom();
 
 		return dataEntryCacheModel;
 	}
@@ -696,21 +1220,56 @@ public class DataEntryModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, DataEntry>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, DataEntry>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
+
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 
+	private String _uuid;
+	private String _originalUuid;
 	private long _dataEntryId;
-	private String _dataCollectionName;
 	private long _companyId;
+	private long _originalCompanyId;
+	private boolean _setOriginalCompanyId;
 	private long _groupId;
+	private long _originalGroupId;
+	private boolean _setOriginalGroupId;
 	private long _userId;
+	private long _originalUserId;
+	private boolean _setOriginalUserId;
+	private String _userName;
 	private Date _createDate;
-	private String _path;
-	private int _sequenceNo;
-	private int _recordCount;
-	private String _sequenceDelimeter;
+	private Date _modifiedDate;
+	private boolean _setModifiedDate;
+	private int _status;
+	private int _originalStatus;
+	private boolean _setOriginalStatus;
+	private long _statusByUserId;
+	private String _statusByUserName;
+	private Date _statusDate;
+	private long _dataPackId;
+	private long _originalDataPackId;
+	private boolean _setOriginalDataPackId;
+	private long _dataSectionId;
+	private long _originalDataSectionId;
+	private boolean _setOriginalDataSectionId;
+	private long _dataSetId;
+	private long _originalDataSetId;
+	private boolean _setOriginalDataSetId;
+	private long _dataCollectionId;
+	private long _originalDataCollectionId;
+	private boolean _setOriginalDataCollectionId;
+	private String _accessURL;
+	private String _pathType;
+	private long _copiedFrom;
+	private long _originalCopiedFrom;
+	private boolean _setOriginalCopiedFrom;
+	private long _columnBitmask;
 	private DataEntry _escapedModel;
 
 }

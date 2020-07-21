@@ -54,11 +54,12 @@ public class DataTypeVisualizerLinkLocalServiceUtil {
 		return getService().addDataTypeVisualizerLink(dataTypeVisualizerLink);
 	}
 
-	public static com.osp.icecap.model.DataTypeVisualizerLink addLink(
-		long dataTypeId, String visualizerName, String visualizerVersion,
-		boolean editable) {
+	public static com.osp.icecap.model.DataTypeVisualizerLink
+		addDataTypeVisualizerLink(
+			long dataTypeId, String visualizerName, String visualizerVersion,
+			boolean editable) {
 
-		return getService().addLink(
+		return getService().addDataTypeVisualizerLink(
 			dataTypeId, visualizerName, visualizerVersion, editable);
 	}
 
@@ -277,14 +278,30 @@ public class DataTypeVisualizerLinkLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
-	public static com.osp.icecap.model.DataTypeVisualizerLink removeLink(
-		String visualizerName, String visualizerVersion) {
+	public static com.osp.icecap.model.DataTypeVisualizerLink
+			removeDataTypeVisualizerLink(long dataTypeVisualizerLinkId)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return getService().removeLink(visualizerName, visualizerVersion);
+		return getService().removeDataTypeVisualizerLink(
+			dataTypeVisualizerLinkId);
 	}
 
-	public static void removeLinks(long dataTypeId) {
-		getService().removeLinks(dataTypeId);
+	public static void removeDataTypeVisualizerLinks(long dataTypeId) {
+		getService().removeDataTypeVisualizerLinks(dataTypeId);
+	}
+
+	public static void removeDataTypeVisualizerLinks(String visualizerName)
+		throws com.osp.icecap.exception.NoSuchDataTypeVisualizerLinkException {
+
+		getService().removeDataTypeVisualizerLinks(visualizerName);
+	}
+
+	public static void removeDataTypeVisualizerLinks(
+			String visualizerName, String visualizerVersion)
+		throws com.osp.icecap.exception.NoSuchDataTypeVisualizerLinkException {
+
+		getService().removeDataTypeVisualizerLinks(
+			visualizerName, visualizerVersion);
 	}
 
 	/**
@@ -300,6 +317,18 @@ public class DataTypeVisualizerLinkLocalServiceUtil {
 
 		return getService().updateDataTypeVisualizerLink(
 			dataTypeVisualizerLink);
+	}
+
+	public static com.osp.icecap.model.DataTypeVisualizerLink
+			updateDataTypeVisualizerLink(
+				long dataTypeVisualizerLinkId, long dataTypeId,
+				String visualizerName, String visualizerVersion,
+				boolean editable)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().updateDataTypeVisualizerLink(
+			dataTypeVisualizerLinkId, dataTypeId, visualizerName,
+			visualizerVersion, editable);
 	}
 
 	public static DataTypeVisualizerLinkLocalService getService() {

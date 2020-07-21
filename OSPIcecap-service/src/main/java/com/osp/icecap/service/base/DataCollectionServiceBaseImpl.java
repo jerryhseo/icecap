@@ -26,9 +26,13 @@ import com.liferay.portal.kernel.util.PortalUtil;
 
 import com.osp.icecap.model.DataCollection;
 import com.osp.icecap.service.DataCollectionService;
-import com.osp.icecap.service.persistence.DataCollectionLayoutPersistence;
+import com.osp.icecap.service.persistence.DataAnalysisLayoutPersistence;
 import com.osp.icecap.service.persistence.DataCollectionPersistence;
 import com.osp.icecap.service.persistence.DataEntryPersistence;
+import com.osp.icecap.service.persistence.DataPackPersistence;
+import com.osp.icecap.service.persistence.DataSectionPersistence;
+import com.osp.icecap.service.persistence.DataSetPersistence;
+import com.osp.icecap.service.persistence.DataTypeLinkPersistence;
 import com.osp.icecap.service.persistence.DataTypePersistence;
 import com.osp.icecap.service.persistence.DataTypeStructurePersistence;
 import com.osp.icecap.service.persistence.DataTypeVisualizerLinkPersistence;
@@ -112,6 +116,9 @@ public abstract class DataCollectionServiceBaseImpl
 	}
 
 	@Reference
+	protected DataAnalysisLayoutPersistence dataAnalysisLayoutPersistence;
+
+	@Reference
 	protected com.osp.icecap.service.DataCollectionLocalService
 		dataCollectionLocalService;
 
@@ -121,13 +128,22 @@ public abstract class DataCollectionServiceBaseImpl
 	protected DataCollectionPersistence dataCollectionPersistence;
 
 	@Reference
-	protected DataCollectionLayoutPersistence dataCollectionLayoutPersistence;
-
-	@Reference
 	protected DataEntryPersistence dataEntryPersistence;
 
 	@Reference
+	protected DataPackPersistence dataPackPersistence;
+
+	@Reference
+	protected DataSectionPersistence dataSectionPersistence;
+
+	@Reference
+	protected DataSetPersistence dataSetPersistence;
+
+	@Reference
 	protected DataTypePersistence dataTypePersistence;
+
+	@Reference
+	protected DataTypeLinkPersistence dataTypeLinkPersistence;
 
 	@Reference
 	protected DataTypeStructurePersistence dataTypeStructurePersistence;
@@ -158,6 +174,10 @@ public abstract class DataCollectionServiceBaseImpl
 
 	@Reference
 	protected com.liferay.portal.kernel.service.UserService userService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService
+		workflowInstanceLinkLocalService;
 
 	@Reference
 	protected com.liferay.asset.kernel.service.AssetEntryLocalService

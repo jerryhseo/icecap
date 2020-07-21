@@ -16,7 +16,10 @@ package com.osp.icecap.model;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
+import com.liferay.portal.kernel.model.StagedAuditedModel;
+import com.liferay.portal.kernel.model.WorkflowedModel;
 
 import java.util.Date;
 
@@ -34,7 +37,9 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface DataEntryModel extends BaseModel<DataEntry>, ShardedModel {
+public interface DataEntryModel
+	extends BaseModel<DataEntry>, GroupedModel, ShardedModel,
+			StagedAuditedModel, WorkflowedModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -57,6 +62,23 @@ public interface DataEntryModel extends BaseModel<DataEntry>, ShardedModel {
 	public void setPrimaryKey(long primaryKey);
 
 	/**
+	 * Returns the uuid of this data entry.
+	 *
+	 * @return the uuid of this data entry
+	 */
+	@AutoEscape
+	@Override
+	public String getUuid();
+
+	/**
+	 * Sets the uuid of this data entry.
+	 *
+	 * @param uuid the uuid of this data entry
+	 */
+	@Override
+	public void setUuid(String uuid);
+
+	/**
 	 * Returns the data entry ID of this data entry.
 	 *
 	 * @return the data entry ID of this data entry
@@ -69,21 +91,6 @@ public interface DataEntryModel extends BaseModel<DataEntry>, ShardedModel {
 	 * @param dataEntryId the data entry ID of this data entry
 	 */
 	public void setDataEntryId(long dataEntryId);
-
-	/**
-	 * Returns the data collection name of this data entry.
-	 *
-	 * @return the data collection name of this data entry
-	 */
-	@AutoEscape
-	public String getDataCollectionName();
-
-	/**
-	 * Sets the data collection name of this data entry.
-	 *
-	 * @param dataCollectionName the data collection name of this data entry
-	 */
-	public void setDataCollectionName(String dataCollectionName);
 
 	/**
 	 * Returns the company ID of this data entry.
@@ -106,6 +113,7 @@ public interface DataEntryModel extends BaseModel<DataEntry>, ShardedModel {
 	 *
 	 * @return the group ID of this data entry
 	 */
+	@Override
 	public long getGroupId();
 
 	/**
@@ -113,6 +121,7 @@ public interface DataEntryModel extends BaseModel<DataEntry>, ShardedModel {
 	 *
 	 * @param groupId the group ID of this data entry
 	 */
+	@Override
 	public void setGroupId(long groupId);
 
 	/**
@@ -120,6 +129,7 @@ public interface DataEntryModel extends BaseModel<DataEntry>, ShardedModel {
 	 *
 	 * @return the user ID of this data entry
 	 */
+	@Override
 	public long getUserId();
 
 	/**
@@ -127,6 +137,7 @@ public interface DataEntryModel extends BaseModel<DataEntry>, ShardedModel {
 	 *
 	 * @param userId the user ID of this data entry
 	 */
+	@Override
 	public void setUserId(long userId);
 
 	/**
@@ -134,6 +145,7 @@ public interface DataEntryModel extends BaseModel<DataEntry>, ShardedModel {
 	 *
 	 * @return the user uuid of this data entry
 	 */
+	@Override
 	public String getUserUuid();
 
 	/**
@@ -141,13 +153,32 @@ public interface DataEntryModel extends BaseModel<DataEntry>, ShardedModel {
 	 *
 	 * @param userUuid the user uuid of this data entry
 	 */
+	@Override
 	public void setUserUuid(String userUuid);
+
+	/**
+	 * Returns the user name of this data entry.
+	 *
+	 * @return the user name of this data entry
+	 */
+	@AutoEscape
+	@Override
+	public String getUserName();
+
+	/**
+	 * Sets the user name of this data entry.
+	 *
+	 * @param userName the user name of this data entry
+	 */
+	@Override
+	public void setUserName(String userName);
 
 	/**
 	 * Returns the create date of this data entry.
 	 *
 	 * @return the create date of this data entry
 	 */
+	@Override
 	public Date getCreateDate();
 
 	/**
@@ -155,64 +186,268 @@ public interface DataEntryModel extends BaseModel<DataEntry>, ShardedModel {
 	 *
 	 * @param createDate the create date of this data entry
 	 */
+	@Override
 	public void setCreateDate(Date createDate);
 
 	/**
-	 * Returns the path of this data entry.
+	 * Returns the modified date of this data entry.
 	 *
-	 * @return the path of this data entry
+	 * @return the modified date of this data entry
+	 */
+	@Override
+	public Date getModifiedDate();
+
+	/**
+	 * Sets the modified date of this data entry.
+	 *
+	 * @param modifiedDate the modified date of this data entry
+	 */
+	@Override
+	public void setModifiedDate(Date modifiedDate);
+
+	/**
+	 * Returns the status of this data entry.
+	 *
+	 * @return the status of this data entry
+	 */
+	@Override
+	public int getStatus();
+
+	/**
+	 * Sets the status of this data entry.
+	 *
+	 * @param status the status of this data entry
+	 */
+	@Override
+	public void setStatus(int status);
+
+	/**
+	 * Returns the status by user ID of this data entry.
+	 *
+	 * @return the status by user ID of this data entry
+	 */
+	@Override
+	public long getStatusByUserId();
+
+	/**
+	 * Sets the status by user ID of this data entry.
+	 *
+	 * @param statusByUserId the status by user ID of this data entry
+	 */
+	@Override
+	public void setStatusByUserId(long statusByUserId);
+
+	/**
+	 * Returns the status by user uuid of this data entry.
+	 *
+	 * @return the status by user uuid of this data entry
+	 */
+	@Override
+	public String getStatusByUserUuid();
+
+	/**
+	 * Sets the status by user uuid of this data entry.
+	 *
+	 * @param statusByUserUuid the status by user uuid of this data entry
+	 */
+	@Override
+	public void setStatusByUserUuid(String statusByUserUuid);
+
+	/**
+	 * Returns the status by user name of this data entry.
+	 *
+	 * @return the status by user name of this data entry
 	 */
 	@AutoEscape
-	public String getPath();
+	@Override
+	public String getStatusByUserName();
 
 	/**
-	 * Sets the path of this data entry.
+	 * Sets the status by user name of this data entry.
 	 *
-	 * @param path the path of this data entry
+	 * @param statusByUserName the status by user name of this data entry
 	 */
-	public void setPath(String path);
+	@Override
+	public void setStatusByUserName(String statusByUserName);
 
 	/**
-	 * Returns the sequence no of this data entry.
+	 * Returns the status date of this data entry.
 	 *
-	 * @return the sequence no of this data entry
+	 * @return the status date of this data entry
 	 */
-	public int getSequenceNo();
+	@Override
+	public Date getStatusDate();
 
 	/**
-	 * Sets the sequence no of this data entry.
+	 * Sets the status date of this data entry.
 	 *
-	 * @param sequenceNo the sequence no of this data entry
+	 * @param statusDate the status date of this data entry
 	 */
-	public void setSequenceNo(int sequenceNo);
+	@Override
+	public void setStatusDate(Date statusDate);
 
 	/**
-	 * Returns the record count of this data entry.
+	 * Returns the data pack ID of this data entry.
 	 *
-	 * @return the record count of this data entry
+	 * @return the data pack ID of this data entry
 	 */
-	public int getRecordCount();
+	public long getDataPackId();
 
 	/**
-	 * Sets the record count of this data entry.
+	 * Sets the data pack ID of this data entry.
 	 *
-	 * @param recordCount the record count of this data entry
+	 * @param dataPackId the data pack ID of this data entry
 	 */
-	public void setRecordCount(int recordCount);
+	public void setDataPackId(long dataPackId);
 
 	/**
-	 * Returns the sequence delimeter of this data entry.
+	 * Returns the data section ID of this data entry.
 	 *
-	 * @return the sequence delimeter of this data entry
+	 * @return the data section ID of this data entry
+	 */
+	public long getDataSectionId();
+
+	/**
+	 * Sets the data section ID of this data entry.
+	 *
+	 * @param dataSectionId the data section ID of this data entry
+	 */
+	public void setDataSectionId(long dataSectionId);
+
+	/**
+	 * Returns the data set ID of this data entry.
+	 *
+	 * @return the data set ID of this data entry
+	 */
+	public long getDataSetId();
+
+	/**
+	 * Sets the data set ID of this data entry.
+	 *
+	 * @param dataSetId the data set ID of this data entry
+	 */
+	public void setDataSetId(long dataSetId);
+
+	/**
+	 * Returns the data collection ID of this data entry.
+	 *
+	 * @return the data collection ID of this data entry
+	 */
+	public long getDataCollectionId();
+
+	/**
+	 * Sets the data collection ID of this data entry.
+	 *
+	 * @param dataCollectionId the data collection ID of this data entry
+	 */
+	public void setDataCollectionId(long dataCollectionId);
+
+	/**
+	 * Returns the access url of this data entry.
+	 *
+	 * @return the access url of this data entry
 	 */
 	@AutoEscape
-	public String getSequenceDelimeter();
+	public String getAccessURL();
 
 	/**
-	 * Sets the sequence delimeter of this data entry.
+	 * Sets the access url of this data entry.
 	 *
-	 * @param sequenceDelimeter the sequence delimeter of this data entry
+	 * @param accessURL the access url of this data entry
 	 */
-	public void setSequenceDelimeter(String sequenceDelimeter);
+	public void setAccessURL(String accessURL);
+
+	/**
+	 * Returns the path type of this data entry.
+	 *
+	 * @return the path type of this data entry
+	 */
+	@AutoEscape
+	public String getPathType();
+
+	/**
+	 * Sets the path type of this data entry.
+	 *
+	 * @param pathType the path type of this data entry
+	 */
+	public void setPathType(String pathType);
+
+	/**
+	 * Returns the copied from of this data entry.
+	 *
+	 * @return the copied from of this data entry
+	 */
+	public long getCopiedFrom();
+
+	/**
+	 * Sets the copied from of this data entry.
+	 *
+	 * @param copiedFrom the copied from of this data entry
+	 */
+	public void setCopiedFrom(long copiedFrom);
+
+	/**
+	 * Returns <code>true</code> if this data entry is approved.
+	 *
+	 * @return <code>true</code> if this data entry is approved; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isApproved();
+
+	/**
+	 * Returns <code>true</code> if this data entry is denied.
+	 *
+	 * @return <code>true</code> if this data entry is denied; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isDenied();
+
+	/**
+	 * Returns <code>true</code> if this data entry is a draft.
+	 *
+	 * @return <code>true</code> if this data entry is a draft; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isDraft();
+
+	/**
+	 * Returns <code>true</code> if this data entry is expired.
+	 *
+	 * @return <code>true</code> if this data entry is expired; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isExpired();
+
+	/**
+	 * Returns <code>true</code> if this data entry is inactive.
+	 *
+	 * @return <code>true</code> if this data entry is inactive; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isInactive();
+
+	/**
+	 * Returns <code>true</code> if this data entry is incomplete.
+	 *
+	 * @return <code>true</code> if this data entry is incomplete; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isIncomplete();
+
+	/**
+	 * Returns <code>true</code> if this data entry is pending.
+	 *
+	 * @return <code>true</code> if this data entry is pending; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isPending();
+
+	/**
+	 * Returns <code>true</code> if this data entry is scheduled.
+	 *
+	 * @return <code>true</code> if this data entry is scheduled; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isScheduled();
 
 }

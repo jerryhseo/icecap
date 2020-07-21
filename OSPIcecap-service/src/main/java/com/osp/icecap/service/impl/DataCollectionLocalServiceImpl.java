@@ -16,11 +16,17 @@ package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.osp.icecap.model.DataCollection;
+import com.osp.icecap.model.DataSection;
+import com.osp.icecap.model.DataSet;
 import com.osp.icecap.service.base.DataCollectionLocalServiceBaseImpl;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -44,47 +50,47 @@ import org.osgi.service.component.annotations.Component;
 public class DataCollectionLocalServiceImpl
 	extends DataCollectionLocalServiceBaseImpl {
 
-	public DataCollection createDataCollection( String collectionName, ServiceContext sc ) {
+	public DataCollection addDataCollection( 
+			String name, 
+			String version,
+			Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap,
+			long organizationId,
+			ServiceContext sc ) throws PortalException {
 		long collectionId = super.counterLocalService.increment();
 		
 		DataCollection collection = super.createDataCollection(collectionId);
 		
-		collection.setName(collectionName);
 		collection.setCompanyId(sc.getCompanyId());
 		collection.setGroupId(sc.getScopeGroupId());
 		collection.setUserId(sc.getUserId());
+		
+		User user = super.userLocalService.getUser(sc.getUserId());
+		collection.setUserName(user.getFullName());
 		collection.setCreateDate(new Date());
 		
-		return collection;
-	}
-	
-	public DataCollection addDataCollection( DataCollection collection ) {
-		collection.setModifiedDate(new Date());
+		collection.setName(name);
+		collection.setVersion(version);
+		collection.setTitleMap(titleMap);
+		collection.setDescriptionMap(descriptionMap);
+		
 		super.addDataCollection(collection);
-		
 		return collection;
-	}
-	
-	public DataCollection removeDataCollection( DataCollection collection ) {
-		DataCollection deletedCollection = super.deleteDataCollection(collection);
-		
-		/* indexes for the collection deleted here and
-		 * resources for the collection deleted too.
-		 */
-		
-		return deletedCollection;
 	}
 	
 	public DataCollection removeDataCollection( long collectionId ) throws PortalException {
-		DataCollection collection = super.getDataCollection(collectionId);
-		
-		return removeDataCollection(collection);
+		return super.deleteDataCollection(collectionId);
 	}
 	
-	public DataCollection removeDataCollection( String collectionName ) {
-		DataCollection collection = super.dataCollectionPersistence.fetchByName(collectionName);
+	public void removeDataCollections( String collectionName ) {
+		List<DataCollection> collections = super.dataCollectionPersistence.findByName(collectionName);
 		
-		return removeDataCollection(collection);
+		for( DataCollection collection : collections ) {
+			super.dataSetPersistence.removeByDataCollectionId(collection.getDataCollectionId());
+			super.dataSectionPersistence.removeByDataCollectionId(collection.getDataCollectionId());
+			super.dataPackPersistence.removeByDataCollectionId(collection.getDataCollectionId());
+			super.dataEntryPersistence.removeByDataCollectionId(collection.getDataCollectionId());
+		}
 	}
 	
 	public DataCollection updateDataCollection( DataCollection collection ) {

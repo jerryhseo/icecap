@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.LocalizedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.model.StagedAuditedModel;
+import com.liferay.portal.kernel.model.WorkflowedModel;
 
 import java.util.Date;
 import java.util.Locale;
@@ -42,7 +43,7 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface DataCollectionModel
 	extends BaseModel<DataCollection>, GroupedModel, LocalizedModel,
-			ShardedModel, StagedAuditedModel {
+			ShardedModel, StagedAuditedModel, WorkflowedModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -213,6 +214,7 @@ public interface DataCollectionModel
 	 *
 	 * @return the status of this data collection
 	 */
+	@Override
 	public int getStatus();
 
 	/**
@@ -220,7 +222,73 @@ public interface DataCollectionModel
 	 *
 	 * @param status the status of this data collection
 	 */
+	@Override
 	public void setStatus(int status);
+
+	/**
+	 * Returns the status by user ID of this data collection.
+	 *
+	 * @return the status by user ID of this data collection
+	 */
+	@Override
+	public long getStatusByUserId();
+
+	/**
+	 * Sets the status by user ID of this data collection.
+	 *
+	 * @param statusByUserId the status by user ID of this data collection
+	 */
+	@Override
+	public void setStatusByUserId(long statusByUserId);
+
+	/**
+	 * Returns the status by user uuid of this data collection.
+	 *
+	 * @return the status by user uuid of this data collection
+	 */
+	@Override
+	public String getStatusByUserUuid();
+
+	/**
+	 * Sets the status by user uuid of this data collection.
+	 *
+	 * @param statusByUserUuid the status by user uuid of this data collection
+	 */
+	@Override
+	public void setStatusByUserUuid(String statusByUserUuid);
+
+	/**
+	 * Returns the status by user name of this data collection.
+	 *
+	 * @return the status by user name of this data collection
+	 */
+	@AutoEscape
+	@Override
+	public String getStatusByUserName();
+
+	/**
+	 * Sets the status by user name of this data collection.
+	 *
+	 * @param statusByUserName the status by user name of this data collection
+	 */
+	@Override
+	public void setStatusByUserName(String statusByUserName);
+
+	/**
+	 * Returns the status date of this data collection.
+	 *
+	 * @return the status date of this data collection
+	 */
+	@Override
+	public Date getStatusDate();
+
+	/**
+	 * Sets the status date of this data collection.
+	 *
+	 * @param statusDate the status date of this data collection
+	 */
+	@Override
+	public void setStatusDate(Date statusDate);
 
 	/**
 	 * Returns the name of this data collection.
@@ -238,18 +306,33 @@ public interface DataCollectionModel
 	public void setName(String name);
 
 	/**
-	 * Returns the variant from of this data collection.
+	 * Returns the version of this data collection.
 	 *
-	 * @return the variant from of this data collection
+	 * @return the version of this data collection
 	 */
-	public long getVariantFrom();
+	@AutoEscape
+	public String getVersion();
 
 	/**
-	 * Sets the variant from of this data collection.
+	 * Sets the version of this data collection.
 	 *
-	 * @param variantFrom the variant from of this data collection
+	 * @param version the version of this data collection
 	 */
-	public void setVariantFrom(long variantFrom);
+	public void setVersion(String version);
+
+	/**
+	 * Returns the copied from of this data collection.
+	 *
+	 * @return the copied from of this data collection
+	 */
+	public long getCopiedFrom();
+
+	/**
+	 * Sets the copied from of this data collection.
+	 *
+	 * @param copiedFrom the copied from of this data collection
+	 */
+	public void setCopiedFrom(long copiedFrom);
 
 	/**
 	 * Returns the title of this data collection.
@@ -452,47 +535,82 @@ public interface DataCollectionModel
 		Map<Locale, String> descriptionMap, Locale defaultLocale);
 
 	/**
-	 * Returns the storage type of this data collection.
+	 * Returns the organization ID of this data collection.
 	 *
-	 * @return the storage type of this data collection
+	 * @return the organization ID of this data collection
 	 */
-	@AutoEscape
-	public String getStorageType();
+	public long getOrganizationId();
 
 	/**
-	 * Sets the storage type of this data collection.
+	 * Sets the organization ID of this data collection.
 	 *
-	 * @param storageType the storage type of this data collection
+	 * @param organizationId the organization ID of this data collection
 	 */
-	public void setStorageType(String storageType);
+	public void setOrganizationId(long organizationId);
 
 	/**
-	 * Returns the data type name of this data collection.
+	 * Returns <code>true</code> if this data collection is approved.
 	 *
-	 * @return the data type name of this data collection
+	 * @return <code>true</code> if this data collection is approved; <code>false</code> otherwise
 	 */
-	public long getDataTypeName();
+	@Override
+	public boolean isApproved();
 
 	/**
-	 * Sets the data type name of this data collection.
+	 * Returns <code>true</code> if this data collection is denied.
 	 *
-	 * @param dataTypeName the data type name of this data collection
+	 * @return <code>true</code> if this data collection is denied; <code>false</code> otherwise
 	 */
-	public void setDataTypeName(long dataTypeName);
+	@Override
+	public boolean isDenied();
 
 	/**
-	 * Returns the data type version of this data collection.
+	 * Returns <code>true</code> if this data collection is a draft.
 	 *
-	 * @return the data type version of this data collection
+	 * @return <code>true</code> if this data collection is a draft; <code>false</code> otherwise
 	 */
-	public long getDataTypeVersion();
+	@Override
+	public boolean isDraft();
 
 	/**
-	 * Sets the data type version of this data collection.
+	 * Returns <code>true</code> if this data collection is expired.
 	 *
-	 * @param dataTypeVersion the data type version of this data collection
+	 * @return <code>true</code> if this data collection is expired; <code>false</code> otherwise
 	 */
-	public void setDataTypeVersion(long dataTypeVersion);
+	@Override
+	public boolean isExpired();
+
+	/**
+	 * Returns <code>true</code> if this data collection is inactive.
+	 *
+	 * @return <code>true</code> if this data collection is inactive; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isInactive();
+
+	/**
+	 * Returns <code>true</code> if this data collection is incomplete.
+	 *
+	 * @return <code>true</code> if this data collection is incomplete; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isIncomplete();
+
+	/**
+	 * Returns <code>true</code> if this data collection is pending.
+	 *
+	 * @return <code>true</code> if this data collection is pending; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isPending();
+
+	/**
+	 * Returns <code>true</code> if this data collection is scheduled.
+	 *
+	 * @return <code>true</code> if this data collection is scheduled; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isScheduled();
 
 	@Override
 	public String[] getAvailableLanguageIds();

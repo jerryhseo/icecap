@@ -17,13 +17,20 @@ package com.osp.icecap.service.impl;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.osp.icecap.exception.NoSuchDataTypeException;
 import com.osp.icecap.exception.NoSuchDataTypeStructureException;
 import com.osp.icecap.model.DataType;
 import com.osp.icecap.service.base.DataTypeLocalServiceBaseImpl;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -46,13 +53,23 @@ import org.osgi.service.component.annotations.Component;
 )
 public class DataTypeLocalServiceImpl extends DataTypeLocalServiceBaseImpl {
 
-	public DataType createDataType( String dataTypeName, String dataTypeVersion, ServiceContext sc) throws PortalException {
+	@Indexable(type = IndexableType.REINDEX)
+	public DataType addDataType( 
+			String dataTypeName, 
+			String dataTypeVersion,
+			Map<Locale, String> descriptionMap,
+			String samplePath,
+			ServiceContext sc) throws PortalException {
 		long dataTypeId = super.counterLocalService.increment();
 		DataType dataType = super.dataTypePersistence.create(dataTypeId);
 		
-		dataType.setUuid(sc.getUuid());
+		// dataType.setUuid(sc.getUuid());
+		System.out.println("New Added Data Type: "+dataTypeId+", "+dataType.getUuid());
+		
 		dataType.setName(dataTypeName);
 		dataType.setVersion(dataTypeVersion);
+		dataType.setDescriptionMap(descriptionMap);
+		dataType.setSamplePath(samplePath);
 		
 		User user = super.userLocalService.getUser(sc.getUserId());
 		
@@ -61,57 +78,113 @@ public class DataTypeLocalServiceImpl extends DataTypeLocalServiceBaseImpl {
 		dataType.setUserId(sc.getUserId());
 		dataType.setUserName(user.getFullName());
 		
-		return dataType;
-	}
-	
-	public DataType addDataType( DataType dataType ) {
+		Date now = new Date();
+		dataType.setCreateDate(now);
+		dataType.setModifiedDate(now);
+
+		dataType.setStatus(WorkflowConstants.STATUS_APPROVED);
+		/*
+		dataType.setStatus(WorkflowConstants.STATUS_DRAFT);
+		dataType.setStatusByUserId(user.getUserId());
+		dataType.setStatusByUserName(user.getFullName());
+		dataType.setStatusDate(now);
+		*/
+
 		super.addDataType(dataType);
+
+		/*
+		super.assetEntryLocalService.updateEntry(
+				dataType.getUserId(), dataType.getGroupId(), dataType.getCreateDate(),
+				dataType.getModifiedDate(), DataType.class.getName(),
+				dataType.getPrimaryKey(), dataType.getUuid(), 0,
+			    assetCategoryIds, assetTagNames, true, true, null, null,
+			    page.getCreateDate(), null, ContentTypes.TEXT_HTML,
+			    page.getTitle(), null, null, null, null, 0, 0, null);
+
+			Indexer<JournalArticle> indexer = IndexerRegistryUtil.nullSafeGetIndexer(
+			    WikiPage.class);
+
+		indexer.reindex(page);
 		
+		WorkflowHandlerRegistryUtil.startWorkflowInstance(
+				dataType.getCompanyId(),
+				dataType.getGroupId(), 
+				dataType.getUserId(),
+				DataType.class.getName(), 
+				dataType.getPrimaryKey(), 
+				dataType,
+				sc);
+		*/
 		return dataType;
 	}
 	
-	public DataType removeDataType( DataType dataType ) {
-		DataType deletedDataType = super.deleteDataType(dataType);
-		
-		try {
-			super.dataTypePersistence.remove(dataType.getDataTypeId());
-			
-		} catch (NoSuchDataTypeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return deletedDataType;
+	public DataType removeDataType( DataType dataType ) throws PortalException {
+		return this.removeDataType(dataType.getDataTypeId());
 	}
 	
+	@Indexable(type = IndexableType.DELETE)
 	public DataType removeDataType( long dataTypeId ) throws PortalException {
-		DataType dataType = super.fetchDataType(dataTypeId);
-		
-		removeDataType( dataType );
+		DataType dataType = super.dataTypePersistence.remove(dataTypeId);
 		
 		return dataType;
 	}
 	
-	public DataType removeDataType( String dataTypeName, String dataTypeVersion ) {
+	public DataType removeDataType( String dataTypeName, String dataTypeVersion ) throws PortalException {
 		DataType dataType = super.dataTypePersistence.fetchByNameVersion(dataTypeName, dataTypeVersion);
-		removeDataType( dataType );
+		this.removeDataType( dataType.getDataTypeId() );
 		
 		return dataType;
 	}
 	
-	public int removeDataType( String dataTypeName ) {
+	public int removeDataType( String dataTypeName ) throws PortalException {
 		List<DataType> dataTypes = super.dataTypePersistence.findByName(dataTypeName);
 		
 		for( DataType dataType : dataTypes ) {
-			removeDataType(dataType);
+			this.removeDataType(dataType.getDataTypeId());
 		}
 		
 		return dataTypes.size();
 	}
 	
-	public DataType updateDataType( DataType dataType) {
-		DataType updatedDataType = super.updateDataType(dataType);
+	@Indexable(type = IndexableType.REINDEX)
+	public DataType updateDataType(
+			long dataTypeId,
+			String dataTypeName,
+			String dataTypeVersion,
+			Map<Locale, String> descriptionMap,
+			String samplePath,
+			ServiceContext sc ) {
+		DataType dataType = super.fetchDataType(dataTypeId);
+		dataType.setName(dataTypeName);
+		dataType.setVersion(dataTypeVersion);
+		dataType.setDescriptionMap(descriptionMap);
+		dataType.setSamplePath(samplePath);
 		
-		return updatedDataType;
+		dataType.setModifiedDate(new Date());;
+		
+		super.updateDataType(dataType);
+		
+		return dataType;
+	}
+	
+	/*
+	public DataType updateStatus( long userId, long dataTypeId, int status, ServiceContext sc ) throws PortalException {
+		User user = userLocalService.getUser(userId);
+		DataType dataType = getDataType(dataTypeId);
+		dataType.setStatus(status);
+		
+		dataType.setStatusByUserId(userId);
+		dataType.setStatusByUserName(user.getFullName());
+		dataType.setStatusDate(sc.getModifiedDate());
+		
+		return null;
+	}
+	*/
+	
+	public DataType copyDataType( long dataTypeId, ServiceContext sc ) throws PortalException {
+		DataType dataType = super.fetchDataType(dataTypeId);
+		DataType copiedDataType = this.addDataType(dataType.getName(), "", dataType.getDescriptionMap(), dataType.getSamplePath(), sc);
+		
+		return copiedDataType;
 	}
 }

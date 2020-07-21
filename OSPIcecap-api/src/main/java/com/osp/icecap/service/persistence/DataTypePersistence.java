@@ -15,6 +15,7 @@
 package com.osp.icecap.service.persistence;
 
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
+import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchDataTypeException;
 import com.osp.icecap.model.DataType;
@@ -70,16 +71,18 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid(String, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByUuid(
 		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where uuid = &#63;.
@@ -92,14 +95,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByUuid(
 		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where uuid = &#63;.
@@ -110,9 +110,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
 	public DataType findByUuid_First(
-			String uuid,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			String uuid, OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -123,9 +121,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the first matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByUuid_First(
-		String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		String uuid, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where uuid = &#63;.
@@ -136,9 +132,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
 	public DataType findByUuid_Last(
-			String uuid,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			String uuid, OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -149,9 +143,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the last matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByUuid_Last(
-		String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		String uuid, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where uuid = &#63;.
@@ -164,8 +156,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByUuid_PrevAndNext(
 			long dataTypeId, String uuid,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -195,24 +186,27 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 		throws NoSuchDataTypeException;
 
 	/**
-	 * Returns the data type where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data type where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByUUID_G(String,long)}
 	 * @param uuid the uuid
 	 * @param groupId the group ID
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchByUUID_G(String uuid, long groupId);
+	@Deprecated
+	public DataType fetchByUUID_G(
+		String uuid, long groupId, boolean useFinderCache);
 
 	/**
 	 * Returns the data type where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache);
+	public DataType fetchByUUID_G(String uuid, long groupId);
 
 	/**
 	 * Removes the data type where uuid = &#63; and groupId = &#63; from the database.
@@ -265,17 +259,19 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid_C(String,long, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where uuid = &#63; and companyId = &#63;.
@@ -289,14 +285,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -309,8 +302,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByUuid_C_First(
 			String uuid, long companyId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -323,8 +315,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByUuid_C_First(
 		String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -337,8 +328,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByUuid_C_Last(
 			String uuid, long companyId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -351,8 +341,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByUuid_C_Last(
 		String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -366,8 +355,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByUuid_C_PrevAndNext(
 			long dataTypeId, String uuid, long companyId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -417,16 +405,18 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByGroupId(long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where groupId = &#63;.
@@ -439,14 +429,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where groupId = &#63;.
@@ -457,9 +444,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
 	public DataType findByGroupId_First(
-			long groupId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			long groupId, OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -470,9 +455,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the first matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByGroupId_First(
-		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		long groupId, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where groupId = &#63;.
@@ -483,9 +466,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
 	public DataType findByGroupId_Last(
-			long groupId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			long groupId, OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -496,9 +477,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the last matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByGroupId_Last(
-		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		long groupId, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where groupId = &#63;.
@@ -511,8 +490,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByGroupId_PrevAndNext(
 			long dataTypeId, long groupId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -560,16 +538,18 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUserId(long, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByUserId(
 		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where userId = &#63;.
@@ -582,14 +562,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByUserId(
 		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where userId = &#63;.
@@ -600,9 +577,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
 	public DataType findByUserId_First(
-			long userId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			long userId, OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -613,9 +588,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the first matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByUserId_First(
-		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		long userId, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where userId = &#63;.
@@ -626,9 +599,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
 	public DataType findByUserId_Last(
-			long userId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			long userId, OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -639,9 +610,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the last matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByUserId_Last(
-		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		long userId, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where userId = &#63;.
@@ -654,8 +623,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByUserId_PrevAndNext(
 			long dataTypeId, long userId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -703,16 +671,18 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByStatus(int, int, int, OrderByComparator)}
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByStatus(
 		int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where status = &#63;.
@@ -725,14 +695,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByStatus(
 		int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where status = &#63;.
@@ -743,9 +710,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
 	public DataType findByStatus_First(
-			int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			int status, OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -756,9 +721,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the first matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByStatus_First(
-		int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		int status, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where status = &#63;.
@@ -769,9 +732,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
 	public DataType findByStatus_Last(
-			int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			int status, OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -782,9 +743,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the last matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByStatus_Last(
-		int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		int status, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where status = &#63;.
@@ -797,8 +756,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByStatus_PrevAndNext(
 			long dataTypeId, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -823,7 +781,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param userId the user ID
 	 * @return the matching data types
 	 */
-	public java.util.List<DataType> findBy_G_U(long groupId, long userId);
+	public java.util.List<DataType> findByG_U(long groupId, long userId);
 
 	/**
 	 * Returns a range of all the data types where groupId = &#63; and userId = &#63;.
@@ -838,7 +796,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @return the range of matching data types
 	 */
-	public java.util.List<DataType> findBy_G_U(
+	public java.util.List<DataType> findByG_U(
 		long groupId, long userId, int start, int end);
 
 	/**
@@ -848,17 +806,19 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_U(long,long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
-	public java.util.List<DataType> findBy_G_U(
+	@Deprecated
+	public java.util.List<DataType> findByG_U(
 		long groupId, long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where groupId = &#63; and userId = &#63;.
@@ -872,14 +832,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
-	public java.util.List<DataType> findBy_G_U(
+	public java.util.List<DataType> findByG_U(
 		long groupId, long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where groupId = &#63; and userId = &#63;.
@@ -890,10 +847,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the first matching data type
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
-	public DataType findBy_G_U_First(
+	public DataType findByG_U_First(
 			long groupId, long userId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -904,10 +860,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchBy_G_U_First(
+	public DataType fetchByG_U_First(
 		long groupId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where groupId = &#63; and userId = &#63;.
@@ -918,10 +873,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the last matching data type
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
-	public DataType findBy_G_U_Last(
+	public DataType findByG_U_Last(
 			long groupId, long userId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -932,10 +886,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchBy_G_U_Last(
+	public DataType fetchByG_U_Last(
 		long groupId, long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where groupId = &#63; and userId = &#63;.
@@ -947,10 +900,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the previous, current, and next data type
 	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
 	 */
-	public DataType[] findBy_G_U_PrevAndNext(
+	public DataType[] findByG_U_PrevAndNext(
 			long dataTypeId, long groupId, long userId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -959,7 +911,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 */
-	public void removeBy_G_U(long groupId, long userId);
+	public void removeByG_U(long groupId, long userId);
 
 	/**
 	 * Returns the number of data types where groupId = &#63; and userId = &#63;.
@@ -968,7 +920,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param userId the user ID
 	 * @return the number of matching data types
 	 */
-	public int countBy_G_U(long groupId, long userId);
+	public int countByG_U(long groupId, long userId);
 
 	/**
 	 * Returns all the data types where groupId = &#63; and status = &#63;.
@@ -977,7 +929,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param status the status
 	 * @return the matching data types
 	 */
-	public java.util.List<DataType> findBy_G_S(long groupId, int status);
+	public java.util.List<DataType> findByG_S(long groupId, int status);
 
 	/**
 	 * Returns a range of all the data types where groupId = &#63; and status = &#63;.
@@ -992,7 +944,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @return the range of matching data types
 	 */
-	public java.util.List<DataType> findBy_G_S(
+	public java.util.List<DataType> findByG_S(
 		long groupId, int status, int start, int end);
 
 	/**
@@ -1002,17 +954,19 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_S(long,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
-	public java.util.List<DataType> findBy_G_S(
+	@Deprecated
+	public java.util.List<DataType> findByG_S(
 		long groupId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where groupId = &#63; and status = &#63;.
@@ -1026,14 +980,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
-	public java.util.List<DataType> findBy_G_S(
+	public java.util.List<DataType> findByG_S(
 		long groupId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where groupId = &#63; and status = &#63;.
@@ -1044,10 +995,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the first matching data type
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
-	public DataType findBy_G_S_First(
+	public DataType findByG_S_First(
 			long groupId, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1058,10 +1008,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchBy_G_S_First(
+	public DataType fetchByG_S_First(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where groupId = &#63; and status = &#63;.
@@ -1072,10 +1021,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the last matching data type
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
-	public DataType findBy_G_S_Last(
+	public DataType findByG_S_Last(
 			long groupId, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1086,10 +1034,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchBy_G_S_Last(
+	public DataType fetchByG_S_Last(
 		long groupId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where groupId = &#63; and status = &#63;.
@@ -1101,10 +1048,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the previous, current, and next data type
 	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
 	 */
-	public DataType[] findBy_G_S_PrevAndNext(
+	public DataType[] findByG_S_PrevAndNext(
 			long dataTypeId, long groupId, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1113,7 +1059,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param groupId the group ID
 	 * @param status the status
 	 */
-	public void removeBy_G_S(long groupId, int status);
+	public void removeByG_S(long groupId, int status);
 
 	/**
 	 * Returns the number of data types where groupId = &#63; and status = &#63;.
@@ -1122,7 +1068,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param status the status
 	 * @return the number of matching data types
 	 */
-	public int countBy_G_S(long groupId, int status);
+	public int countByG_S(long groupId, int status);
 
 	/**
 	 * Returns all the data types where userId = &#63; and status = &#63;.
@@ -1131,7 +1077,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param status the status
 	 * @return the matching data types
 	 */
-	public java.util.List<DataType> findBy_U_S(long userId, int status);
+	public java.util.List<DataType> findByU_S(long userId, int status);
 
 	/**
 	 * Returns a range of all the data types where userId = &#63; and status = &#63;.
@@ -1146,7 +1092,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @return the range of matching data types
 	 */
-	public java.util.List<DataType> findBy_U_S(
+	public java.util.List<DataType> findByU_S(
 		long userId, int status, int start, int end);
 
 	/**
@@ -1156,17 +1102,19 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByU_S(long,int, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
-	public java.util.List<DataType> findBy_U_S(
+	@Deprecated
+	public java.util.List<DataType> findByU_S(
 		long userId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where userId = &#63; and status = &#63;.
@@ -1180,14 +1128,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
-	public java.util.List<DataType> findBy_U_S(
+	public java.util.List<DataType> findByU_S(
 		long userId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where userId = &#63; and status = &#63;.
@@ -1198,10 +1143,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the first matching data type
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
-	public DataType findBy_U_S_First(
+	public DataType findByU_S_First(
 			long userId, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1212,10 +1156,8 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchBy_U_S_First(
-		long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+	public DataType fetchByU_S_First(
+		long userId, int status, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where userId = &#63; and status = &#63;.
@@ -1226,10 +1168,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the last matching data type
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
-	public DataType findBy_U_S_Last(
+	public DataType findByU_S_Last(
 			long userId, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1240,10 +1181,8 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchBy_U_S_Last(
-		long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+	public DataType fetchByU_S_Last(
+		long userId, int status, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where userId = &#63; and status = &#63;.
@@ -1255,10 +1194,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the previous, current, and next data type
 	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
 	 */
-	public DataType[] findBy_U_S_PrevAndNext(
+	public DataType[] findByU_S_PrevAndNext(
 			long dataTypeId, long userId, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1267,7 +1205,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param userId the user ID
 	 * @param status the status
 	 */
-	public void removeBy_U_S(long userId, int status);
+	public void removeByU_S(long userId, int status);
 
 	/**
 	 * Returns the number of data types where userId = &#63; and status = &#63;.
@@ -1276,7 +1214,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param status the status
 	 * @return the number of matching data types
 	 */
-	public int countBy_U_S(long userId, int status);
+	public int countByU_S(long userId, int status);
 
 	/**
 	 * Returns all the data types where groupId = &#63; and userId = &#63; and status = &#63;.
@@ -1286,7 +1224,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param status the status
 	 * @return the matching data types
 	 */
-	public java.util.List<DataType> findBy_G_U_S(
+	public java.util.List<DataType> findByG_U_S(
 		long groupId, long userId, int status);
 
 	/**
@@ -1303,7 +1241,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @return the range of matching data types
 	 */
-	public java.util.List<DataType> findBy_G_U_S(
+	public java.util.List<DataType> findByG_U_S(
 		long groupId, long userId, int status, int start, int end);
 
 	/**
@@ -1313,18 +1251,20 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_U_S(long,long,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
-	public java.util.List<DataType> findBy_G_U_S(
+	@Deprecated
+	public java.util.List<DataType> findByG_U_S(
 		long groupId, long userId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where groupId = &#63; and userId = &#63; and status = &#63;.
@@ -1339,14 +1279,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
-	public java.util.List<DataType> findBy_G_U_S(
+	public java.util.List<DataType> findByG_U_S(
 		long groupId, long userId, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where groupId = &#63; and userId = &#63; and status = &#63;.
@@ -1358,10 +1295,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the first matching data type
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
-	public DataType findBy_G_U_S_First(
+	public DataType findByG_U_S_First(
 			long groupId, long userId, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1373,10 +1309,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchBy_G_U_S_First(
+	public DataType fetchByG_U_S_First(
 		long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where groupId = &#63; and userId = &#63; and status = &#63;.
@@ -1388,10 +1323,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the last matching data type
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
-	public DataType findBy_G_U_S_Last(
+	public DataType findByG_U_S_Last(
 			long groupId, long userId, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1403,10 +1337,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchBy_G_U_S_Last(
+	public DataType fetchByG_U_S_Last(
 		long groupId, long userId, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where groupId = &#63; and userId = &#63; and status = &#63;.
@@ -1419,10 +1352,9 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the previous, current, and next data type
 	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
 	 */
-	public DataType[] findBy_G_U_S_PrevAndNext(
+	public DataType[] findByG_U_S_PrevAndNext(
 			long dataTypeId, long groupId, long userId, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1432,7 +1364,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param userId the user ID
 	 * @param status the status
 	 */
-	public void removeBy_G_U_S(long groupId, long userId, int status);
+	public void removeByG_U_S(long groupId, long userId, int status);
 
 	/**
 	 * Returns the number of data types where groupId = &#63; and userId = &#63; and status = &#63;.
@@ -1442,7 +1374,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param status the status
 	 * @return the number of matching data types
 	 */
-	public int countBy_G_U_S(long groupId, long userId, int status);
+	public int countByG_U_S(long groupId, long userId, int status);
 
 	/**
 	 * Returns all the data types where name = &#63;.
@@ -1473,16 +1405,18 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName(String, int, int, OrderByComparator)}
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByName(
 		String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where name = &#63;.
@@ -1495,14 +1429,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByName(
 		String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where name = &#63;.
@@ -1513,9 +1444,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
 	public DataType findByName_First(
-			String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			String name, OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1526,9 +1455,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the first matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByName_First(
-		String name,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		String name, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where name = &#63;.
@@ -1539,9 +1466,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @throws NoSuchDataTypeException if a matching data type could not be found
 	 */
 	public DataType findByName_Last(
-			String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			String name, OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1552,9 +1477,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the last matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByName_Last(
-		String name,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		String name, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where name = &#63;.
@@ -1567,8 +1490,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByName_PrevAndNext(
 			long dataTypeId, String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1618,17 +1540,19 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G(long,String, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByName_G(
 		long groupId, String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where groupId = &#63; and name = &#63;.
@@ -1642,14 +1566,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByName_G(
 		long groupId, String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where groupId = &#63; and name = &#63;.
@@ -1662,8 +1583,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_G_First(
 			long groupId, String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1676,8 +1596,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_G_First(
 		long groupId, String name,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where groupId = &#63; and name = &#63;.
@@ -1690,8 +1609,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_G_Last(
 			long groupId, String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1704,8 +1622,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_G_Last(
 		long groupId, String name,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where groupId = &#63; and name = &#63;.
@@ -1719,8 +1636,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByName_G_PrevAndNext(
 			long dataTypeId, long groupId, String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1772,17 +1688,19 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_U(long,String, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByName_U(
 		long userId, String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where userId = &#63; and name = &#63;.
@@ -1796,14 +1714,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByName_U(
 		long userId, String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where userId = &#63; and name = &#63;.
@@ -1816,8 +1731,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_U_First(
 			long userId, String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1830,8 +1744,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_U_First(
 		long userId, String name,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where userId = &#63; and name = &#63;.
@@ -1844,8 +1757,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_U_Last(
 			long userId, String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1858,8 +1770,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_U_Last(
 		long userId, String name,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where userId = &#63; and name = &#63;.
@@ -1873,8 +1784,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByName_U_PrevAndNext(
 			long dataTypeId, long userId, String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1926,17 +1836,19 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_S(String,int, int, int, OrderByComparator)}
 	 * @param name the name
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByName_S(
 		String name, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where name = &#63; and status = &#63;.
@@ -1950,14 +1862,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByName_S(
 		String name, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where name = &#63; and status = &#63;.
@@ -1970,8 +1879,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_S_First(
 			String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -1983,9 +1891,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the first matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByName_S_First(
-		String name, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		String name, int status, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where name = &#63; and status = &#63;.
@@ -1998,8 +1904,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_S_Last(
 			String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2011,9 +1916,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @return the last matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	public DataType fetchByName_S_Last(
-		String name, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		String name, int status, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where name = &#63; and status = &#63;.
@@ -2027,8 +1930,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByName_S_PrevAndNext(
 			long dataTypeId, String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2083,18 +1985,20 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G_U(long,long,String, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByName_G_U(
 		long groupId, long userId, String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where groupId = &#63; and userId = &#63; and name = &#63;.
@@ -2109,14 +2013,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByName_G_U(
 		long groupId, long userId, String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where groupId = &#63; and userId = &#63; and name = &#63;.
@@ -2130,8 +2031,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_G_U_First(
 			long groupId, long userId, String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2145,8 +2045,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_G_U_First(
 		long groupId, long userId, String name,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where groupId = &#63; and userId = &#63; and name = &#63;.
@@ -2160,8 +2059,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_G_U_Last(
 			long groupId, long userId, String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2175,8 +2073,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_G_U_Last(
 		long groupId, long userId, String name,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where groupId = &#63; and userId = &#63; and name = &#63;.
@@ -2191,8 +2088,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByName_G_U_PrevAndNext(
 			long dataTypeId, long groupId, long userId, String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2249,18 +2145,20 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G_S(long,String,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param name the name
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByName_G_S(
 		long groupId, String name, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where groupId = &#63; and name = &#63; and status = &#63;.
@@ -2275,14 +2173,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByName_G_S(
 		long groupId, String name, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where groupId = &#63; and name = &#63; and status = &#63;.
@@ -2296,8 +2191,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_G_S_First(
 			long groupId, String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2311,8 +2205,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_G_S_First(
 		long groupId, String name, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where groupId = &#63; and name = &#63; and status = &#63;.
@@ -2326,8 +2219,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_G_S_Last(
 			long groupId, String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2341,8 +2233,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_G_S_Last(
 		long groupId, String name, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where groupId = &#63; and name = &#63; and status = &#63;.
@@ -2357,8 +2248,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByName_G_S_PrevAndNext(
 			long dataTypeId, long groupId, String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2415,18 +2305,20 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_U_S(long,String,int, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param name the name
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByName_U_S(
 		long userId, String name, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where userId = &#63; and name = &#63; and status = &#63;.
@@ -2441,14 +2333,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByName_U_S(
 		long userId, String name, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where userId = &#63; and name = &#63; and status = &#63;.
@@ -2462,8 +2351,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_U_S_First(
 			long userId, String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2477,8 +2365,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_U_S_First(
 		long userId, String name, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where userId = &#63; and name = &#63; and status = &#63;.
@@ -2492,8 +2379,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_U_S_Last(
 			long userId, String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2507,8 +2393,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_U_S_Last(
 		long userId, String name, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where userId = &#63; and name = &#63; and status = &#63;.
@@ -2523,8 +2408,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByName_U_S_PrevAndNext(
 			long dataTypeId, long userId, String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2583,6 +2467,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G_U_S(long,long,String,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param name the name
@@ -2590,12 +2475,13 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findByName_G_U_S(
 		long groupId, long userId, String name, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types where groupId = &#63; and userId = &#63; and name = &#63; and status = &#63;.
@@ -2611,14 +2497,11 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public java.util.List<DataType> findByName_G_U_S(
 		long groupId, long userId, String name, int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the first data type in the ordered set where groupId = &#63; and userId = &#63; and name = &#63; and status = &#63;.
@@ -2633,8 +2516,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_G_U_S_First(
 			long groupId, long userId, String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2649,8 +2531,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_G_U_S_First(
 		long groupId, long userId, String name, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the last data type in the ordered set where groupId = &#63; and userId = &#63; and name = &#63; and status = &#63;.
@@ -2665,8 +2546,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType findByName_G_U_S_Last(
 			long groupId, long userId, String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2681,8 +2561,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType fetchByName_G_U_S_Last(
 		long groupId, long userId, String name, int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Returns the data types before and after the current data type in the ordered set where groupId = &#63; and userId = &#63; and name = &#63; and status = &#63;.
@@ -2698,8 +2577,7 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 */
 	public DataType[] findByName_G_U_S_PrevAndNext(
 			long dataTypeId, long groupId, long userId, String name, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataType>
-				orderByComparator)
+			OrderByComparator<DataType> orderByComparator)
 		throws NoSuchDataTypeException;
 
 	/**
@@ -2737,24 +2615,27 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 		throws NoSuchDataTypeException;
 
 	/**
-	 * Returns the data type where name = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data type where name = &#63; and version = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByNameVersion(String,String)}
 	 * @param name the name
 	 * @param version the version
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchByNameVersion(String name, String version);
+	@Deprecated
+	public DataType fetchByNameVersion(
+		String name, String version, boolean useFinderCache);
 
 	/**
 	 * Returns the data type where name = &#63; and version = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param name the name
 	 * @param version the version
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public DataType fetchByNameVersion(
-		String name, String version, boolean retrieveFromCache);
+	public DataType fetchByNameVersion(String name, String version);
 
 	/**
 	 * Removes the data type where name = &#63; and version = &#63; from the database.
@@ -2853,15 +2734,17 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data types
 	 */
+	@Deprecated
 	public java.util.List<DataType> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator);
+		int start, int end, OrderByComparator<DataType> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data types.
@@ -2873,14 +2756,10 @@ public interface DataTypePersistence extends BasePersistence<DataType> {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data types
 	 */
 	public java.util.List<DataType> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataType>
-			orderByComparator,
-		boolean retrieveFromCache);
+		int start, int end, OrderByComparator<DataType> orderByComparator);
 
 	/**
 	 * Removes all the data types from the database.

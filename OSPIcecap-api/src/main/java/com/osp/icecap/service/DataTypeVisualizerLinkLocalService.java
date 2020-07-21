@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.osp.icecap.exception.NoSuchDataTypeVisualizerLinkException;
 import com.osp.icecap.model.DataTypeVisualizerLink;
 
 import java.io.Serializable;
@@ -72,7 +73,7 @@ public interface DataTypeVisualizerLinkLocalService
 	public DataTypeVisualizerLink addDataTypeVisualizerLink(
 		DataTypeVisualizerLink dataTypeVisualizerLink);
 
-	public DataTypeVisualizerLink addLink(
+	public DataTypeVisualizerLink addDataTypeVisualizerLink(
 		long dataTypeId, String visualizerName, String visualizerVersion,
 		boolean editable);
 
@@ -238,10 +239,18 @@ public interface DataTypeVisualizerLinkLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	public DataTypeVisualizerLink removeLink(
-		String visualizerName, String visualizerVersion);
+	public DataTypeVisualizerLink removeDataTypeVisualizerLink(
+			long dataTypeVisualizerLinkId)
+		throws PortalException;
 
-	public void removeLinks(long dataTypeId);
+	public void removeDataTypeVisualizerLinks(long dataTypeId);
+
+	public void removeDataTypeVisualizerLinks(String visualizerName)
+		throws NoSuchDataTypeVisualizerLinkException;
+
+	public void removeDataTypeVisualizerLinks(
+			String visualizerName, String visualizerVersion)
+		throws NoSuchDataTypeVisualizerLinkException;
 
 	/**
 	 * Updates the data type visualizer link in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
@@ -252,5 +261,10 @@ public interface DataTypeVisualizerLinkLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataTypeVisualizerLink updateDataTypeVisualizerLink(
 		DataTypeVisualizerLink dataTypeVisualizerLink);
+
+	public DataTypeVisualizerLink updateDataTypeVisualizerLink(
+			long dataTypeVisualizerLinkId, long dataTypeId,
+			String visualizerName, String visualizerVersion, boolean editable)
+		throws PortalException;
 
 }

@@ -22,7 +22,7 @@ import java.util.List;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * This class is used by SOAP remote services, specifically {@link com.osp.icecap.service.http.DataTypeStructureServiceSoap}.
+ * This class is used by SOAP remote services.
  *
  * @author Jerry H. Seo
  * @generated

@@ -15,6 +15,7 @@
 package com.osp.icecap.service.persistence;
 
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
+import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchDataEntryException;
 import com.osp.icecap.model.DataEntry;
@@ -40,6 +41,1407 @@ public interface DataEntryPersistence extends BasePersistence<DataEntry> {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link DataEntryUtil} to access the data entry persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this interface.
 	 */
+
+	/**
+	 * Returns all the data entries where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the matching data entries
+	 */
+	public java.util.List<DataEntry> findByUuid(String uuid);
+
+	/**
+	 * Returns a range of all the data entries where uuid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @return the range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByUuid(
+		String uuid, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data entries where uuid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid(String, int, int, OrderByComparator)}
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data entries
+	 */
+	@Deprecated
+	public java.util.List<DataEntry> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator, boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data entries where uuid = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the first data entry in the ordered set where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByUuid_First(
+			String uuid, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the first data entry in the ordered set where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByUuid_First(
+		String uuid, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the last data entry in the ordered set where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByUuid_Last(
+			String uuid, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the last data entry in the ordered set where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByUuid_Last(
+		String uuid, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the data entries before and after the current data entry in the ordered set where uuid = &#63;.
+	 *
+	 * @param dataEntryId the primary key of the current data entry
+	 * @param uuid the uuid
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data entry
+	 * @throws NoSuchDataEntryException if a data entry with the primary key could not be found
+	 */
+	public DataEntry[] findByUuid_PrevAndNext(
+			long dataEntryId, String uuid,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Removes all the data entries where uuid = &#63; from the database.
+	 *
+	 * @param uuid the uuid
+	 */
+	public void removeByUuid(String uuid);
+
+	/**
+	 * Returns the number of data entries where uuid = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @return the number of matching data entries
+	 */
+	public int countByUuid(String uuid);
+
+	/**
+	 * Returns the data entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchDataEntryException</code> if it could not be found.
+	 *
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByUUID_G(String uuid, long groupId)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the data entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByUUID_G(String,long)}
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	@Deprecated
+	public DataEntry fetchByUUID_G(
+		String uuid, long groupId, boolean useFinderCache);
+
+	/**
+	 * Returns the data entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByUUID_G(String uuid, long groupId);
+
+	/**
+	 * Removes the data entry where uuid = &#63; and groupId = &#63; from the database.
+	 *
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the data entry that was removed
+	 */
+	public DataEntry removeByUUID_G(String uuid, long groupId)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the number of data entries where uuid = &#63; and groupId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param groupId the group ID
+	 * @return the number of matching data entries
+	 */
+	public int countByUUID_G(String uuid, long groupId);
+
+	/**
+	 * Returns all the data entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the matching data entries
+	 */
+	public java.util.List<DataEntry> findByUuid_C(String uuid, long companyId);
+
+	/**
+	 * Returns a range of all the data entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @return the range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByUuid_C(
+		String uuid, long companyId, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid_C(String,long, int, int, OrderByComparator)}
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data entries
+	 */
+	@Deprecated
+	public java.util.List<DataEntry> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator, boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the first data entry in the ordered set where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByUuid_C_First(
+			String uuid, long companyId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the first data entry in the ordered set where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByUuid_C_First(
+		String uuid, long companyId,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the last data entry in the ordered set where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByUuid_C_Last(
+			String uuid, long companyId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the last data entry in the ordered set where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByUuid_C_Last(
+		String uuid, long companyId,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the data entries before and after the current data entry in the ordered set where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param dataEntryId the primary key of the current data entry
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data entry
+	 * @throws NoSuchDataEntryException if a data entry with the primary key could not be found
+	 */
+	public DataEntry[] findByUuid_C_PrevAndNext(
+			long dataEntryId, String uuid, long companyId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Removes all the data entries where uuid = &#63; and companyId = &#63; from the database.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 */
+	public void removeByUuid_C(String uuid, long companyId);
+
+	/**
+	 * Returns the number of data entries where uuid = &#63; and companyId = &#63;.
+	 *
+	 * @param uuid the uuid
+	 * @param companyId the company ID
+	 * @return the number of matching data entries
+	 */
+	public int countByUuid_C(String uuid, long companyId);
+
+	/**
+	 * Returns all the data entries where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching data entries
+	 */
+	public java.util.List<DataEntry> findByGroupId(long groupId);
+
+	/**
+	 * Returns a range of all the data entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @return the range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByGroupId(
+		long groupId, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByGroupId(long, int, int, OrderByComparator)}
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data entries
+	 */
+	@Deprecated
+	public java.util.List<DataEntry> findByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator, boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data entries where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the first data entry in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByGroupId_First(
+			long groupId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the first data entry in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByGroupId_First(
+		long groupId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the last data entry in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByGroupId_Last(
+			long groupId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the last data entry in the ordered set where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByGroupId_Last(
+		long groupId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the data entries before and after the current data entry in the ordered set where groupId = &#63;.
+	 *
+	 * @param dataEntryId the primary key of the current data entry
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data entry
+	 * @throws NoSuchDataEntryException if a data entry with the primary key could not be found
+	 */
+	public DataEntry[] findByGroupId_PrevAndNext(
+			long dataEntryId, long groupId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Removes all the data entries where groupId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 */
+	public void removeByGroupId(long groupId);
+
+	/**
+	 * Returns the number of data entries where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the number of matching data entries
+	 */
+	public int countByGroupId(long groupId);
+
+	/**
+	 * Returns all the data entries where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @return the matching data entries
+	 */
+	public java.util.List<DataEntry> findByUserId(long userId);
+
+	/**
+	 * Returns a range of all the data entries where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @return the range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByUserId(
+		long userId, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data entries where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUserId(long, int, int, OrderByComparator)}
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data entries
+	 */
+	@Deprecated
+	public java.util.List<DataEntry> findByUserId(
+		long userId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator, boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data entries where userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByUserId(
+		long userId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the first data entry in the ordered set where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByUserId_First(
+			long userId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the first data entry in the ordered set where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByUserId_First(
+		long userId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the last data entry in the ordered set where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByUserId_Last(
+			long userId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the last data entry in the ordered set where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByUserId_Last(
+		long userId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the data entries before and after the current data entry in the ordered set where userId = &#63;.
+	 *
+	 * @param dataEntryId the primary key of the current data entry
+	 * @param userId the user ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data entry
+	 * @throws NoSuchDataEntryException if a data entry with the primary key could not be found
+	 */
+	public DataEntry[] findByUserId_PrevAndNext(
+			long dataEntryId, long userId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Removes all the data entries where userId = &#63; from the database.
+	 *
+	 * @param userId the user ID
+	 */
+	public void removeByUserId(long userId);
+
+	/**
+	 * Returns the number of data entries where userId = &#63;.
+	 *
+	 * @param userId the user ID
+	 * @return the number of matching data entries
+	 */
+	public int countByUserId(long userId);
+
+	/**
+	 * Returns all the data entries where status = &#63;.
+	 *
+	 * @param status the status
+	 * @return the matching data entries
+	 */
+	public java.util.List<DataEntry> findByStatus(int status);
+
+	/**
+	 * Returns a range of all the data entries where status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param status the status
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @return the range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByStatus(
+		int status, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data entries where status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByStatus(int, int, int, OrderByComparator)}
+	 * @param status the status
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data entries
+	 */
+	@Deprecated
+	public java.util.List<DataEntry> findByStatus(
+		int status, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator, boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data entries where status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param status the status
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByStatus(
+		int status, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the first data entry in the ordered set where status = &#63;.
+	 *
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByStatus_First(
+			int status, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the first data entry in the ordered set where status = &#63;.
+	 *
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByStatus_First(
+		int status, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the last data entry in the ordered set where status = &#63;.
+	 *
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByStatus_Last(
+			int status, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the last data entry in the ordered set where status = &#63;.
+	 *
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByStatus_Last(
+		int status, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the data entries before and after the current data entry in the ordered set where status = &#63;.
+	 *
+	 * @param dataEntryId the primary key of the current data entry
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data entry
+	 * @throws NoSuchDataEntryException if a data entry with the primary key could not be found
+	 */
+	public DataEntry[] findByStatus_PrevAndNext(
+			long dataEntryId, int status,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Removes all the data entries where status = &#63; from the database.
+	 *
+	 * @param status the status
+	 */
+	public void removeByStatus(int status);
+
+	/**
+	 * Returns the number of data entries where status = &#63;.
+	 *
+	 * @param status the status
+	 * @return the number of matching data entries
+	 */
+	public int countByStatus(int status);
+
+	/**
+	 * Returns all the data entries where dataCollectionId = &#63;.
+	 *
+	 * @param dataCollectionId the data collection ID
+	 * @return the matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataCollectionId(
+		long dataCollectionId);
+
+	/**
+	 * Returns a range of all the data entries where dataCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataCollectionId the data collection ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @return the range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataCollectionId(
+		long dataCollectionId, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data entries where dataCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
+	 * @param dataCollectionId the data collection ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data entries
+	 */
+	@Deprecated
+	public java.util.List<DataEntry> findByDataCollectionId(
+		long dataCollectionId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator, boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data entries where dataCollectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataCollectionId the data collection ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataCollectionId(
+		long dataCollectionId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the first data entry in the ordered set where dataCollectionId = &#63;.
+	 *
+	 * @param dataCollectionId the data collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByDataCollectionId_First(
+			long dataCollectionId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the first data entry in the ordered set where dataCollectionId = &#63;.
+	 *
+	 * @param dataCollectionId the data collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByDataCollectionId_First(
+		long dataCollectionId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the last data entry in the ordered set where dataCollectionId = &#63;.
+	 *
+	 * @param dataCollectionId the data collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByDataCollectionId_Last(
+			long dataCollectionId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the last data entry in the ordered set where dataCollectionId = &#63;.
+	 *
+	 * @param dataCollectionId the data collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByDataCollectionId_Last(
+		long dataCollectionId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the data entries before and after the current data entry in the ordered set where dataCollectionId = &#63;.
+	 *
+	 * @param dataEntryId the primary key of the current data entry
+	 * @param dataCollectionId the data collection ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data entry
+	 * @throws NoSuchDataEntryException if a data entry with the primary key could not be found
+	 */
+	public DataEntry[] findByDataCollectionId_PrevAndNext(
+			long dataEntryId, long dataCollectionId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Removes all the data entries where dataCollectionId = &#63; from the database.
+	 *
+	 * @param dataCollectionId the data collection ID
+	 */
+	public void removeByDataCollectionId(long dataCollectionId);
+
+	/**
+	 * Returns the number of data entries where dataCollectionId = &#63;.
+	 *
+	 * @param dataCollectionId the data collection ID
+	 * @return the number of matching data entries
+	 */
+	public int countByDataCollectionId(long dataCollectionId);
+
+	/**
+	 * Returns all the data entries where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
+	 * @return the matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataSetId(long dataSetId);
+
+	/**
+	 * Returns a range of all the data entries where dataSetId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSetId the data set ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @return the range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataSetId(
+		long dataSetId, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data entries where dataSetId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSetId(long, int, int, OrderByComparator)}
+	 * @param dataSetId the data set ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data entries
+	 */
+	@Deprecated
+	public java.util.List<DataEntry> findByDataSetId(
+		long dataSetId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator, boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data entries where dataSetId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSetId the data set ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataSetId(
+		long dataSetId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the first data entry in the ordered set where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByDataSetId_First(
+			long dataSetId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the first data entry in the ordered set where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByDataSetId_First(
+		long dataSetId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the last data entry in the ordered set where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByDataSetId_Last(
+			long dataSetId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the last data entry in the ordered set where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByDataSetId_Last(
+		long dataSetId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the data entries before and after the current data entry in the ordered set where dataSetId = &#63;.
+	 *
+	 * @param dataEntryId the primary key of the current data entry
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data entry
+	 * @throws NoSuchDataEntryException if a data entry with the primary key could not be found
+	 */
+	public DataEntry[] findByDataSetId_PrevAndNext(
+			long dataEntryId, long dataSetId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Removes all the data entries where dataSetId = &#63; from the database.
+	 *
+	 * @param dataSetId the data set ID
+	 */
+	public void removeByDataSetId(long dataSetId);
+
+	/**
+	 * Returns the number of data entries where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
+	 * @return the number of matching data entries
+	 */
+	public int countByDataSetId(long dataSetId);
+
+	/**
+	 * Returns all the data entries where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @return the matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataSectionId(long dataSectionId);
+
+	/**
+	 * Returns a range of all the data entries where dataSectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @return the range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataSectionId(
+		long dataSectionId, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data entries where dataSectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSectionId(long, int, int, OrderByComparator)}
+	 * @param dataSectionId the data section ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data entries
+	 */
+	@Deprecated
+	public java.util.List<DataEntry> findByDataSectionId(
+		long dataSectionId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator, boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data entries where dataSectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataSectionId(
+		long dataSectionId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the first data entry in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByDataSectionId_First(
+			long dataSectionId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the first data entry in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByDataSectionId_First(
+		long dataSectionId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the last data entry in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByDataSectionId_Last(
+			long dataSectionId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the last data entry in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByDataSectionId_Last(
+		long dataSectionId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the data entries before and after the current data entry in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataEntryId the primary key of the current data entry
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data entry
+	 * @throws NoSuchDataEntryException if a data entry with the primary key could not be found
+	 */
+	public DataEntry[] findByDataSectionId_PrevAndNext(
+			long dataEntryId, long dataSectionId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Removes all the data entries where dataSectionId = &#63; from the database.
+	 *
+	 * @param dataSectionId the data section ID
+	 */
+	public void removeByDataSectionId(long dataSectionId);
+
+	/**
+	 * Returns the number of data entries where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @return the number of matching data entries
+	 */
+	public int countByDataSectionId(long dataSectionId);
+
+	/**
+	 * Returns all the data entries where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @return the matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataPackId(long dataPackId);
+
+	/**
+	 * Returns a range of all the data entries where dataPackId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @return the range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataPackId(
+		long dataPackId, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data entries where dataPackId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataPackId(long, int, int, OrderByComparator)}
+	 * @param dataPackId the data pack ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data entries
+	 */
+	@Deprecated
+	public java.util.List<DataEntry> findByDataPackId(
+		long dataPackId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator, boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data entries where dataPackId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByDataPackId(
+		long dataPackId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the first data entry in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByDataPackId_First(
+			long dataPackId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the first data entry in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByDataPackId_First(
+		long dataPackId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the last data entry in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByDataPackId_Last(
+			long dataPackId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the last data entry in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByDataPackId_Last(
+		long dataPackId, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the data entries before and after the current data entry in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataEntryId the primary key of the current data entry
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data entry
+	 * @throws NoSuchDataEntryException if a data entry with the primary key could not be found
+	 */
+	public DataEntry[] findByDataPackId_PrevAndNext(
+			long dataEntryId, long dataPackId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Removes all the data entries where dataPackId = &#63; from the database.
+	 *
+	 * @param dataPackId the data pack ID
+	 */
+	public void removeByDataPackId(long dataPackId);
+
+	/**
+	 * Returns the number of data entries where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @return the number of matching data entries
+	 */
+	public int countByDataPackId(long dataPackId);
+
+	/**
+	 * Returns all the data entries where copiedFrom = &#63;.
+	 *
+	 * @param copiedFrom the copied from
+	 * @return the matching data entries
+	 */
+	public java.util.List<DataEntry> findByCopiedFrom(long copiedFrom);
+
+	/**
+	 * Returns a range of all the data entries where copiedFrom = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param copiedFrom the copied from
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @return the range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByCopiedFrom(
+		long copiedFrom, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data entries where copiedFrom = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByCopiedFrom(long, int, int, OrderByComparator)}
+	 * @param copiedFrom the copied from
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data entries
+	 */
+	@Deprecated
+	public java.util.List<DataEntry> findByCopiedFrom(
+		long copiedFrom, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator, boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data entries where copiedFrom = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param copiedFrom the copied from
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data entries
+	 */
+	public java.util.List<DataEntry> findByCopiedFrom(
+		long copiedFrom, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the first data entry in the ordered set where copiedFrom = &#63;.
+	 *
+	 * @param copiedFrom the copied from
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByCopiedFrom_First(
+			long copiedFrom, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the first data entry in the ordered set where copiedFrom = &#63;.
+	 *
+	 * @param copiedFrom the copied from
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByCopiedFrom_First(
+		long copiedFrom, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the last data entry in the ordered set where copiedFrom = &#63;.
+	 *
+	 * @param copiedFrom the copied from
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	public DataEntry findByCopiedFrom_Last(
+			long copiedFrom, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Returns the last data entry in the ordered set where copiedFrom = &#63;.
+	 *
+	 * @param copiedFrom the copied from
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public DataEntry fetchByCopiedFrom_Last(
+		long copiedFrom, OrderByComparator<DataEntry> orderByComparator);
+
+	/**
+	 * Returns the data entries before and after the current data entry in the ordered set where copiedFrom = &#63;.
+	 *
+	 * @param dataEntryId the primary key of the current data entry
+	 * @param copiedFrom the copied from
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data entry
+	 * @throws NoSuchDataEntryException if a data entry with the primary key could not be found
+	 */
+	public DataEntry[] findByCopiedFrom_PrevAndNext(
+			long dataEntryId, long copiedFrom,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException;
+
+	/**
+	 * Removes all the data entries where copiedFrom = &#63; from the database.
+	 *
+	 * @param copiedFrom the copied from
+	 */
+	public void removeByCopiedFrom(long copiedFrom);
+
+	/**
+	 * Returns the number of data entries where copiedFrom = &#63;.
+	 *
+	 * @param copiedFrom the copied from
+	 * @return the number of matching data entries
+	 */
+	public int countByCopiedFrom(long copiedFrom);
 
 	/**
 	 * Caches the data entry in the entity cache if it is enabled.
@@ -119,15 +1521,17 @@ public interface DataEntryPersistence extends BasePersistence<DataEntry> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data entries
 	 */
+	@Deprecated
 	public java.util.List<DataEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataEntry>
-			orderByComparator);
+		int start, int end, OrderByComparator<DataEntry> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data entries.
@@ -139,14 +1543,10 @@ public interface DataEntryPersistence extends BasePersistence<DataEntry> {
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data entries
 	 */
 	public java.util.List<DataEntry> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataEntry>
-			orderByComparator,
-		boolean retrieveFromCache);
+		int start, int end, OrderByComparator<DataEntry> orderByComparator);
 
 	/**
 	 * Removes all the data entries from the database.

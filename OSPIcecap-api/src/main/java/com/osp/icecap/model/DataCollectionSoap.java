@@ -43,13 +43,15 @@ public class DataCollectionSoap implements Serializable {
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setStatus(model.getStatus());
+		soapModel.setStatusByUserId(model.getStatusByUserId());
+		soapModel.setStatusByUserName(model.getStatusByUserName());
+		soapModel.setStatusDate(model.getStatusDate());
 		soapModel.setName(model.getName());
-		soapModel.setVariantFrom(model.getVariantFrom());
+		soapModel.setVersion(model.getVersion());
+		soapModel.setCopiedFrom(model.getCopiedFrom());
 		soapModel.setTitle(model.getTitle());
 		soapModel.setDescription(model.getDescription());
-		soapModel.setStorageType(model.getStorageType());
-		soapModel.setDataTypeName(model.getDataTypeName());
-		soapModel.setDataTypeVersion(model.getDataTypeVersion());
+		soapModel.setOrganizationId(model.getOrganizationId());
 
 		return soapModel;
 	}
@@ -180,6 +182,30 @@ public class DataCollectionSoap implements Serializable {
 		_status = status;
 	}
 
+	public long getStatusByUserId() {
+		return _statusByUserId;
+	}
+
+	public void setStatusByUserId(long statusByUserId) {
+		_statusByUserId = statusByUserId;
+	}
+
+	public String getStatusByUserName() {
+		return _statusByUserName;
+	}
+
+	public void setStatusByUserName(String statusByUserName) {
+		_statusByUserName = statusByUserName;
+	}
+
+	public Date getStatusDate() {
+		return _statusDate;
+	}
+
+	public void setStatusDate(Date statusDate) {
+		_statusDate = statusDate;
+	}
+
 	public String getName() {
 		return _name;
 	}
@@ -188,12 +214,20 @@ public class DataCollectionSoap implements Serializable {
 		_name = name;
 	}
 
-	public long getVariantFrom() {
-		return _variantFrom;
+	public String getVersion() {
+		return _version;
 	}
 
-	public void setVariantFrom(long variantFrom) {
-		_variantFrom = variantFrom;
+	public void setVersion(String version) {
+		_version = version;
+	}
+
+	public long getCopiedFrom() {
+		return _copiedFrom;
+	}
+
+	public void setCopiedFrom(long copiedFrom) {
+		_copiedFrom = copiedFrom;
 	}
 
 	public String getTitle() {
@@ -212,28 +246,12 @@ public class DataCollectionSoap implements Serializable {
 		_description = description;
 	}
 
-	public String getStorageType() {
-		return _storageType;
+	public long getOrganizationId() {
+		return _organizationId;
 	}
 
-	public void setStorageType(String storageType) {
-		_storageType = storageType;
-	}
-
-	public long getDataTypeName() {
-		return _dataTypeName;
-	}
-
-	public void setDataTypeName(long dataTypeName) {
-		_dataTypeName = dataTypeName;
-	}
-
-	public long getDataTypeVersion() {
-		return _dataTypeVersion;
-	}
-
-	public void setDataTypeVersion(long dataTypeVersion) {
-		_dataTypeVersion = dataTypeVersion;
+	public void setOrganizationId(long organizationId) {
+		_organizationId = organizationId;
 	}
 
 	private String _uuid;
@@ -245,12 +263,14 @@ public class DataCollectionSoap implements Serializable {
 	private Date _createDate;
 	private Date _modifiedDate;
 	private int _status;
+	private long _statusByUserId;
+	private String _statusByUserName;
+	private Date _statusDate;
 	private String _name;
-	private long _variantFrom;
+	private String _version;
+	private long _copiedFrom;
 	private String _title;
 	private String _description;
-	private String _storageType;
-	private long _dataTypeName;
-	private long _dataTypeVersion;
+	private long _organizationId;
 
 }

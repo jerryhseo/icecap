@@ -18,7 +18,6 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
@@ -28,7 +27,6 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 
 import com.osp.icecap.model.DataTypeVisualizerLink;
 import com.osp.icecap.model.DataTypeVisualizerLinkModel;
-import com.osp.icecap.model.DataTypeVisualizerLinkSoap;
 
 import java.io.Serializable;
 
@@ -37,11 +35,9 @@ import java.lang.reflect.InvocationHandler;
 
 import java.sql.Types;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -59,7 +55,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataTypeVisualizerLinkImpl
  * @generated
  */
-@JSON(strict = true)
 @ProviderType
 public class DataTypeVisualizerLinkModelImpl
 	extends BaseModelImpl<DataTypeVisualizerLink>
@@ -125,55 +120,6 @@ public class DataTypeVisualizerLinkModelImpl
 
 	public static void setFinderCacheEnabled(boolean finderCacheEnabled) {
 		_finderCacheEnabled = finderCacheEnabled;
-	}
-
-	/**
-	 * Converts the soap model instance into a normal model instance.
-	 *
-	 * @param soapModel the soap model instance to convert
-	 * @return the normal model instance
-	 */
-	public static DataTypeVisualizerLink toModel(
-		DataTypeVisualizerLinkSoap soapModel) {
-
-		if (soapModel == null) {
-			return null;
-		}
-
-		DataTypeVisualizerLink model = new DataTypeVisualizerLinkImpl();
-
-		model.setDataTypeVisualizerLinkId(
-			soapModel.getDataTypeVisualizerLinkId());
-		model.setDataTypeId(soapModel.getDataTypeId());
-		model.setVisualizerName(soapModel.getVisualizerName());
-		model.setVisualizerVersion(soapModel.getVisualizerVersion());
-		model.setDefaultVisualizer(soapModel.isDefaultVisualizer());
-		model.setEditable(soapModel.isEditable());
-
-		return model;
-	}
-
-	/**
-	 * Converts the soap model instances into normal model instances.
-	 *
-	 * @param soapModels the soap model instances to convert
-	 * @return the normal model instances
-	 */
-	public static List<DataTypeVisualizerLink> toModels(
-		DataTypeVisualizerLinkSoap[] soapModels) {
-
-		if (soapModels == null) {
-			return null;
-		}
-
-		List<DataTypeVisualizerLink> models =
-			new ArrayList<DataTypeVisualizerLink>(soapModels.length);
-
-		for (DataTypeVisualizerLinkSoap soapModel : soapModels) {
-			models.add(toModel(soapModel));
-		}
-
-		return models;
 	}
 
 	public DataTypeVisualizerLinkModelImpl() {
@@ -350,7 +296,6 @@ public class DataTypeVisualizerLinkModelImpl
 			(Map)attributeSetterBiConsumers);
 	}
 
-	@JSON
 	@Override
 	public long getDataTypeVisualizerLinkId() {
 		return _dataTypeVisualizerLinkId;
@@ -361,7 +306,6 @@ public class DataTypeVisualizerLinkModelImpl
 		_dataTypeVisualizerLinkId = dataTypeVisualizerLinkId;
 	}
 
-	@JSON
 	@Override
 	public long getDataTypeId() {
 		return _dataTypeId;
@@ -384,7 +328,6 @@ public class DataTypeVisualizerLinkModelImpl
 		return _originalDataTypeId;
 	}
 
-	@JSON
 	@Override
 	public String getVisualizerName() {
 		if (_visualizerName == null) {
@@ -410,7 +353,6 @@ public class DataTypeVisualizerLinkModelImpl
 		return GetterUtil.getString(_originalVisualizerName);
 	}
 
-	@JSON
 	@Override
 	public String getVisualizerVersion() {
 		if (_visualizerVersion == null) {
@@ -436,13 +378,11 @@ public class DataTypeVisualizerLinkModelImpl
 		return GetterUtil.getString(_originalVisualizerVersion);
 	}
 
-	@JSON
 	@Override
 	public boolean getDefaultVisualizer() {
 		return _defaultVisualizer;
 	}
 
-	@JSON
 	@Override
 	public boolean isDefaultVisualizer() {
 		return _defaultVisualizer;
@@ -453,13 +393,11 @@ public class DataTypeVisualizerLinkModelImpl
 		_defaultVisualizer = defaultVisualizer;
 	}
 
-	@JSON
 	@Override
 	public boolean getEditable() {
 		return _editable;
 	}
 
-	@JSON
 	@Override
 	public boolean isEditable() {
 		return _editable;
@@ -502,7 +440,12 @@ public class DataTypeVisualizerLinkModelImpl
 	@Override
 	public DataTypeVisualizerLink toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, DataTypeVisualizerLink>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -704,8 +647,13 @@ public class DataTypeVisualizerLinkModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, DataTypeVisualizerLink>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, DataTypeVisualizerLink>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
+
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 

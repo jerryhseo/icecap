@@ -15,6 +15,8 @@
 package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.service.base.DataEntryLocalServiceBaseImpl;
@@ -42,15 +44,27 @@ import org.osgi.service.component.annotations.Component;
 )
 public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 
-	public DataEntry createDataEntry( String dataCollectionName, ServiceContext sc ) {
+	public DataEntry createDataEntry( 
+			long dataCollectionId, 
+			long dataSetId, 
+			long dataSectionId, 
+			long dataPackId, 
+			ServiceContext sc ) throws PortalException {
 		long dataEntryId = super.counterLocalService.increment();
 		DataEntry dataEntry = super.createDataEntry(dataEntryId);
 		
-		dataEntry.setDataCollectionName(dataCollectionName);
+		dataEntry.setDataCollectionId(dataCollectionId);
+		dataEntry.setDataSetId(dataSetId);
+		dataEntry.setDataSectionId(dataSectionId);
+		dataEntry.setDataPackId(dataPackId);
+		
 		dataEntry.setCompanyId(sc.getCompanyId());
 		dataEntry.setGroupId(sc.getScopeGroupId());
-		dataEntry.setUserId(sc.getUserId());
+		User user = super.userLocalService.getUser(sc.getUserId());
+		dataEntry.setUserId(user.getUserId());
 		dataEntry.setCreateDate(new Date());
+		
+		super.updateDataEntry(dataEntry);
 		
 		return dataEntry;
 	}

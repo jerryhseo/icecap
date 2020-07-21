@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.LocalizedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.model.StagedAuditedModel;
-import com.liferay.portal.kernel.model.WorkflowedModel;
 
 import java.util.Date;
 import java.util.Locale;
@@ -43,7 +42,7 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface DataTypeModel
 	extends BaseModel<DataType>, GroupedModel, LocalizedModel, ShardedModel,
-			StagedAuditedModel, WorkflowedModel {
+			StagedAuditedModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -214,7 +213,6 @@ public interface DataTypeModel
 	 *
 	 * @return the status of this data type
 	 */
-	@Override
 	public int getStatus();
 
 	/**
@@ -222,73 +220,7 @@ public interface DataTypeModel
 	 *
 	 * @param status the status of this data type
 	 */
-	@Override
 	public void setStatus(int status);
-
-	/**
-	 * Returns the status by user ID of this data type.
-	 *
-	 * @return the status by user ID of this data type
-	 */
-	@Override
-	public long getStatusByUserId();
-
-	/**
-	 * Sets the status by user ID of this data type.
-	 *
-	 * @param statusByUserId the status by user ID of this data type
-	 */
-	@Override
-	public void setStatusByUserId(long statusByUserId);
-
-	/**
-	 * Returns the status by user uuid of this data type.
-	 *
-	 * @return the status by user uuid of this data type
-	 */
-	@Override
-	public String getStatusByUserUuid();
-
-	/**
-	 * Sets the status by user uuid of this data type.
-	 *
-	 * @param statusByUserUuid the status by user uuid of this data type
-	 */
-	@Override
-	public void setStatusByUserUuid(String statusByUserUuid);
-
-	/**
-	 * Returns the status by user name of this data type.
-	 *
-	 * @return the status by user name of this data type
-	 */
-	@AutoEscape
-	@Override
-	public String getStatusByUserName();
-
-	/**
-	 * Sets the status by user name of this data type.
-	 *
-	 * @param statusByUserName the status by user name of this data type
-	 */
-	@Override
-	public void setStatusByUserName(String statusByUserName);
-
-	/**
-	 * Returns the status date of this data type.
-	 *
-	 * @return the status date of this data type
-	 */
-	@Override
-	public Date getStatusDate();
-
-	/**
-	 * Sets the status date of this data type.
-	 *
-	 * @param statusDate the status date of this data type
-	 */
-	@Override
-	public void setStatusDate(Date statusDate);
 
 	/**
 	 * Returns the name of this data type.
@@ -435,84 +367,6 @@ public interface DataTypeModel
 	 */
 	public void setDescriptionMap(
 		Map<Locale, String> descriptionMap, Locale defaultLocale);
-
-	/**
-	 * Returns the super type of this data type.
-	 *
-	 * @return the super type of this data type
-	 */
-	public long getSuperType();
-
-	/**
-	 * Sets the super type of this data type.
-	 *
-	 * @param superType the super type of this data type
-	 */
-	public void setSuperType(long superType);
-
-	/**
-	 * Returns <code>true</code> if this data type is approved.
-	 *
-	 * @return <code>true</code> if this data type is approved; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isApproved();
-
-	/**
-	 * Returns <code>true</code> if this data type is denied.
-	 *
-	 * @return <code>true</code> if this data type is denied; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isDenied();
-
-	/**
-	 * Returns <code>true</code> if this data type is a draft.
-	 *
-	 * @return <code>true</code> if this data type is a draft; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isDraft();
-
-	/**
-	 * Returns <code>true</code> if this data type is expired.
-	 *
-	 * @return <code>true</code> if this data type is expired; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isExpired();
-
-	/**
-	 * Returns <code>true</code> if this data type is inactive.
-	 *
-	 * @return <code>true</code> if this data type is inactive; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isInactive();
-
-	/**
-	 * Returns <code>true</code> if this data type is incomplete.
-	 *
-	 * @return <code>true</code> if this data type is incomplete; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isIncomplete();
-
-	/**
-	 * Returns <code>true</code> if this data type is pending.
-	 *
-	 * @return <code>true</code> if this data type is pending; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isPending();
-
-	/**
-	 * Returns <code>true</code> if this data type is scheduled.
-	 *
-	 * @return <code>true</code> if this data type is scheduled; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isScheduled();
 
 	@Override
 	public String[] getAvailableLanguageIds();

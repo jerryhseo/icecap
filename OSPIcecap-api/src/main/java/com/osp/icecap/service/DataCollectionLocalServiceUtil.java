@@ -52,6 +52,18 @@ public class DataCollectionLocalServiceUtil {
 		return getService().addDataCollection(dataCollection);
 	}
 
+	public static com.osp.icecap.model.DataCollection addDataCollection(
+			String name, String version,
+			java.util.Map<java.util.Locale, String> titleMap,
+			java.util.Map<java.util.Locale, String> descriptionMap,
+			long organizationId,
+			com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().addDataCollection(
+			name, version, titleMap, descriptionMap, organizationId, sc);
+	}
+
 	/**
 	 * Creates a new data collection with the primary key. Does not add the data collection to the database.
 	 *
@@ -62,13 +74,6 @@ public class DataCollectionLocalServiceUtil {
 		long dataCollectionId) {
 
 		return getService().createDataCollection(dataCollectionId);
-	}
-
-	public static com.osp.icecap.model.DataCollection createDataCollection(
-		String collectionName,
-		com.liferay.portal.kernel.service.ServiceContext sc) {
-
-		return getService().createDataCollection(collectionName, sc);
 	}
 
 	/**
@@ -339,22 +344,14 @@ public class DataCollectionLocalServiceUtil {
 	}
 
 	public static com.osp.icecap.model.DataCollection removeDataCollection(
-		com.osp.icecap.model.DataCollection collection) {
-
-		return getService().removeDataCollection(collection);
-	}
-
-	public static com.osp.icecap.model.DataCollection removeDataCollection(
 			long collectionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().removeDataCollection(collectionId);
 	}
 
-	public static com.osp.icecap.model.DataCollection removeDataCollection(
-		String collectionName) {
-
-		return getService().removeDataCollection(collectionName);
+	public static void removeDataCollections(String collectionName) {
+		getService().removeDataCollections(collectionName);
 	}
 
 	/**

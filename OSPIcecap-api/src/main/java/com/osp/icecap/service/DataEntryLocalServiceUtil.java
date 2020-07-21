@@ -65,10 +65,13 @@ public class DataEntryLocalServiceUtil {
 	}
 
 	public static com.osp.icecap.model.DataEntry createDataEntry(
-		String dataCollectionName,
-		com.liferay.portal.kernel.service.ServiceContext sc) {
+			long dataCollectionId, long dataSetId, long dataSectionId,
+			long dataPackId,
+			com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return getService().createDataEntry(dataCollectionName, sc);
+		return getService().createDataEntry(
+			dataCollectionId, dataSetId, dataSectionId, dataPackId, sc);
 	}
 
 	/**
@@ -199,6 +202,19 @@ public class DataEntryLocalServiceUtil {
 		return getService().fetchDataEntry(dataEntryId);
 	}
 
+	/**
+	 * Returns the data entry matching the UUID and group.
+	 *
+	 * @param uuid the data entry's UUID
+	 * @param groupId the primary key of the group
+	 * @return the matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	public static com.osp.icecap.model.DataEntry fetchDataEntryByUuidAndGroupId(
+		String uuid, long groupId) {
+
+		return getService().fetchDataEntryByUuidAndGroupId(uuid, groupId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
@@ -223,6 +239,39 @@ public class DataEntryLocalServiceUtil {
 	}
 
 	/**
+	 * Returns all the data entries matching the UUID and company.
+	 *
+	 * @param uuid the UUID of the data entries
+	 * @param companyId the primary key of the company
+	 * @return the matching data entries, or an empty list if no matches were found
+	 */
+	public static java.util.List<com.osp.icecap.model.DataEntry>
+		getDataEntriesByUuidAndCompanyId(String uuid, long companyId) {
+
+		return getService().getDataEntriesByUuidAndCompanyId(uuid, companyId);
+	}
+
+	/**
+	 * Returns a range of data entries matching the UUID and company.
+	 *
+	 * @param uuid the UUID of the data entries
+	 * @param companyId the primary key of the company
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the range of matching data entries, or an empty list if no matches were found
+	 */
+	public static java.util.List<com.osp.icecap.model.DataEntry>
+		getDataEntriesByUuidAndCompanyId(
+			String uuid, long companyId, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.osp.icecap.model.DataEntry> orderByComparator) {
+
+		return getService().getDataEntriesByUuidAndCompanyId(
+			uuid, companyId, start, end, orderByComparator);
+	}
+
+	/**
 	 * Returns the number of data entries.
 	 *
 	 * @return the number of data entries
@@ -242,6 +291,29 @@ public class DataEntryLocalServiceUtil {
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getDataEntry(dataEntryId);
+	}
+
+	/**
+	 * Returns the data entry matching the UUID and group.
+	 *
+	 * @param uuid the data entry's UUID
+	 * @param groupId the primary key of the group
+	 * @return the matching data entry
+	 * @throws PortalException if a matching data entry could not be found
+	 */
+	public static com.osp.icecap.model.DataEntry getDataEntryByUuidAndGroupId(
+			String uuid, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().getDataEntryByUuidAndGroupId(uuid, groupId);
+	}
+
+	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
+		getExportActionableDynamicQuery(
+			com.liferay.exportimport.kernel.lar.PortletDataContext
+				portletDataContext) {
+
+		return getService().getExportActionableDynamicQuery(portletDataContext);
 	}
 
 	public static

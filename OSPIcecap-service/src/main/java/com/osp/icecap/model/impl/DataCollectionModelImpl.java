@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import com.osp.icecap.model.DataCollection;
 import com.osp.icecap.model.DataCollectionModel;
@@ -90,10 +91,11 @@ public class DataCollectionModelImpl
 		{"companyId", Types.BIGINT}, {"groupId", Types.BIGINT},
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
-		{"status", Types.INTEGER}, {"name", Types.VARCHAR},
-		{"variantFrom", Types.BIGINT}, {"title", Types.VARCHAR},
-		{"description", Types.VARCHAR}, {"storageType", Types.VARCHAR},
-		{"dataTypeName", Types.BIGINT}, {"dataTypeVersion", Types.BIGINT}
+		{"status", Types.INTEGER}, {"statusByUserId", Types.BIGINT},
+		{"statusByUserName", Types.VARCHAR}, {"statusDate", Types.TIMESTAMP},
+		{"name", Types.VARCHAR}, {"version", Types.VARCHAR},
+		{"copiedFrom", Types.BIGINT}, {"title", Types.VARCHAR},
+		{"description", Types.VARCHAR}, {"organizationId", Types.BIGINT}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -109,17 +111,19 @@ public class DataCollectionModelImpl
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("status", Types.INTEGER);
+		TABLE_COLUMNS_MAP.put("statusByUserId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("statusByUserName", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("variantFrom", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("version", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("copiedFrom", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("title", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("storageType", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("dataTypeName", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("dataTypeVersion", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("organizationId", Types.BIGINT);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataCollection (uuid_ VARCHAR(75) null,dataCollectionId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,name VARCHAR(75) null,variantFrom LONG,title STRING null,description STRING null,storageType VARCHAR(75) null,dataTypeName LONG,dataTypeVersion LONG)";
+		"create table ICECAP_DataCollection (uuid_ VARCHAR(75) null,dataCollectionId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,name VARCHAR(75) null,version VARCHAR(75) null,copiedFrom LONG,title STRING null,description STRING null,organizationId LONG)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table ICECAP_DataCollection";
@@ -138,19 +142,19 @@ public class DataCollectionModelImpl
 
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
 
-	public static final long DATATYPENAME_COLUMN_BITMASK = 2L;
+	public static final long GROUPID_COLUMN_BITMASK = 2L;
 
-	public static final long DATATYPEVERSION_COLUMN_BITMASK = 4L;
+	public static final long NAME_COLUMN_BITMASK = 4L;
 
-	public static final long GROUPID_COLUMN_BITMASK = 8L;
+	public static final long ORGANIZATIONID_COLUMN_BITMASK = 8L;
 
-	public static final long NAME_COLUMN_BITMASK = 16L;
+	public static final long STATUS_COLUMN_BITMASK = 16L;
 
-	public static final long STATUS_COLUMN_BITMASK = 32L;
+	public static final long USERID_COLUMN_BITMASK = 32L;
 
-	public static final long USERID_COLUMN_BITMASK = 64L;
+	public static final long UUID_COLUMN_BITMASK = 64L;
 
-	public static final long UUID_COLUMN_BITMASK = 128L;
+	public static final long VERSION_COLUMN_BITMASK = 128L;
 
 	public static final long CREATEDATE_COLUMN_BITMASK = 256L;
 
@@ -184,13 +188,15 @@ public class DataCollectionModelImpl
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
 		model.setStatus(soapModel.getStatus());
+		model.setStatusByUserId(soapModel.getStatusByUserId());
+		model.setStatusByUserName(soapModel.getStatusByUserName());
+		model.setStatusDate(soapModel.getStatusDate());
 		model.setName(soapModel.getName());
-		model.setVariantFrom(soapModel.getVariantFrom());
+		model.setVersion(soapModel.getVersion());
+		model.setCopiedFrom(soapModel.getCopiedFrom());
 		model.setTitle(soapModel.getTitle());
 		model.setDescription(soapModel.getDescription());
-		model.setStorageType(soapModel.getStorageType());
-		model.setDataTypeName(soapModel.getDataTypeName());
-		model.setDataTypeVersion(soapModel.getDataTypeVersion());
+		model.setOrganizationId(soapModel.getOrganizationId());
 
 		return model;
 	}
@@ -383,15 +389,36 @@ public class DataCollectionModelImpl
 		attributeSetterBiConsumers.put(
 			"status",
 			(BiConsumer<DataCollection, Integer>)DataCollection::setStatus);
+		attributeGetterFunctions.put(
+			"statusByUserId", DataCollection::getStatusByUserId);
+		attributeSetterBiConsumers.put(
+			"statusByUserId",
+			(BiConsumer<DataCollection, Long>)
+				DataCollection::setStatusByUserId);
+		attributeGetterFunctions.put(
+			"statusByUserName", DataCollection::getStatusByUserName);
+		attributeSetterBiConsumers.put(
+			"statusByUserName",
+			(BiConsumer<DataCollection, String>)
+				DataCollection::setStatusByUserName);
+		attributeGetterFunctions.put(
+			"statusDate", DataCollection::getStatusDate);
+		attributeSetterBiConsumers.put(
+			"statusDate",
+			(BiConsumer<DataCollection, Date>)DataCollection::setStatusDate);
 		attributeGetterFunctions.put("name", DataCollection::getName);
 		attributeSetterBiConsumers.put(
 			"name",
 			(BiConsumer<DataCollection, String>)DataCollection::setName);
-		attributeGetterFunctions.put(
-			"variantFrom", DataCollection::getVariantFrom);
+		attributeGetterFunctions.put("version", DataCollection::getVersion);
 		attributeSetterBiConsumers.put(
-			"variantFrom",
-			(BiConsumer<DataCollection, Long>)DataCollection::setVariantFrom);
+			"version",
+			(BiConsumer<DataCollection, String>)DataCollection::setVersion);
+		attributeGetterFunctions.put(
+			"copiedFrom", DataCollection::getCopiedFrom);
+		attributeSetterBiConsumers.put(
+			"copiedFrom",
+			(BiConsumer<DataCollection, Long>)DataCollection::setCopiedFrom);
 		attributeGetterFunctions.put("title", DataCollection::getTitle);
 		attributeSetterBiConsumers.put(
 			"title",
@@ -402,21 +429,11 @@ public class DataCollectionModelImpl
 			"description",
 			(BiConsumer<DataCollection, String>)DataCollection::setDescription);
 		attributeGetterFunctions.put(
-			"storageType", DataCollection::getStorageType);
+			"organizationId", DataCollection::getOrganizationId);
 		attributeSetterBiConsumers.put(
-			"storageType",
-			(BiConsumer<DataCollection, String>)DataCollection::setStorageType);
-		attributeGetterFunctions.put(
-			"dataTypeName", DataCollection::getDataTypeName);
-		attributeSetterBiConsumers.put(
-			"dataTypeName",
-			(BiConsumer<DataCollection, Long>)DataCollection::setDataTypeName);
-		attributeGetterFunctions.put(
-			"dataTypeVersion", DataCollection::getDataTypeVersion);
-		attributeSetterBiConsumers.put(
-			"dataTypeVersion",
+			"organizationId",
 			(BiConsumer<DataCollection, Long>)
-				DataCollection::setDataTypeVersion);
+				DataCollection::setOrganizationId);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -617,6 +634,60 @@ public class DataCollectionModelImpl
 
 	@JSON
 	@Override
+	public long getStatusByUserId() {
+		return _statusByUserId;
+	}
+
+	@Override
+	public void setStatusByUserId(long statusByUserId) {
+		_statusByUserId = statusByUserId;
+	}
+
+	@Override
+	public String getStatusByUserUuid() {
+		try {
+			User user = UserLocalServiceUtil.getUserById(getStatusByUserId());
+
+			return user.getUuid();
+		}
+		catch (PortalException pe) {
+			return "";
+		}
+	}
+
+	@Override
+	public void setStatusByUserUuid(String statusByUserUuid) {
+	}
+
+	@JSON
+	@Override
+	public String getStatusByUserName() {
+		if (_statusByUserName == null) {
+			return "";
+		}
+		else {
+			return _statusByUserName;
+		}
+	}
+
+	@Override
+	public void setStatusByUserName(String statusByUserName) {
+		_statusByUserName = statusByUserName;
+	}
+
+	@JSON
+	@Override
+	public Date getStatusDate() {
+		return _statusDate;
+	}
+
+	@Override
+	public void setStatusDate(Date statusDate) {
+		_statusDate = statusDate;
+	}
+
+	@JSON
+	@Override
 	public String getName() {
 		if (_name == null) {
 			return "";
@@ -643,13 +714,39 @@ public class DataCollectionModelImpl
 
 	@JSON
 	@Override
-	public long getVariantFrom() {
-		return _variantFrom;
+	public String getVersion() {
+		if (_version == null) {
+			return "";
+		}
+		else {
+			return _version;
+		}
 	}
 
 	@Override
-	public void setVariantFrom(long variantFrom) {
-		_variantFrom = variantFrom;
+	public void setVersion(String version) {
+		_columnBitmask |= VERSION_COLUMN_BITMASK;
+
+		if (_originalVersion == null) {
+			_originalVersion = _version;
+		}
+
+		_version = version;
+	}
+
+	public String getOriginalVersion() {
+		return GetterUtil.getString(_originalVersion);
+	}
+
+	@JSON
+	@Override
+	public long getCopiedFrom() {
+		return _copiedFrom;
+	}
+
+	@Override
+	public void setCopiedFrom(long copiedFrom) {
+		_copiedFrom = copiedFrom;
 	}
 
 	@JSON
@@ -867,70 +964,111 @@ public class DataCollectionModelImpl
 
 	@JSON
 	@Override
-	public String getStorageType() {
-		if (_storageType == null) {
-			return "";
-		}
-		else {
-			return _storageType;
-		}
+	public long getOrganizationId() {
+		return _organizationId;
 	}
 
 	@Override
-	public void setStorageType(String storageType) {
-		_storageType = storageType;
-	}
+	public void setOrganizationId(long organizationId) {
+		_columnBitmask |= ORGANIZATIONID_COLUMN_BITMASK;
 
-	@JSON
-	@Override
-	public long getDataTypeName() {
-		return _dataTypeName;
-	}
+		if (!_setOriginalOrganizationId) {
+			_setOriginalOrganizationId = true;
 
-	@Override
-	public void setDataTypeName(long dataTypeName) {
-		_columnBitmask |= DATATYPENAME_COLUMN_BITMASK;
-
-		if (!_setOriginalDataTypeName) {
-			_setOriginalDataTypeName = true;
-
-			_originalDataTypeName = _dataTypeName;
+			_originalOrganizationId = _organizationId;
 		}
 
-		_dataTypeName = dataTypeName;
+		_organizationId = organizationId;
 	}
 
-	public long getOriginalDataTypeName() {
-		return _originalDataTypeName;
-	}
-
-	@JSON
-	@Override
-	public long getDataTypeVersion() {
-		return _dataTypeVersion;
-	}
-
-	@Override
-	public void setDataTypeVersion(long dataTypeVersion) {
-		_columnBitmask |= DATATYPEVERSION_COLUMN_BITMASK;
-
-		if (!_setOriginalDataTypeVersion) {
-			_setOriginalDataTypeVersion = true;
-
-			_originalDataTypeVersion = _dataTypeVersion;
-		}
-
-		_dataTypeVersion = dataTypeVersion;
-	}
-
-	public long getOriginalDataTypeVersion() {
-		return _originalDataTypeVersion;
+	public long getOriginalOrganizationId() {
+		return _originalOrganizationId;
 	}
 
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(
 			PortalUtil.getClassNameId(DataCollection.class.getName()));
+	}
+
+	@Override
+	public boolean isApproved() {
+		if (getStatus() == WorkflowConstants.STATUS_APPROVED) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isDenied() {
+		if (getStatus() == WorkflowConstants.STATUS_DENIED) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isDraft() {
+		if (getStatus() == WorkflowConstants.STATUS_DRAFT) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isExpired() {
+		if (getStatus() == WorkflowConstants.STATUS_EXPIRED) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isInactive() {
+		if (getStatus() == WorkflowConstants.STATUS_INACTIVE) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isIncomplete() {
+		if (getStatus() == WorkflowConstants.STATUS_INCOMPLETE) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isPending() {
+		if (getStatus() == WorkflowConstants.STATUS_PENDING) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isScheduled() {
+		if (getStatus() == WorkflowConstants.STATUS_SCHEDULED) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	public long getColumnBitmask() {
@@ -1041,7 +1179,12 @@ public class DataCollectionModelImpl
 	@Override
 	public DataCollection toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, DataCollection>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -1061,13 +1204,15 @@ public class DataCollectionModelImpl
 		dataCollectionImpl.setCreateDate(getCreateDate());
 		dataCollectionImpl.setModifiedDate(getModifiedDate());
 		dataCollectionImpl.setStatus(getStatus());
+		dataCollectionImpl.setStatusByUserId(getStatusByUserId());
+		dataCollectionImpl.setStatusByUserName(getStatusByUserName());
+		dataCollectionImpl.setStatusDate(getStatusDate());
 		dataCollectionImpl.setName(getName());
-		dataCollectionImpl.setVariantFrom(getVariantFrom());
+		dataCollectionImpl.setVersion(getVersion());
+		dataCollectionImpl.setCopiedFrom(getCopiedFrom());
 		dataCollectionImpl.setTitle(getTitle());
 		dataCollectionImpl.setDescription(getDescription());
-		dataCollectionImpl.setStorageType(getStorageType());
-		dataCollectionImpl.setDataTypeName(getDataTypeName());
-		dataCollectionImpl.setDataTypeVersion(getDataTypeVersion());
+		dataCollectionImpl.setOrganizationId(getOrganizationId());
 
 		dataCollectionImpl.resetOriginalValues();
 
@@ -1155,15 +1300,13 @@ public class DataCollectionModelImpl
 
 		dataCollectionModelImpl._originalName = dataCollectionModelImpl._name;
 
-		dataCollectionModelImpl._originalDataTypeName =
-			dataCollectionModelImpl._dataTypeName;
+		dataCollectionModelImpl._originalVersion =
+			dataCollectionModelImpl._version;
 
-		dataCollectionModelImpl._setOriginalDataTypeName = false;
+		dataCollectionModelImpl._originalOrganizationId =
+			dataCollectionModelImpl._organizationId;
 
-		dataCollectionModelImpl._originalDataTypeVersion =
-			dataCollectionModelImpl._dataTypeVersion;
-
-		dataCollectionModelImpl._setOriginalDataTypeVersion = false;
+		dataCollectionModelImpl._setOriginalOrganizationId = false;
 
 		dataCollectionModelImpl._columnBitmask = 0;
 	}
@@ -1217,6 +1360,25 @@ public class DataCollectionModelImpl
 
 		dataCollectionCacheModel.status = getStatus();
 
+		dataCollectionCacheModel.statusByUserId = getStatusByUserId();
+
+		dataCollectionCacheModel.statusByUserName = getStatusByUserName();
+
+		String statusByUserName = dataCollectionCacheModel.statusByUserName;
+
+		if ((statusByUserName != null) && (statusByUserName.length() == 0)) {
+			dataCollectionCacheModel.statusByUserName = null;
+		}
+
+		Date statusDate = getStatusDate();
+
+		if (statusDate != null) {
+			dataCollectionCacheModel.statusDate = statusDate.getTime();
+		}
+		else {
+			dataCollectionCacheModel.statusDate = Long.MIN_VALUE;
+		}
+
 		dataCollectionCacheModel.name = getName();
 
 		String name = dataCollectionCacheModel.name;
@@ -1225,7 +1387,15 @@ public class DataCollectionModelImpl
 			dataCollectionCacheModel.name = null;
 		}
 
-		dataCollectionCacheModel.variantFrom = getVariantFrom();
+		dataCollectionCacheModel.version = getVersion();
+
+		String version = dataCollectionCacheModel.version;
+
+		if ((version != null) && (version.length() == 0)) {
+			dataCollectionCacheModel.version = null;
+		}
+
+		dataCollectionCacheModel.copiedFrom = getCopiedFrom();
 
 		dataCollectionCacheModel.title = getTitle();
 
@@ -1243,17 +1413,7 @@ public class DataCollectionModelImpl
 			dataCollectionCacheModel.description = null;
 		}
 
-		dataCollectionCacheModel.storageType = getStorageType();
-
-		String storageType = dataCollectionCacheModel.storageType;
-
-		if ((storageType != null) && (storageType.length() == 0)) {
-			dataCollectionCacheModel.storageType = null;
-		}
-
-		dataCollectionCacheModel.dataTypeName = getDataTypeName();
-
-		dataCollectionCacheModel.dataTypeVersion = getDataTypeVersion();
+		dataCollectionCacheModel.organizationId = getOrganizationId();
 
 		return dataCollectionCacheModel;
 	}
@@ -1321,8 +1481,13 @@ public class DataCollectionModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, DataCollection>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, DataCollection>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
+
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 
@@ -1345,20 +1510,21 @@ public class DataCollectionModelImpl
 	private int _status;
 	private int _originalStatus;
 	private boolean _setOriginalStatus;
+	private long _statusByUserId;
+	private String _statusByUserName;
+	private Date _statusDate;
 	private String _name;
 	private String _originalName;
-	private long _variantFrom;
+	private String _version;
+	private String _originalVersion;
+	private long _copiedFrom;
 	private String _title;
 	private String _titleCurrentLanguageId;
 	private String _description;
 	private String _descriptionCurrentLanguageId;
-	private String _storageType;
-	private long _dataTypeName;
-	private long _originalDataTypeName;
-	private boolean _setOriginalDataTypeName;
-	private long _dataTypeVersion;
-	private long _originalDataTypeVersion;
-	private boolean _setOriginalDataTypeVersion;
+	private long _organizationId;
+	private long _originalOrganizationId;
+	private boolean _setOriginalOrganizationId;
 	private long _columnBitmask;
 	private DataCollection _escapedModel;
 

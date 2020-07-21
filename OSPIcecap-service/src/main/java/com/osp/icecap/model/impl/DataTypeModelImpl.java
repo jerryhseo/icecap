@@ -34,11 +34,9 @@ import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import com.osp.icecap.model.DataType;
 import com.osp.icecap.model.DataTypeModel;
-import com.osp.icecap.model.DataTypeSoap;
 
 import java.io.Serializable;
 
@@ -47,12 +45,10 @@ import java.lang.reflect.InvocationHandler;
 
 import java.sql.Types;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -73,7 +69,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataTypeImpl
  * @generated
  */
-@JSON(strict = true)
 @ProviderType
 public class DataTypeModelImpl
 	extends BaseModelImpl<DataType> implements DataTypeModel {
@@ -90,11 +85,9 @@ public class DataTypeModelImpl
 		{"companyId", Types.BIGINT}, {"groupId", Types.BIGINT},
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
-		{"status", Types.INTEGER}, {"statusByUserId", Types.BIGINT},
-		{"statusByUserName", Types.VARCHAR}, {"statusDate", Types.TIMESTAMP},
-		{"name", Types.VARCHAR}, {"version", Types.VARCHAR},
-		{"samplePath", Types.VARCHAR}, {"description", Types.VARCHAR},
-		{"superType", Types.BIGINT}
+		{"status", Types.INTEGER}, {"name", Types.VARCHAR},
+		{"version", Types.VARCHAR}, {"samplePath", Types.VARCHAR},
+		{"description", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -110,18 +103,14 @@ public class DataTypeModelImpl
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("status", Types.INTEGER);
-		TABLE_COLUMNS_MAP.put("statusByUserId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("statusByUserName", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("version", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("samplePath", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("superType", Types.BIGINT);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataType (uuid_ VARCHAR(75) null,dataTypeId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,name VARCHAR(75) null,version VARCHAR(75) null,samplePath VARCHAR(75) null,description STRING null,superType LONG)";
+		"create table ICECAP_DataType (uuid_ VARCHAR(75) null,dataTypeId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,name VARCHAR(75) null,version VARCHAR(75) null,samplePath VARCHAR(75) null,description STRING null)";
 
 	public static final String TABLE_SQL_DROP = "drop table ICECAP_DataType";
 
@@ -159,60 +148,6 @@ public class DataTypeModelImpl
 
 	public static void setFinderCacheEnabled(boolean finderCacheEnabled) {
 		_finderCacheEnabled = finderCacheEnabled;
-	}
-
-	/**
-	 * Converts the soap model instance into a normal model instance.
-	 *
-	 * @param soapModel the soap model instance to convert
-	 * @return the normal model instance
-	 */
-	public static DataType toModel(DataTypeSoap soapModel) {
-		if (soapModel == null) {
-			return null;
-		}
-
-		DataType model = new DataTypeImpl();
-
-		model.setUuid(soapModel.getUuid());
-		model.setDataTypeId(soapModel.getDataTypeId());
-		model.setCompanyId(soapModel.getCompanyId());
-		model.setGroupId(soapModel.getGroupId());
-		model.setUserId(soapModel.getUserId());
-		model.setUserName(soapModel.getUserName());
-		model.setCreateDate(soapModel.getCreateDate());
-		model.setModifiedDate(soapModel.getModifiedDate());
-		model.setStatus(soapModel.getStatus());
-		model.setStatusByUserId(soapModel.getStatusByUserId());
-		model.setStatusByUserName(soapModel.getStatusByUserName());
-		model.setStatusDate(soapModel.getStatusDate());
-		model.setName(soapModel.getName());
-		model.setVersion(soapModel.getVersion());
-		model.setSamplePath(soapModel.getSamplePath());
-		model.setDescription(soapModel.getDescription());
-		model.setSuperType(soapModel.getSuperType());
-
-		return model;
-	}
-
-	/**
-	 * Converts the soap model instances into normal model instances.
-	 *
-	 * @param soapModels the soap model instances to convert
-	 * @return the normal model instances
-	 */
-	public static List<DataType> toModels(DataTypeSoap[] soapModels) {
-		if (soapModels == null) {
-			return null;
-		}
-
-		List<DataType> models = new ArrayList<DataType>(soapModels.length);
-
-		for (DataTypeSoap soapModel : soapModels) {
-			models.add(toModel(soapModel));
-		}
-
-		return models;
 	}
 
 	public DataTypeModelImpl() {
@@ -367,19 +302,6 @@ public class DataTypeModelImpl
 		attributeGetterFunctions.put("status", DataType::getStatus);
 		attributeSetterBiConsumers.put(
 			"status", (BiConsumer<DataType, Integer>)DataType::setStatus);
-		attributeGetterFunctions.put(
-			"statusByUserId", DataType::getStatusByUserId);
-		attributeSetterBiConsumers.put(
-			"statusByUserId",
-			(BiConsumer<DataType, Long>)DataType::setStatusByUserId);
-		attributeGetterFunctions.put(
-			"statusByUserName", DataType::getStatusByUserName);
-		attributeSetterBiConsumers.put(
-			"statusByUserName",
-			(BiConsumer<DataType, String>)DataType::setStatusByUserName);
-		attributeGetterFunctions.put("statusDate", DataType::getStatusDate);
-		attributeSetterBiConsumers.put(
-			"statusDate", (BiConsumer<DataType, Date>)DataType::setStatusDate);
 		attributeGetterFunctions.put("name", DataType::getName);
 		attributeSetterBiConsumers.put(
 			"name", (BiConsumer<DataType, String>)DataType::setName);
@@ -394,9 +316,6 @@ public class DataTypeModelImpl
 		attributeSetterBiConsumers.put(
 			"description",
 			(BiConsumer<DataType, String>)DataType::setDescription);
-		attributeGetterFunctions.put("superType", DataType::getSuperType);
-		attributeSetterBiConsumers.put(
-			"superType", (BiConsumer<DataType, Long>)DataType::setSuperType);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -404,7 +323,6 @@ public class DataTypeModelImpl
 			(Map)attributeSetterBiConsumers);
 	}
 
-	@JSON
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
@@ -430,7 +348,6 @@ public class DataTypeModelImpl
 		return GetterUtil.getString(_originalUuid);
 	}
 
-	@JSON
 	@Override
 	public long getDataTypeId() {
 		return _dataTypeId;
@@ -441,7 +358,6 @@ public class DataTypeModelImpl
 		_dataTypeId = dataTypeId;
 	}
 
-	@JSON
 	@Override
 	public long getCompanyId() {
 		return _companyId;
@@ -464,7 +380,6 @@ public class DataTypeModelImpl
 		return _originalCompanyId;
 	}
 
-	@JSON
 	@Override
 	public long getGroupId() {
 		return _groupId;
@@ -487,7 +402,6 @@ public class DataTypeModelImpl
 		return _originalGroupId;
 	}
 
-	@JSON
 	@Override
 	public long getUserId() {
 		return _userId;
@@ -526,7 +440,6 @@ public class DataTypeModelImpl
 		return _originalUserId;
 	}
 
-	@JSON
 	@Override
 	public String getUserName() {
 		if (_userName == null) {
@@ -542,7 +455,6 @@ public class DataTypeModelImpl
 		_userName = userName;
 	}
 
-	@JSON
 	@Override
 	public Date getCreateDate() {
 		return _createDate;
@@ -553,7 +465,6 @@ public class DataTypeModelImpl
 		_createDate = createDate;
 	}
 
-	@JSON
 	@Override
 	public Date getModifiedDate() {
 		return _modifiedDate;
@@ -570,7 +481,6 @@ public class DataTypeModelImpl
 		_modifiedDate = modifiedDate;
 	}
 
-	@JSON
 	@Override
 	public int getStatus() {
 		return _status;
@@ -593,61 +503,6 @@ public class DataTypeModelImpl
 		return _originalStatus;
 	}
 
-	@JSON
-	@Override
-	public long getStatusByUserId() {
-		return _statusByUserId;
-	}
-
-	@Override
-	public void setStatusByUserId(long statusByUserId) {
-		_statusByUserId = statusByUserId;
-	}
-
-	@Override
-	public String getStatusByUserUuid() {
-		try {
-			User user = UserLocalServiceUtil.getUserById(getStatusByUserId());
-
-			return user.getUuid();
-		}
-		catch (PortalException pe) {
-			return "";
-		}
-	}
-
-	@Override
-	public void setStatusByUserUuid(String statusByUserUuid) {
-	}
-
-	@JSON
-	@Override
-	public String getStatusByUserName() {
-		if (_statusByUserName == null) {
-			return "";
-		}
-		else {
-			return _statusByUserName;
-		}
-	}
-
-	@Override
-	public void setStatusByUserName(String statusByUserName) {
-		_statusByUserName = statusByUserName;
-	}
-
-	@JSON
-	@Override
-	public Date getStatusDate() {
-		return _statusDate;
-	}
-
-	@Override
-	public void setStatusDate(Date statusDate) {
-		_statusDate = statusDate;
-	}
-
-	@JSON
 	@Override
 	public String getName() {
 		if (_name == null) {
@@ -673,7 +528,6 @@ public class DataTypeModelImpl
 		return GetterUtil.getString(_originalName);
 	}
 
-	@JSON
 	@Override
 	public String getVersion() {
 		if (_version == null) {
@@ -699,7 +553,6 @@ public class DataTypeModelImpl
 		return GetterUtil.getString(_originalVersion);
 	}
 
-	@JSON
 	@Override
 	public String getSamplePath() {
 		if (_samplePath == null) {
@@ -715,7 +568,6 @@ public class DataTypeModelImpl
 		_samplePath = samplePath;
 	}
 
-	@JSON
 	@Override
 	public String getDescription() {
 		if (_description == null) {
@@ -823,101 +675,10 @@ public class DataTypeModelImpl
 				LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
-	@JSON
-	@Override
-	public long getSuperType() {
-		return _superType;
-	}
-
-	@Override
-	public void setSuperType(long superType) {
-		_superType = superType;
-	}
-
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(
 			PortalUtil.getClassNameId(DataType.class.getName()));
-	}
-
-	@Override
-	public boolean isApproved() {
-		if (getStatus() == WorkflowConstants.STATUS_APPROVED) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean isDenied() {
-		if (getStatus() == WorkflowConstants.STATUS_DENIED) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean isDraft() {
-		if (getStatus() == WorkflowConstants.STATUS_DRAFT) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean isExpired() {
-		if (getStatus() == WorkflowConstants.STATUS_EXPIRED) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean isInactive() {
-		if (getStatus() == WorkflowConstants.STATUS_INACTIVE) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean isIncomplete() {
-		if (getStatus() == WorkflowConstants.STATUS_INCOMPLETE) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean isPending() {
-		if (getStatus() == WorkflowConstants.STATUS_PENDING) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean isScheduled() {
-		if (getStatus() == WorkflowConstants.STATUS_SCHEDULED) {
-			return true;
-		}
-		else {
-			return false;
-		}
 	}
 
 	public long getColumnBitmask() {
@@ -1008,7 +769,12 @@ public class DataTypeModelImpl
 	@Override
 	public DataType toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, DataType>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -1028,14 +794,10 @@ public class DataTypeModelImpl
 		dataTypeImpl.setCreateDate(getCreateDate());
 		dataTypeImpl.setModifiedDate(getModifiedDate());
 		dataTypeImpl.setStatus(getStatus());
-		dataTypeImpl.setStatusByUserId(getStatusByUserId());
-		dataTypeImpl.setStatusByUserName(getStatusByUserName());
-		dataTypeImpl.setStatusDate(getStatusDate());
 		dataTypeImpl.setName(getName());
 		dataTypeImpl.setVersion(getVersion());
 		dataTypeImpl.setSamplePath(getSamplePath());
 		dataTypeImpl.setDescription(getDescription());
-		dataTypeImpl.setSuperType(getSuperType());
 
 		dataTypeImpl.resetOriginalValues();
 
@@ -1173,25 +935,6 @@ public class DataTypeModelImpl
 
 		dataTypeCacheModel.status = getStatus();
 
-		dataTypeCacheModel.statusByUserId = getStatusByUserId();
-
-		dataTypeCacheModel.statusByUserName = getStatusByUserName();
-
-		String statusByUserName = dataTypeCacheModel.statusByUserName;
-
-		if ((statusByUserName != null) && (statusByUserName.length() == 0)) {
-			dataTypeCacheModel.statusByUserName = null;
-		}
-
-		Date statusDate = getStatusDate();
-
-		if (statusDate != null) {
-			dataTypeCacheModel.statusDate = statusDate.getTime();
-		}
-		else {
-			dataTypeCacheModel.statusDate = Long.MIN_VALUE;
-		}
-
 		dataTypeCacheModel.name = getName();
 
 		String name = dataTypeCacheModel.name;
@@ -1223,8 +966,6 @@ public class DataTypeModelImpl
 		if ((description != null) && (description.length() == 0)) {
 			dataTypeCacheModel.description = null;
 		}
-
-		dataTypeCacheModel.superType = getSuperType();
 
 		return dataTypeCacheModel;
 	}
@@ -1292,8 +1033,13 @@ public class DataTypeModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, DataType>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, DataType>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
+
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 
@@ -1316,9 +1062,6 @@ public class DataTypeModelImpl
 	private int _status;
 	private int _originalStatus;
 	private boolean _setOriginalStatus;
-	private long _statusByUserId;
-	private String _statusByUserName;
-	private Date _statusDate;
 	private String _name;
 	private String _originalName;
 	private String _version;
@@ -1326,7 +1069,6 @@ public class DataTypeModelImpl
 	private String _samplePath;
 	private String _description;
 	private String _descriptionCurrentLanguageId;
-	private long _superType;
 	private long _columnBitmask;
 	private DataType _escapedModel;
 

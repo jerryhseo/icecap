@@ -23,7 +23,7 @@ import java.util.List;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * This class is used by SOAP remote services, specifically {@link com.osp.icecap.service.http.DataTypeServiceSoap}.
+ * This class is used by SOAP remote services.
  *
  * @author Jerry H. Seo
  * @generated
@@ -43,14 +43,10 @@ public class DataTypeSoap implements Serializable {
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setStatus(model.getStatus());
-		soapModel.setStatusByUserId(model.getStatusByUserId());
-		soapModel.setStatusByUserName(model.getStatusByUserName());
-		soapModel.setStatusDate(model.getStatusDate());
 		soapModel.setName(model.getName());
 		soapModel.setVersion(model.getVersion());
 		soapModel.setSamplePath(model.getSamplePath());
 		soapModel.setDescription(model.getDescription());
-		soapModel.setSuperType(model.getSuperType());
 
 		return soapModel;
 	}
@@ -176,30 +172,6 @@ public class DataTypeSoap implements Serializable {
 		_status = status;
 	}
 
-	public long getStatusByUserId() {
-		return _statusByUserId;
-	}
-
-	public void setStatusByUserId(long statusByUserId) {
-		_statusByUserId = statusByUserId;
-	}
-
-	public String getStatusByUserName() {
-		return _statusByUserName;
-	}
-
-	public void setStatusByUserName(String statusByUserName) {
-		_statusByUserName = statusByUserName;
-	}
-
-	public Date getStatusDate() {
-		return _statusDate;
-	}
-
-	public void setStatusDate(Date statusDate) {
-		_statusDate = statusDate;
-	}
-
 	public String getName() {
 		return _name;
 	}
@@ -232,14 +204,6 @@ public class DataTypeSoap implements Serializable {
 		_description = description;
 	}
 
-	public long getSuperType() {
-		return _superType;
-	}
-
-	public void setSuperType(long superType) {
-		_superType = superType;
-	}
-
 	private String _uuid;
 	private long _dataTypeId;
 	private long _companyId;
@@ -249,13 +213,9 @@ public class DataTypeSoap implements Serializable {
 	private Date _createDate;
 	private Date _modifiedDate;
 	private int _status;
-	private long _statusByUserId;
-	private String _statusByUserName;
-	private Date _statusDate;
 	private String _name;
 	private String _version;
 	private String _samplePath;
 	private String _description;
-	private long _superType;
 
 }

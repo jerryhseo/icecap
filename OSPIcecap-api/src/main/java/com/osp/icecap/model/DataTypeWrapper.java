@@ -55,14 +55,10 @@ public class DataTypeWrapper
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("status", getStatus());
-		attributes.put("statusByUserId", getStatusByUserId());
-		attributes.put("statusByUserName", getStatusByUserName());
-		attributes.put("statusDate", getStatusDate());
 		attributes.put("name", getName());
 		attributes.put("version", getVersion());
 		attributes.put("samplePath", getSamplePath());
 		attributes.put("description", getDescription());
-		attributes.put("superType", getSuperType());
 
 		return attributes;
 	}
@@ -123,24 +119,6 @@ public class DataTypeWrapper
 			setStatus(status);
 		}
 
-		Long statusByUserId = (Long)attributes.get("statusByUserId");
-
-		if (statusByUserId != null) {
-			setStatusByUserId(statusByUserId);
-		}
-
-		String statusByUserName = (String)attributes.get("statusByUserName");
-
-		if (statusByUserName != null) {
-			setStatusByUserName(statusByUserName);
-		}
-
-		Date statusDate = (Date)attributes.get("statusDate");
-
-		if (statusDate != null) {
-			setStatusDate(statusDate);
-		}
-
 		String name = (String)attributes.get("name");
 
 		if (name != null) {
@@ -163,12 +141,6 @@ public class DataTypeWrapper
 
 		if (description != null) {
 			setDescription(description);
-		}
-
-		Long superType = (Long)attributes.get("superType");
-
-		if (superType != null) {
-			setSuperType(superType);
 		}
 	}
 
@@ -349,56 +321,6 @@ public class DataTypeWrapper
 	}
 
 	/**
-	 * Returns the status by user ID of this data type.
-	 *
-	 * @return the status by user ID of this data type
-	 */
-	@Override
-	public long getStatusByUserId() {
-		return model.getStatusByUserId();
-	}
-
-	/**
-	 * Returns the status by user name of this data type.
-	 *
-	 * @return the status by user name of this data type
-	 */
-	@Override
-	public String getStatusByUserName() {
-		return model.getStatusByUserName();
-	}
-
-	/**
-	 * Returns the status by user uuid of this data type.
-	 *
-	 * @return the status by user uuid of this data type
-	 */
-	@Override
-	public String getStatusByUserUuid() {
-		return model.getStatusByUserUuid();
-	}
-
-	/**
-	 * Returns the status date of this data type.
-	 *
-	 * @return the status date of this data type
-	 */
-	@Override
-	public Date getStatusDate() {
-		return model.getStatusDate();
-	}
-
-	/**
-	 * Returns the super type of this data type.
-	 *
-	 * @return the super type of this data type
-	 */
-	@Override
-	public long getSuperType() {
-		return model.getSuperType();
-	}
-
-	/**
 	 * Returns the user ID of this data type.
 	 *
 	 * @return the user ID of this data type
@@ -446,86 +368,6 @@ public class DataTypeWrapper
 	@Override
 	public String getVersion() {
 		return model.getVersion();
-	}
-
-	/**
-	 * Returns <code>true</code> if this data type is approved.
-	 *
-	 * @return <code>true</code> if this data type is approved; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isApproved() {
-		return model.isApproved();
-	}
-
-	/**
-	 * Returns <code>true</code> if this data type is denied.
-	 *
-	 * @return <code>true</code> if this data type is denied; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isDenied() {
-		return model.isDenied();
-	}
-
-	/**
-	 * Returns <code>true</code> if this data type is a draft.
-	 *
-	 * @return <code>true</code> if this data type is a draft; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isDraft() {
-		return model.isDraft();
-	}
-
-	/**
-	 * Returns <code>true</code> if this data type is expired.
-	 *
-	 * @return <code>true</code> if this data type is expired; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isExpired() {
-		return model.isExpired();
-	}
-
-	/**
-	 * Returns <code>true</code> if this data type is inactive.
-	 *
-	 * @return <code>true</code> if this data type is inactive; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isInactive() {
-		return model.isInactive();
-	}
-
-	/**
-	 * Returns <code>true</code> if this data type is incomplete.
-	 *
-	 * @return <code>true</code> if this data type is incomplete; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isIncomplete() {
-		return model.isIncomplete();
-	}
-
-	/**
-	 * Returns <code>true</code> if this data type is pending.
-	 *
-	 * @return <code>true</code> if this data type is pending; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isPending() {
-		return model.isPending();
-	}
-
-	/**
-	 * Returns <code>true</code> if this data type is scheduled.
-	 *
-	 * @return <code>true</code> if this data type is scheduled; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isScheduled() {
-		return model.isScheduled();
 	}
 
 	@Override
@@ -703,56 +545,6 @@ public class DataTypeWrapper
 	@Override
 	public void setStatus(int status) {
 		model.setStatus(status);
-	}
-
-	/**
-	 * Sets the status by user ID of this data type.
-	 *
-	 * @param statusByUserId the status by user ID of this data type
-	 */
-	@Override
-	public void setStatusByUserId(long statusByUserId) {
-		model.setStatusByUserId(statusByUserId);
-	}
-
-	/**
-	 * Sets the status by user name of this data type.
-	 *
-	 * @param statusByUserName the status by user name of this data type
-	 */
-	@Override
-	public void setStatusByUserName(String statusByUserName) {
-		model.setStatusByUserName(statusByUserName);
-	}
-
-	/**
-	 * Sets the status by user uuid of this data type.
-	 *
-	 * @param statusByUserUuid the status by user uuid of this data type
-	 */
-	@Override
-	public void setStatusByUserUuid(String statusByUserUuid) {
-		model.setStatusByUserUuid(statusByUserUuid);
-	}
-
-	/**
-	 * Sets the status date of this data type.
-	 *
-	 * @param statusDate the status date of this data type
-	 */
-	@Override
-	public void setStatusDate(Date statusDate) {
-		model.setStatusDate(statusDate);
-	}
-
-	/**
-	 * Sets the super type of this data type.
-	 *
-	 * @param superType the super type of this data type
-	 */
-	@Override
-	public void setSuperType(long superType) {
-		model.setSuperType(superType);
 	}
 
 	/**

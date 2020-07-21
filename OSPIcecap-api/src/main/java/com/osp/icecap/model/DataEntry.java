@@ -36,6 +36,26 @@ public interface DataEntry extends DataEntryModel, PersistedModel {
 	 *
 	 * Never modify this interface directly. Add methods to <code>com.osp.icecap.model.impl.DataEntryImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public static final Accessor<DataEntry, String> UUID_ACCESSOR =
+		new Accessor<DataEntry, String>() {
+
+			@Override
+			public String get(DataEntry dataEntry) {
+				return dataEntry.getUuid();
+			}
+
+			@Override
+			public Class<String> getAttributeClass() {
+				return String.class;
+			}
+
+			@Override
+			public Class<DataEntry> getTypeClass() {
+				return DataEntry.class;
+			}
+
+		};
+
 	public static final Accessor<DataEntry, Long> DATA_ENTRY_ID_ACCESSOR =
 		new Accessor<DataEntry, Long>() {
 

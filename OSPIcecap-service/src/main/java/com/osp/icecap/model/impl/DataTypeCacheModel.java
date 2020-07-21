@@ -65,7 +65,7 @@ public class DataTypeCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(35);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -85,12 +85,6 @@ public class DataTypeCacheModel
 		sb.append(modifiedDate);
 		sb.append(", status=");
 		sb.append(status);
-		sb.append(", statusByUserId=");
-		sb.append(statusByUserId);
-		sb.append(", statusByUserName=");
-		sb.append(statusByUserName);
-		sb.append(", statusDate=");
-		sb.append(statusDate);
 		sb.append(", name=");
 		sb.append(name);
 		sb.append(", version=");
@@ -99,8 +93,6 @@ public class DataTypeCacheModel
 		sb.append(samplePath);
 		sb.append(", description=");
 		sb.append(description);
-		sb.append(", superType=");
-		sb.append(superType);
 		sb.append("}");
 
 		return sb.toString();
@@ -144,21 +136,6 @@ public class DataTypeCacheModel
 		}
 
 		dataTypeImpl.setStatus(status);
-		dataTypeImpl.setStatusByUserId(statusByUserId);
-
-		if (statusByUserName == null) {
-			dataTypeImpl.setStatusByUserName("");
-		}
-		else {
-			dataTypeImpl.setStatusByUserName(statusByUserName);
-		}
-
-		if (statusDate == Long.MIN_VALUE) {
-			dataTypeImpl.setStatusDate(null);
-		}
-		else {
-			dataTypeImpl.setStatusDate(new Date(statusDate));
-		}
 
 		if (name == null) {
 			dataTypeImpl.setName("");
@@ -188,8 +165,6 @@ public class DataTypeCacheModel
 			dataTypeImpl.setDescription(description);
 		}
 
-		dataTypeImpl.setSuperType(superType);
-
 		dataTypeImpl.resetOriginalValues();
 
 		return dataTypeImpl;
@@ -211,16 +186,10 @@ public class DataTypeCacheModel
 		modifiedDate = objectInput.readLong();
 
 		status = objectInput.readInt();
-
-		statusByUserId = objectInput.readLong();
-		statusByUserName = objectInput.readUTF();
-		statusDate = objectInput.readLong();
 		name = objectInput.readUTF();
 		version = objectInput.readUTF();
 		samplePath = objectInput.readUTF();
 		description = objectInput.readUTF();
-
-		superType = objectInput.readLong();
 	}
 
 	@Override
@@ -252,17 +221,6 @@ public class DataTypeCacheModel
 
 		objectOutput.writeInt(status);
 
-		objectOutput.writeLong(statusByUserId);
-
-		if (statusByUserName == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(statusByUserName);
-		}
-
-		objectOutput.writeLong(statusDate);
-
 		if (name == null) {
 			objectOutput.writeUTF("");
 		}
@@ -290,8 +248,6 @@ public class DataTypeCacheModel
 		else {
 			objectOutput.writeUTF(description);
 		}
-
-		objectOutput.writeLong(superType);
 	}
 
 	public String uuid;
@@ -303,13 +259,9 @@ public class DataTypeCacheModel
 	public long createDate;
 	public long modifiedDate;
 	public int status;
-	public long statusByUserId;
-	public String statusByUserName;
-	public long statusDate;
 	public String name;
 	public String version;
 	public String samplePath;
 	public String description;
-	public long superType;
 
 }

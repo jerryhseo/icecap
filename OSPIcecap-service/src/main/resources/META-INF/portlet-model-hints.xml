@@ -1,43 +1,13 @@
 <?xml version="1.0"?>
 
 <model-hints>
+	<model name="com.osp.icecap.model.DataAnalysisLayout">
+		<field name="dataUuid" type="String" />
+		<field name="layout" type="String" />
+	</model>
 	<model name="com.osp.icecap.model.DataCollection">
 		<field name="uuid" type="String" />
 		<field name="dataCollectionId" type="long" />
-		<field name="companyId" type="long" />
-		<field name="groupId" type="long" />
-		<field name="userId" type="long" />
-		<field name="userName" type="String" />
-		<field name="createDate" type="Date" />
-		<field name="modifiedDate" type="Date" />
-		<field name="status" type="int" />
-		<field name="name" type="String" />
-		<field name="variantFrom" type="long" />
-		<field localized="true" name="title" type="String" />
-		<field localized="true" name="description" type="String" />
-		<field name="storageType" type="String" />
-		<field name="dataTypeName" type="long" />
-		<field name="dataTypeVersion" type="long" />
-	</model>
-	<model name="com.osp.icecap.model.DataCollectionLayout">
-		<field name="dataCollectionId" type="long" />
-		<field name="layout" type="String" />
-	</model>
-	<model name="com.osp.icecap.model.DataEntry">
-		<field name="dataEntryId" type="long" />
-		<field name="dataCollectionName" type="String" />
-		<field name="companyId" type="long" />
-		<field name="groupId" type="long" />
-		<field name="userId" type="long" />
-		<field name="createDate" type="Date" />
-		<field name="path" type="String" />
-		<field name="sequenceNo" type="int" />
-		<field name="recordCount" type="int" />
-		<field name="sequenceDelimeter" type="String" />
-	</model>
-	<model name="com.osp.icecap.model.DataType">
-		<field name="uuid" type="String" />
-		<field name="dataTypeId" type="long" />
 		<field name="companyId" type="long" />
 		<field name="groupId" type="long" />
 		<field name="userId" type="long" />
@@ -50,9 +20,110 @@
 		<field name="statusDate" type="Date" />
 		<field name="name" type="String" />
 		<field name="version" type="String" />
+		<field name="copiedFrom" type="long" />
+		<field localized="true" name="title" type="String" />
+		<field localized="true" name="description" type="String" />
+		<field name="organizationId" type="long" />
+	</model>
+	<model name="com.osp.icecap.model.DataEntry">
+		<field name="uuid" type="String" />
+		<field name="dataEntryId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="statusByUserId" type="long" />
+		<field name="statusByUserName" type="String" />
+		<field name="statusDate" type="Date" />
+		<field name="dataPackId" type="long" />
+		<field name="dataSectionId" type="long" />
+		<field name="dataSetId" type="long" />
+		<field name="dataCollectionId" type="long" />
+		<field name="accessURL" type="String" />
+		<field name="pathType" type="String" />
+		<field name="copiedFrom" type="long" />
+	</model>
+	<model name="com.osp.icecap.model.DataPack">
+		<field name="uuid" type="String" />
+		<field name="dataPackId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="statusByUserId" type="long" />
+		<field name="statusByUserName" type="String" />
+		<field name="statusDate" type="Date" />
+		<field name="dataCollectionId" type="long" />
+		<field name="dataSetId" type="long" />
+		<field name="dataSectionId" type="long" />
+		<field localized="true" name="title" type="String" />
+		<field name="version" type="String" />
+		<field localized="true" name="description" type="String" />
+		<field name="copiedFrom" type="long" />
+	</model>
+	<model name="com.osp.icecap.model.DataSection">
+		<field name="uuid" type="String" />
+		<field name="dataSectionId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="statusByUserId" type="long" />
+		<field name="statusByUserName" type="String" />
+		<field name="statusDate" type="Date" />
+		<field name="dataCollectionId" type="long" />
+		<field name="dataSetId" type="long" />
+		<field localized="true" name="title" type="String" />
+		<field name="version" type="String" />
+		<field localized="true" name="description" type="String" />
+		<field name="copiedFrom" type="long" />
+	</model>
+	<model name="com.osp.icecap.model.DataSet">
+		<field name="uuid" type="String" />
+		<field name="dataSetId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="statusByUserId" type="long" />
+		<field name="statusByUserName" type="String" />
+		<field name="statusDate" type="Date" />
+		<field name="dataCollectionId" type="long" />
+		<field localized="true" name="title" type="String" />
+		<field name="version" type="String" />
+		<field localized="true" name="description" type="String" />
+		<field name="copiedFrom" type="long" />
+	</model>
+	<model name="com.osp.icecap.model.DataType">
+		<field name="uuid" type="String" />
+		<field name="dataTypeId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="name" type="String" />
+		<field name="version" type="String" />
 		<field name="samplePath" type="String" />
 		<field localized="true" name="description" type="String" />
-		<field name="superType" type="long" />
+	</model>
+	<model name="com.osp.icecap.model.DataTypeLink">
+		<field name="dataUuid" type="String" />
+		<field name="dataTypeId" type="long" />
 	</model>
 	<model name="com.osp.icecap.model.DataTypeStructure">
 		<field name="dataTypeId" type="long" />

@@ -54,11 +54,12 @@ public class DataTypeVisualizerLinkLocalServiceWrapper
 	}
 
 	@Override
-	public com.osp.icecap.model.DataTypeVisualizerLink addLink(
-		long dataTypeId, String visualizerName, String visualizerVersion,
-		boolean editable) {
+	public com.osp.icecap.model.DataTypeVisualizerLink
+		addDataTypeVisualizerLink(
+			long dataTypeId, String visualizerName, String visualizerVersion,
+			boolean editable) {
 
-		return _dataTypeVisualizerLinkLocalService.addLink(
+		return _dataTypeVisualizerLinkLocalService.addDataTypeVisualizerLink(
 			dataTypeId, visualizerName, visualizerVersion, editable);
 	}
 
@@ -301,16 +302,35 @@ public class DataTypeVisualizerLinkLocalServiceWrapper
 	}
 
 	@Override
-	public com.osp.icecap.model.DataTypeVisualizerLink removeLink(
-		String visualizerName, String visualizerVersion) {
+	public com.osp.icecap.model.DataTypeVisualizerLink
+			removeDataTypeVisualizerLink(long dataTypeVisualizerLinkId)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return _dataTypeVisualizerLinkLocalService.removeLink(
-			visualizerName, visualizerVersion);
+		return _dataTypeVisualizerLinkLocalService.removeDataTypeVisualizerLink(
+			dataTypeVisualizerLinkId);
 	}
 
 	@Override
-	public void removeLinks(long dataTypeId) {
-		_dataTypeVisualizerLinkLocalService.removeLinks(dataTypeId);
+	public void removeDataTypeVisualizerLinks(long dataTypeId) {
+		_dataTypeVisualizerLinkLocalService.removeDataTypeVisualizerLinks(
+			dataTypeId);
+	}
+
+	@Override
+	public void removeDataTypeVisualizerLinks(String visualizerName)
+		throws com.osp.icecap.exception.NoSuchDataTypeVisualizerLinkException {
+
+		_dataTypeVisualizerLinkLocalService.removeDataTypeVisualizerLinks(
+			visualizerName);
+	}
+
+	@Override
+	public void removeDataTypeVisualizerLinks(
+			String visualizerName, String visualizerVersion)
+		throws com.osp.icecap.exception.NoSuchDataTypeVisualizerLinkException {
+
+		_dataTypeVisualizerLinkLocalService.removeDataTypeVisualizerLinks(
+			visualizerName, visualizerVersion);
 	}
 
 	/**
@@ -327,6 +347,19 @@ public class DataTypeVisualizerLinkLocalServiceWrapper
 
 		return _dataTypeVisualizerLinkLocalService.updateDataTypeVisualizerLink(
 			dataTypeVisualizerLink);
+	}
+
+	@Override
+	public com.osp.icecap.model.DataTypeVisualizerLink
+			updateDataTypeVisualizerLink(
+				long dataTypeVisualizerLinkId, long dataTypeId,
+				String visualizerName, String visualizerVersion,
+				boolean editable)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _dataTypeVisualizerLinkLocalService.updateDataTypeVisualizerLink(
+			dataTypeVisualizerLinkId, dataTypeId, visualizerName,
+			visualizerVersion, editable);
 	}
 
 	@Override

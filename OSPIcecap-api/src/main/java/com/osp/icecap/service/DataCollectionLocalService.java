@@ -38,6 +38,8 @@ import com.osp.icecap.model.DataCollection;
 import java.io.Serializable;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -74,6 +76,12 @@ public interface DataCollectionLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataCollection addDataCollection(DataCollection dataCollection);
 
+	public DataCollection addDataCollection(
+			String name, String version, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, long organizationId,
+			ServiceContext sc)
+		throws PortalException;
+
 	/**
 	 * Creates a new data collection with the primary key. Does not add the data collection to the database.
 	 *
@@ -82,9 +90,6 @@ public interface DataCollectionLocalService
 	 */
 	@Transactional(enabled = false)
 	public DataCollection createDataCollection(long dataCollectionId);
-
-	public DataCollection createDataCollection(
-		String collectionName, ServiceContext sc);
 
 	/**
 	 * Deletes the data collection from the database. Also notifies the appropriate model listeners.
@@ -287,12 +292,10 @@ public interface DataCollectionLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	public DataCollection removeDataCollection(DataCollection collection);
-
 	public DataCollection removeDataCollection(long collectionId)
 		throws PortalException;
 
-	public DataCollection removeDataCollection(String collectionName);
+	public void removeDataCollections(String collectionName);
 
 	/**
 	 * Updates the data collection in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

@@ -42,10 +42,10 @@ public class DataTypeStructureLocalServiceImpl
 	extends DataTypeStructureLocalServiceBaseImpl {
 
 	public DataTypeStructure addDataTypeStructure( long dataTypeId, String jsonStructure ) {
-		DataTypeStructure structure = super.createDataTypeStructure(dataTypeId);
-		structure.setStructure(jsonStructure);
+		DataTypeStructure dataStructure = super.createDataTypeStructure(dataTypeId);
+		dataStructure.setStructure(jsonStructure);
 		
-		return structure;
+		return super.addDataTypeStructure(dataStructure);
 	}
 	
 	public DataTypeStructure removeDataTypeStructure( long dataTypeId ) throws PortalException {

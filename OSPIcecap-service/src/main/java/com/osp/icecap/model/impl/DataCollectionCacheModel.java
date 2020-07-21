@@ -66,7 +66,7 @@ public class DataCollectionCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(33);
+		StringBundler sb = new StringBundler(37);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -86,20 +86,24 @@ public class DataCollectionCacheModel
 		sb.append(modifiedDate);
 		sb.append(", status=");
 		sb.append(status);
+		sb.append(", statusByUserId=");
+		sb.append(statusByUserId);
+		sb.append(", statusByUserName=");
+		sb.append(statusByUserName);
+		sb.append(", statusDate=");
+		sb.append(statusDate);
 		sb.append(", name=");
 		sb.append(name);
-		sb.append(", variantFrom=");
-		sb.append(variantFrom);
+		sb.append(", version=");
+		sb.append(version);
+		sb.append(", copiedFrom=");
+		sb.append(copiedFrom);
 		sb.append(", title=");
 		sb.append(title);
 		sb.append(", description=");
 		sb.append(description);
-		sb.append(", storageType=");
-		sb.append(storageType);
-		sb.append(", dataTypeName=");
-		sb.append(dataTypeName);
-		sb.append(", dataTypeVersion=");
-		sb.append(dataTypeVersion);
+		sb.append(", organizationId=");
+		sb.append(organizationId);
 		sb.append("}");
 
 		return sb.toString();
@@ -143,6 +147,21 @@ public class DataCollectionCacheModel
 		}
 
 		dataCollectionImpl.setStatus(status);
+		dataCollectionImpl.setStatusByUserId(statusByUserId);
+
+		if (statusByUserName == null) {
+			dataCollectionImpl.setStatusByUserName("");
+		}
+		else {
+			dataCollectionImpl.setStatusByUserName(statusByUserName);
+		}
+
+		if (statusDate == Long.MIN_VALUE) {
+			dataCollectionImpl.setStatusDate(null);
+		}
+		else {
+			dataCollectionImpl.setStatusDate(new Date(statusDate));
+		}
 
 		if (name == null) {
 			dataCollectionImpl.setName("");
@@ -151,7 +170,14 @@ public class DataCollectionCacheModel
 			dataCollectionImpl.setName(name);
 		}
 
-		dataCollectionImpl.setVariantFrom(variantFrom);
+		if (version == null) {
+			dataCollectionImpl.setVersion("");
+		}
+		else {
+			dataCollectionImpl.setVersion(version);
+		}
+
+		dataCollectionImpl.setCopiedFrom(copiedFrom);
 
 		if (title == null) {
 			dataCollectionImpl.setTitle("");
@@ -167,15 +193,7 @@ public class DataCollectionCacheModel
 			dataCollectionImpl.setDescription(description);
 		}
 
-		if (storageType == null) {
-			dataCollectionImpl.setStorageType("");
-		}
-		else {
-			dataCollectionImpl.setStorageType(storageType);
-		}
-
-		dataCollectionImpl.setDataTypeName(dataTypeName);
-		dataCollectionImpl.setDataTypeVersion(dataTypeVersion);
+		dataCollectionImpl.setOrganizationId(organizationId);
 
 		dataCollectionImpl.resetOriginalValues();
 
@@ -198,16 +216,18 @@ public class DataCollectionCacheModel
 		modifiedDate = objectInput.readLong();
 
 		status = objectInput.readInt();
-		name = objectInput.readUTF();
 
-		variantFrom = objectInput.readLong();
+		statusByUserId = objectInput.readLong();
+		statusByUserName = objectInput.readUTF();
+		statusDate = objectInput.readLong();
+		name = objectInput.readUTF();
+		version = objectInput.readUTF();
+
+		copiedFrom = objectInput.readLong();
 		title = objectInput.readUTF();
 		description = objectInput.readUTF();
-		storageType = objectInput.readUTF();
 
-		dataTypeName = objectInput.readLong();
-
-		dataTypeVersion = objectInput.readLong();
+		organizationId = objectInput.readLong();
 	}
 
 	@Override
@@ -239,6 +259,17 @@ public class DataCollectionCacheModel
 
 		objectOutput.writeInt(status);
 
+		objectOutput.writeLong(statusByUserId);
+
+		if (statusByUserName == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(statusByUserName);
+		}
+
+		objectOutput.writeLong(statusDate);
+
 		if (name == null) {
 			objectOutput.writeUTF("");
 		}
@@ -246,7 +277,14 @@ public class DataCollectionCacheModel
 			objectOutput.writeUTF(name);
 		}
 
-		objectOutput.writeLong(variantFrom);
+		if (version == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(version);
+		}
+
+		objectOutput.writeLong(copiedFrom);
 
 		if (title == null) {
 			objectOutput.writeUTF("");
@@ -262,16 +300,7 @@ public class DataCollectionCacheModel
 			objectOutput.writeUTF(description);
 		}
 
-		if (storageType == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(storageType);
-		}
-
-		objectOutput.writeLong(dataTypeName);
-
-		objectOutput.writeLong(dataTypeVersion);
+		objectOutput.writeLong(organizationId);
 	}
 
 	public String uuid;
@@ -283,12 +312,14 @@ public class DataCollectionCacheModel
 	public long createDate;
 	public long modifiedDate;
 	public int status;
+	public long statusByUserId;
+	public String statusByUserName;
+	public long statusDate;
 	public String name;
-	public long variantFrom;
+	public String version;
+	public long copiedFrom;
 	public String title;
 	public String description;
-	public String storageType;
-	public long dataTypeName;
-	public long dataTypeVersion;
+	public long organizationId;
 
 }
