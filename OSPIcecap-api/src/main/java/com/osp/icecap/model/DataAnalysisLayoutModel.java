@@ -83,4 +83,19 @@ public interface DataAnalysisLayoutModel extends BaseModel<DataAnalysisLayout> {
 	 */
 	public void setLayout(String layout);
 
+	/**
+	 * Returns the apply level of this data analysis layout.
+	 *
+	 * @return the apply level of this data analysis layout
+	 */
+	@AutoEscape
+	public String getApplyLevel();
+
+	/**
+	 * Sets the apply level of this data analysis layout.
+	 *
+	 * @param applyLevel the apply level of this data analysis layout
+	 */
+	public void setApplyLevel(String applyLevel);
+
 }

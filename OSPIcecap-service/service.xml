@@ -457,6 +457,14 @@
     <entity name="DataAnalysisLayout" local-service="true" remote-service="false">
         <column name="dataUuid" type="String" primary="true"></column>
         <column name="layout" type="String"></column>
+        <column name="applyLevel" type="String"></column>
+        <finder name="ApplyLevel" return-type="Collection">
+            <finder-column name="applyLevel"></finder-column>
+        </finder>
+        <finder name="DataUuidApplyLevel" return-type="DataAnalysisLayout">
+            <finder-column name="dataUuid"></finder-column>
+            <finder-column name="applyLevel"></finder-column>
+        </finder>
     </entity>
 
 </service-builder>

@@ -1,3 +1,6 @@
+create index IX_DF1BD3D8 on ICECAP_DataAnalysisLayout (applyLevel[$COLUMN_LENGTH:75$]);
+create index IX_8ABEE511 on ICECAP_DataAnalysisLayout (dataUuid[$COLUMN_LENGTH:75$], applyLevel[$COLUMN_LENGTH:75$]);
+
 create index IX_8D4DDEAA on ICECAP_DataCollection (groupId, status);
 create index IX_4E0A58E4 on ICECAP_DataCollection (groupId, userId, status);
 create index IX_BF2560C3 on ICECAP_DataCollection (name[$COLUMN_LENGTH:75$], version[$COLUMN_LENGTH:75$]);

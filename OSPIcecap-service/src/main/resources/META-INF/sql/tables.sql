@@ -1,6 +1,7 @@
 create table ICECAP_DataAnalysisLayout (
 	dataUuid VARCHAR(75) not null primary key,
-	layout VARCHAR(75) null
+	layout VARCHAR(75) null,
+	applyLevel VARCHAR(75) null
 );
 
 create table ICECAP_DataCollection (

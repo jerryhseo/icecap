@@ -364,6 +364,22 @@ public class DataPackLocalServiceWrapper
 		return _dataPackLocalService.removeDataPack(dataPackId);
 	}
 
+	@Override
+	public void removeDataPacksByDataCollectionId(long dataCollectionId) {
+		_dataPackLocalService.removeDataPacksByDataCollectionId(
+			dataCollectionId);
+	}
+
+	@Override
+	public void removeDataPacksByDataSectionId(long dataSectionId) {
+		_dataPackLocalService.removeDataPacksByDataSectionId(dataSectionId);
+	}
+
+	@Override
+	public void removeDataPacksByDataSetId(long dataSetId) {
+		_dataPackLocalService.removeDataPacksByDataSetId(dataSetId);
+	}
+
 	/**
 	 * Updates the data pack in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *

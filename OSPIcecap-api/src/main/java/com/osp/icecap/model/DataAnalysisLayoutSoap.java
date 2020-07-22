@@ -35,6 +35,7 @@ public class DataAnalysisLayoutSoap implements Serializable {
 
 		soapModel.setDataUuid(model.getDataUuid());
 		soapModel.setLayout(model.getLayout());
+		soapModel.setApplyLevel(model.getApplyLevel());
 
 		return soapModel;
 	}
@@ -113,7 +114,16 @@ public class DataAnalysisLayoutSoap implements Serializable {
 		_layout = layout;
 	}
 
+	public String getApplyLevel() {
+		return _applyLevel;
+	}
+
+	public void setApplyLevel(String applyLevel) {
+		_applyLevel = applyLevel;
+	}
+
 	private String _dataUuid;
 	private String _layout;
+	private String _applyLevel;
 
 }

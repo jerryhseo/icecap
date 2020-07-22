@@ -92,6 +92,19 @@ public class DataPackLocalServiceImpl extends DataPackLocalServiceBaseImpl {
 		return dataPack;
 	}
 	
+	public void removeDataPacksByDataCollectionId( long dataCollectionId ) {
+		super.dataEntryPersistence.removeByDataCollectionId(dataCollectionId);
+		super.dataPackPersistence.removeByDataCollectionId(dataCollectionId);
+	}
+	
+	public void removeDataPacksByDataSetId( long dataSetId ) {
+		super.dataPackPersistence.removeByDataSetId(dataSetId);
+	}
+	
+	public void removeDataPacksByDataSectionId( long dataSectionId ) {
+		super.dataPackPersistence.removeByDataSectionId(dataSectionId);
+	}
+	
 	public DataPack updateDataPack(
 			long dataPackId,
 			Map<Locale, String> titleMap,

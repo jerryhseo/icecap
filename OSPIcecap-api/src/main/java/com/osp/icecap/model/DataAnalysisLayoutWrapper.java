@@ -46,6 +46,7 @@ public class DataAnalysisLayoutWrapper
 
 		attributes.put("dataUuid", getDataUuid());
 		attributes.put("layout", getLayout());
+		attributes.put("applyLevel", getApplyLevel());
 
 		return attributes;
 	}
@@ -63,6 +64,22 @@ public class DataAnalysisLayoutWrapper
 		if (layout != null) {
 			setLayout(layout);
 		}
+
+		String applyLevel = (String)attributes.get("applyLevel");
+
+		if (applyLevel != null) {
+			setApplyLevel(applyLevel);
+		}
+	}
+
+	/**
+	 * Returns the apply level of this data analysis layout.
+	 *
+	 * @return the apply level of this data analysis layout
+	 */
+	@Override
+	public String getApplyLevel() {
+		return model.getApplyLevel();
 	}
 
 	/**
@@ -98,6 +115,16 @@ public class DataAnalysisLayoutWrapper
 	@Override
 	public void persist() {
 		model.persist();
+	}
+
+	/**
+	 * Sets the apply level of this data analysis layout.
+	 *
+	 * @param applyLevel the apply level of this data analysis layout
+	 */
+	@Override
+	public void setApplyLevel(String applyLevel) {
+		model.setApplyLevel(applyLevel);
 	}
 
 	/**

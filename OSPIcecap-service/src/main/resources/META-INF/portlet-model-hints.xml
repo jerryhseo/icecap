@@ -4,6 +4,7 @@
 	<model name="com.osp.icecap.model.DataAnalysisLayout">
 		<field name="dataUuid" type="String" />
 		<field name="layout" type="String" />
+		<field name="applyLevel" type="String" />
 	</model>
 	<model name="com.osp.icecap.model.DataCollection">
 		<field name="uuid" type="String" />

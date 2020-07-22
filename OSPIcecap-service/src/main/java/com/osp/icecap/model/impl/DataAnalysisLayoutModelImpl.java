@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 
 import com.osp.icecap.model.DataAnalysisLayout;
@@ -64,7 +65,8 @@ public class DataAnalysisLayoutModelImpl
 	public static final String TABLE_NAME = "ICECAP_DataAnalysisLayout";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"dataUuid", Types.VARCHAR}, {"layout", Types.VARCHAR}
+		{"dataUuid", Types.VARCHAR}, {"layout", Types.VARCHAR},
+		{"applyLevel", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -73,10 +75,11 @@ public class DataAnalysisLayoutModelImpl
 	static {
 		TABLE_COLUMNS_MAP.put("dataUuid", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("layout", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("applyLevel", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataAnalysisLayout (dataUuid VARCHAR(75) not null primary key,layout VARCHAR(75) null)";
+		"create table ICECAP_DataAnalysisLayout (dataUuid VARCHAR(75) not null primary key,layout VARCHAR(75) null,applyLevel VARCHAR(75) null)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table ICECAP_DataAnalysisLayout";
@@ -92,6 +95,10 @@ public class DataAnalysisLayoutModelImpl
 	public static final String SESSION_FACTORY = "liferaySessionFactory";
 
 	public static final String TX_MANAGER = "liferayTransactionManager";
+
+	public static final long APPLYLEVEL_COLUMN_BITMASK = 1L;
+
+	public static final long DATAUUID_COLUMN_BITMASK = 2L;
 
 	public static void setEntityCacheEnabled(boolean entityCacheEnabled) {
 		_entityCacheEnabled = entityCacheEnabled;
@@ -240,6 +247,12 @@ public class DataAnalysisLayoutModelImpl
 			"layout",
 			(BiConsumer<DataAnalysisLayout, String>)
 				DataAnalysisLayout::setLayout);
+		attributeGetterFunctions.put(
+			"applyLevel", DataAnalysisLayout::getApplyLevel);
+		attributeSetterBiConsumers.put(
+			"applyLevel",
+			(BiConsumer<DataAnalysisLayout, String>)
+				DataAnalysisLayout::setApplyLevel);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -259,7 +272,17 @@ public class DataAnalysisLayoutModelImpl
 
 	@Override
 	public void setDataUuid(String dataUuid) {
+		_columnBitmask |= DATAUUID_COLUMN_BITMASK;
+
+		if (_originalDataUuid == null) {
+			_originalDataUuid = _dataUuid;
+		}
+
 		_dataUuid = dataUuid;
+	}
+
+	public String getOriginalDataUuid() {
+		return GetterUtil.getString(_originalDataUuid);
 	}
 
 	@Override
@@ -275,6 +298,35 @@ public class DataAnalysisLayoutModelImpl
 	@Override
 	public void setLayout(String layout) {
 		_layout = layout;
+	}
+
+	@Override
+	public String getApplyLevel() {
+		if (_applyLevel == null) {
+			return "";
+		}
+		else {
+			return _applyLevel;
+		}
+	}
+
+	@Override
+	public void setApplyLevel(String applyLevel) {
+		_columnBitmask |= APPLYLEVEL_COLUMN_BITMASK;
+
+		if (_originalApplyLevel == null) {
+			_originalApplyLevel = _applyLevel;
+		}
+
+		_applyLevel = applyLevel;
+	}
+
+	public String getOriginalApplyLevel() {
+		return GetterUtil.getString(_originalApplyLevel);
+	}
+
+	public long getColumnBitmask() {
+		return _columnBitmask;
 	}
 
 	@Override
@@ -299,6 +351,7 @@ public class DataAnalysisLayoutModelImpl
 
 		dataAnalysisLayoutImpl.setDataUuid(getDataUuid());
 		dataAnalysisLayoutImpl.setLayout(getLayout());
+		dataAnalysisLayoutImpl.setApplyLevel(getApplyLevel());
 
 		dataAnalysisLayoutImpl.resetOriginalValues();
 
@@ -351,6 +404,15 @@ public class DataAnalysisLayoutModelImpl
 
 	@Override
 	public void resetOriginalValues() {
+		DataAnalysisLayoutModelImpl dataAnalysisLayoutModelImpl = this;
+
+		dataAnalysisLayoutModelImpl._originalDataUuid =
+			dataAnalysisLayoutModelImpl._dataUuid;
+
+		dataAnalysisLayoutModelImpl._originalApplyLevel =
+			dataAnalysisLayoutModelImpl._applyLevel;
+
+		dataAnalysisLayoutModelImpl._columnBitmask = 0;
 	}
 
 	@Override
@@ -372,6 +434,14 @@ public class DataAnalysisLayoutModelImpl
 
 		if ((layout != null) && (layout.length() == 0)) {
 			dataAnalysisLayoutCacheModel.layout = null;
+		}
+
+		dataAnalysisLayoutCacheModel.applyLevel = getApplyLevel();
+
+		String applyLevel = dataAnalysisLayoutCacheModel.applyLevel;
+
+		if ((applyLevel != null) && (applyLevel.length() == 0)) {
+			dataAnalysisLayoutCacheModel.applyLevel = null;
 		}
 
 		return dataAnalysisLayoutCacheModel;
@@ -451,7 +521,11 @@ public class DataAnalysisLayoutModelImpl
 	private static boolean _finderCacheEnabled;
 
 	private String _dataUuid;
+	private String _originalDataUuid;
 	private String _layout;
+	private String _applyLevel;
+	private String _originalApplyLevel;
+	private long _columnBitmask;
 	private DataAnalysisLayout _escapedModel;
 
 }

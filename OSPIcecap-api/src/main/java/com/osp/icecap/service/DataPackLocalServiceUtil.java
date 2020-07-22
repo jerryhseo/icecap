@@ -345,6 +345,20 @@ public class DataPackLocalServiceUtil {
 		return getService().removeDataPack(dataPackId);
 	}
 
+	public static void removeDataPacksByDataCollectionId(
+		long dataCollectionId) {
+
+		getService().removeDataPacksByDataCollectionId(dataCollectionId);
+	}
+
+	public static void removeDataPacksByDataSectionId(long dataSectionId) {
+		getService().removeDataPacksByDataSectionId(dataSectionId);
+	}
+
+	public static void removeDataPacksByDataSetId(long dataSetId) {
+		getService().removeDataPacksByDataSetId(dataSetId);
+	}
+
 	/**
 	 * Updates the data pack in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *

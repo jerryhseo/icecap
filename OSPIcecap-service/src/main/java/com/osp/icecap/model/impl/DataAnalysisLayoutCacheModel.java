@@ -64,12 +64,14 @@ public class DataAnalysisLayoutCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(5);
+		StringBundler sb = new StringBundler(7);
 
 		sb.append("{dataUuid=");
 		sb.append(dataUuid);
 		sb.append(", layout=");
 		sb.append(layout);
+		sb.append(", applyLevel=");
+		sb.append(applyLevel);
 		sb.append("}");
 
 		return sb.toString();
@@ -94,6 +96,13 @@ public class DataAnalysisLayoutCacheModel
 			dataAnalysisLayoutImpl.setLayout(layout);
 		}
 
+		if (applyLevel == null) {
+			dataAnalysisLayoutImpl.setApplyLevel("");
+		}
+		else {
+			dataAnalysisLayoutImpl.setApplyLevel(applyLevel);
+		}
+
 		dataAnalysisLayoutImpl.resetOriginalValues();
 
 		return dataAnalysisLayoutImpl;
@@ -103,6 +112,7 @@ public class DataAnalysisLayoutCacheModel
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		dataUuid = objectInput.readUTF();
 		layout = objectInput.readUTF();
+		applyLevel = objectInput.readUTF();
 	}
 
 	@Override
@@ -120,9 +130,17 @@ public class DataAnalysisLayoutCacheModel
 		else {
 			objectOutput.writeUTF(layout);
 		}
+
+		if (applyLevel == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(applyLevel);
+		}
 	}
 
 	public String dataUuid;
 	public String layout;
+	public String applyLevel;
 
 }
