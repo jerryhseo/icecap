@@ -15,7 +15,11 @@
 package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
-
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
+import com.osp.icecap.model.DataAnalysisLayout;
 import com.osp.icecap.service.base.DataAnalysisLayoutLocalServiceBaseImpl;
 
 import org.osgi.service.component.annotations.Component;
@@ -40,9 +44,48 @@ import org.osgi.service.component.annotations.Component;
 public class DataAnalysisLayoutLocalServiceImpl
 	extends DataAnalysisLayoutLocalServiceBaseImpl {
 
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Use <code>com.osp.icecap.service.DataAnalysisLayoutLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.osp.icecap.service.DataAnalysisLayoutLocalServiceUtil</code>.
-	 */
+	public JSONObject addDataAnalysisLayout( String dataUuidStr, String layoutStr ) throws JSONException {
+		DataAnalysisLayout layout = super.dataAnalysisLayoutPersistence.create(dataUuidStr);
+		
+		JSONObject layoutJSON = null;
+		
+		layoutJSON = JSONFactoryUtil.createJSONObject(layoutStr);
+		layout.setLayout(layoutJSON.toString());
+		
+		super.dataAnalysisLayoutPersistence.update( layout );
+		
+		return  layoutJSON;
+	}
+	
+	public DataAnalysisLayout removeDataAnalysisLayout( String dataUuid ) throws NoSuchDataAnalysisLayoutException {
+		return super.dataAnalysisLayoutPersistence.remove(dataUuid);
+	}
+	
+	public JSONObject updateDataAnalysisLayout( String dataUuidStr, String layoutStr) throws NoSuchDataAnalysisLayoutException, JSONException {
+		DataAnalysisLayout layout = super.dataAnalysisLayoutPersistence.findByPrimaryKey(dataUuidStr);
+		
+		JSONObject layoutJSON = null;
+		
+		layoutJSON = JSONFactoryUtil.createJSONObject(layoutStr);
+		layout.setLayout(layoutJSON.toString());
+		super.dataAnalysisLayoutPersistence.update( layout );
+		
+		return  layoutJSON;
+	}
+	
+	public JSONObject getDataAnalysisLayoutJSON( String dataUuidStr ) throws NoSuchDataAnalysisLayoutException, JSONException {
+		DataAnalysisLayout layout = super.dataAnalysisLayoutPersistence.findByPrimaryKey(dataUuidStr);
+		
+		JSONObject layoutJSON = null;
+		
+		layoutJSON = JSONFactoryUtil.createJSONObject(layout.getLayout());
+		
+		return  layoutJSON;
+	}
+	
+	public String getDataAnalysisLayoutStr( String dataUuidStr ) throws NoSuchDataAnalysisLayoutException{
+		DataAnalysisLayout layout = super.dataAnalysisLayoutPersistence.findByPrimaryKey(dataUuidStr);
+		
+		return  layout.getLayout();
+	}
 }
