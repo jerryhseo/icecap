@@ -48,6 +48,20 @@ public class DataEntryLocalServiceWrapper
 		return _dataEntryLocalService.addDataEntry(dataEntry);
 	}
 
+	@Override
+	public com.osp.icecap.model.DataEntry addDataEntry(
+			long dataCollectionId, long dataSetId, long dataSectionId,
+			long dataPackId, long dataTypeId, String accessURL,
+			String sequenceId, String accessType, long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _dataEntryLocalService.addDataEntry(
+			dataCollectionId, dataSetId, dataSectionId, dataPackId, dataTypeId,
+			accessURL, sequenceId, accessType, copiedFrom, metaDataJSON, sc);
+	}
+
 	/**
 	 * Creates a new data entry with the primary key. Does not add the data entry to the database.
 	 *
@@ -57,20 +71,6 @@ public class DataEntryLocalServiceWrapper
 	@Override
 	public com.osp.icecap.model.DataEntry createDataEntry(long dataEntryId) {
 		return _dataEntryLocalService.createDataEntry(dataEntryId);
-	}
-
-	@Override
-	public com.osp.icecap.model.DataEntry createDataEntry(
-			long dataCollectionId, long dataSetId, long dataSectionId,
-			long dataPackId, String accessURL, String sequenceId,
-			String accessType, long copiedFrom,
-			java.util.Map<String, String> descriptionMap,
-			com.liferay.portal.kernel.service.ServiceContext sc)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return _dataEntryLocalService.createDataEntry(
-			dataCollectionId, dataSetId, dataSectionId, dataPackId, accessURL,
-			sequenceId, accessType, copiedFrom, descriptionMap, sc);
 	}
 
 	/**
@@ -359,7 +359,10 @@ public class DataEntryLocalServiceWrapper
 	}
 
 	@Override
-	public com.osp.icecap.model.DataEntry removeDataEntry(long dataEntryId) {
+	public com.osp.icecap.model.DataEntry removeDataEntry(long dataEntryId)
+		throws com.osp.icecap.exception.NoSuchDataEntryException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
 		return _dataEntryLocalService.removeDataEntry(dataEntryId);
 	}
 
@@ -378,13 +381,18 @@ public class DataEntryLocalServiceWrapper
 
 	@Override
 	public com.osp.icecap.model.DataEntry updateDataEntry(
-		long dataEntryId, long dataCollectionId, long dataSetId,
-		long dataSectionId, long dataPackId,
-		com.liferay.portal.kernel.service.ServiceContext sc) {
+			long dataEntryId, long dataCollectionId, long dataSetId,
+			long dataSectionId, long dataPackId, long dataTypeId,
+			String accessURL, String sequenceId, String accessType,
+			long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.osp.icecap.exception.NoSuchMetaDataFieldException {
 
 		return _dataEntryLocalService.updateDataEntry(
 			dataEntryId, dataCollectionId, dataSetId, dataSectionId, dataPackId,
-			sc);
+			dataTypeId, accessURL, sequenceId, accessType, copiedFrom,
+			metaDataJSON, sc);
 	}
 
 	@Override

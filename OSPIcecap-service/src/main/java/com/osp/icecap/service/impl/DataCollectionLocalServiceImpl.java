@@ -20,7 +20,9 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
+import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
 import com.osp.icecap.exception.NoSuchDataCollectionException;
+import com.osp.icecap.exception.NoSuchMetaDataException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataAnalysisLayout;
 import com.osp.icecap.model.DataCollection;
@@ -74,7 +76,7 @@ public class DataCollectionLocalServiceImpl
 		
 		collection = this.assignDataCollectionAttributes(collection, name, version, organizationId, metaDataJSON, layout);
 
-		return super.dataCollectionPersistence.update(collection);
+		return super.dataCollectionPersistence.update(collection, sc);
 	}
 	
 	/**
@@ -179,8 +181,18 @@ public class DataCollectionLocalServiceImpl
 		return super.dataCollectionPersistence.findByNameVersion(dataCollectionName, dataCollectionVersion);
 	}
 	
-	public JSONObject getDataCollectionLayout() {
+	public String getDataCollectionLayout( long dataCollectionId ) throws NoSuchDataCollectionException, NoSuchDataAnalysisLayoutException {
+		DataCollection dataCollection = super.dataCollectionPersistence.findByPrimaryKey(dataCollectionId);
+		DataAnalysisLayout analysisLayout = super.dataAnalysisLayoutPersistence.findByPrimaryKey(dataCollection.getUuid());
 		
+		return analysisLayout.getLayout();
+	}
+	
+	public MetaData getDataCollectionMetaData( long dataCollectionId ) throws NoSuchDataCollectionException, NoSuchMetaDataException {
+		DataCollection dataCollection = super.dataCollectionPersistence.findByPrimaryKey(dataCollectionId);
+		MetaData metaData = super.metaDataPersistence.findByPrimaryKey(dataCollection.getUuid());
+		
+		return metaData;
 	}
 	
 	private DataCollection assignDataCollectionAttributes(

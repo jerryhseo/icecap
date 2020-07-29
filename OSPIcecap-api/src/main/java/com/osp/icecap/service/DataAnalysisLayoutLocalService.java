@@ -18,6 +18,8 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -28,6 +30,7 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
 import com.osp.icecap.model.DataAnalysisLayout;
 
 import java.io.Serializable;
@@ -69,6 +72,10 @@ public interface DataAnalysisLayoutLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataAnalysisLayout addDataAnalysisLayout(
 		DataAnalysisLayout dataAnalysisLayout);
+
+	public JSONObject addDataAnalysisLayout(
+			String dataUuidStr, String layoutStr)
+		throws JSONException;
 
 	/**
 	 * Creates a new data analysis layout with the primary key. Does not add the data analysis layout to the database.
@@ -187,6 +194,10 @@ public interface DataAnalysisLayoutLocalService
 	public DataAnalysisLayout getDataAnalysisLayout(String dataUuid)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public JSONObject getDataAnalysisLayoutJSON(String dataUuidStr)
+		throws JSONException, NoSuchDataAnalysisLayoutException;
+
 	/**
 	 * Returns a range of all the data analysis layouts.
 	 *
@@ -209,6 +220,10 @@ public interface DataAnalysisLayoutLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getDataAnalysisLayoutsCount();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public String getDataAnalysisLayoutStr(String dataUuidStr)
+		throws NoSuchDataAnalysisLayoutException;
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -221,6 +236,9 @@ public interface DataAnalysisLayoutLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	public DataAnalysisLayout removeDataAnalysisLayout(String dataUuid)
+		throws NoSuchDataAnalysisLayoutException;
+
 	/**
 	 * Updates the data analysis layout in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -230,5 +248,9 @@ public interface DataAnalysisLayoutLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataAnalysisLayout updateDataAnalysisLayout(
 		DataAnalysisLayout dataAnalysisLayout);
+
+	public JSONObject updateDataAnalysisLayout(
+			String dataUuidStr, String layoutStr)
+		throws JSONException, NoSuchDataAnalysisLayoutException;
 
 }

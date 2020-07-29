@@ -50,6 +50,15 @@ public class DataAnalysisLayoutLocalServiceWrapper
 			dataAnalysisLayout);
 	}
 
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject addDataAnalysisLayout(
+			String dataUuidStr, String layoutStr)
+		throws com.liferay.portal.kernel.json.JSONException {
+
+		return _dataAnalysisLayoutLocalService.addDataAnalysisLayout(
+			dataUuidStr, layoutStr);
+	}
+
 	/**
 	 * Creates a new data analysis layout with the primary key. Does not add the data analysis layout to the database.
 	 *
@@ -220,6 +229,16 @@ public class DataAnalysisLayoutLocalServiceWrapper
 		return _dataAnalysisLayoutLocalService.getDataAnalysisLayout(dataUuid);
 	}
 
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject getDataAnalysisLayoutJSON(
+			String dataUuidStr)
+		throws com.liferay.portal.kernel.json.JSONException,
+			   com.osp.icecap.exception.NoSuchDataAnalysisLayoutException {
+
+		return _dataAnalysisLayoutLocalService.getDataAnalysisLayoutJSON(
+			dataUuidStr);
+	}
+
 	/**
 	 * Returns a range of all the data analysis layouts.
 	 *
@@ -249,6 +268,14 @@ public class DataAnalysisLayoutLocalServiceWrapper
 		return _dataAnalysisLayoutLocalService.getDataAnalysisLayoutsCount();
 	}
 
+	@Override
+	public String getDataAnalysisLayoutStr(String dataUuidStr)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException {
+
+		return _dataAnalysisLayoutLocalService.getDataAnalysisLayoutStr(
+			dataUuidStr);
+	}
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -267,6 +294,15 @@ public class DataAnalysisLayoutLocalServiceWrapper
 		return _dataAnalysisLayoutLocalService.getPersistedModel(primaryKeyObj);
 	}
 
+	@Override
+	public com.osp.icecap.model.DataAnalysisLayout removeDataAnalysisLayout(
+			String dataUuid)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException {
+
+		return _dataAnalysisLayoutLocalService.removeDataAnalysisLayout(
+			dataUuid);
+	}
+
 	/**
 	 * Updates the data analysis layout in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -279,6 +315,16 @@ public class DataAnalysisLayoutLocalServiceWrapper
 
 		return _dataAnalysisLayoutLocalService.updateDataAnalysisLayout(
 			dataAnalysisLayout);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject updateDataAnalysisLayout(
+			String dataUuidStr, String layoutStr)
+		throws com.liferay.portal.kernel.json.JSONException,
+			   com.osp.icecap.exception.NoSuchDataAnalysisLayoutException {
+
+		return _dataAnalysisLayoutLocalService.updateDataAnalysisLayout(
+			dataUuidStr, layoutStr);
 	}
 
 	@Override

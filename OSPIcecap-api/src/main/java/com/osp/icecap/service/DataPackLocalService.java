@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchDataPackException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
+import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.model.DataPack;
 
 import java.io.Serializable;
@@ -199,6 +200,16 @@ public interface DataPackLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataEntry> getDataEntriesByDataPackId(long dataPackId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataEntry> getDataEntriesByDataPackId(
+		long dataPackId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataEntriesCountByDataPackId(long dataPackId);
 
 	/**
 	 * Returns the data pack with the primary key.

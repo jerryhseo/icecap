@@ -217,6 +217,22 @@ public class DataSetLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
+	public static java.util.List<com.osp.icecap.model.DataSection>
+		getDataSectionsByDataSetId(long dataSetId) {
+
+		return getService().getDataSectionsByDataSetId(dataSetId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataSection>
+		getDataSectionsByDataSetId(long dataSetId, int start, int end) {
+
+		return getService().getDataSectionsByDataSetId(dataSetId, start, end);
+	}
+
+	public static int getDataSectionsCountByDataSetId(long dataSetId) {
+		return getService().getDataSectionsCountByDataSetId(dataSetId);
+	}
+
 	/**
 	 * Returns the data set with the primary key.
 	 *

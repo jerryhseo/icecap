@@ -52,6 +52,13 @@ public class DataAnalysisLayoutLocalServiceUtil {
 		return getService().addDataAnalysisLayout(dataAnalysisLayout);
 	}
 
+	public static com.liferay.portal.kernel.json.JSONObject
+			addDataAnalysisLayout(String dataUuidStr, String layoutStr)
+		throws com.liferay.portal.kernel.json.JSONException {
+
+		return getService().addDataAnalysisLayout(dataUuidStr, layoutStr);
+	}
+
 	/**
 	 * Creates a new data analysis layout with the primary key. Does not add the data analysis layout to the database.
 	 *
@@ -207,6 +214,14 @@ public class DataAnalysisLayoutLocalServiceUtil {
 		return getService().getDataAnalysisLayout(dataUuid);
 	}
 
+	public static com.liferay.portal.kernel.json.JSONObject
+			getDataAnalysisLayoutJSON(String dataUuidStr)
+		throws com.liferay.portal.kernel.json.JSONException,
+			   com.osp.icecap.exception.NoSuchDataAnalysisLayoutException {
+
+		return getService().getDataAnalysisLayoutJSON(dataUuidStr);
+	}
+
 	/**
 	 * Returns a range of all the data analysis layouts.
 	 *
@@ -233,6 +248,12 @@ public class DataAnalysisLayoutLocalServiceUtil {
 		return getService().getDataAnalysisLayoutsCount();
 	}
 
+	public static String getDataAnalysisLayoutStr(String dataUuidStr)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException {
+
+		return getService().getDataAnalysisLayoutStr(dataUuidStr);
+	}
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -249,6 +270,13 @@ public class DataAnalysisLayoutLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static com.osp.icecap.model.DataAnalysisLayout
+			removeDataAnalysisLayout(String dataUuid)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException {
+
+		return getService().removeDataAnalysisLayout(dataUuid);
+	}
+
 	/**
 	 * Updates the data analysis layout in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -260,6 +288,14 @@ public class DataAnalysisLayoutLocalServiceUtil {
 			com.osp.icecap.model.DataAnalysisLayout dataAnalysisLayout) {
 
 		return getService().updateDataAnalysisLayout(dataAnalysisLayout);
+	}
+
+	public static com.liferay.portal.kernel.json.JSONObject
+			updateDataAnalysisLayout(String dataUuidStr, String layoutStr)
+		throws com.liferay.portal.kernel.json.JSONException,
+			   com.osp.icecap.exception.NoSuchDataAnalysisLayoutException {
+
+		return getService().updateDataAnalysisLayout(dataUuidStr, layoutStr);
 	}
 
 	public static DataAnalysisLayoutLocalService getService() {

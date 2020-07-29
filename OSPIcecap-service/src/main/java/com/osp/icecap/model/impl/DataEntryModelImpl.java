@@ -983,12 +983,7 @@ public class DataEntryModelImpl
 	@Override
 	public DataEntry toEscapedModel() {
 		if (_escapedModel == null) {
-			Function<InvocationHandler, DataEntry>
-				escapedModelProxyProviderFunction =
-					EscapedModelProxyProviderFunctionHolder.
-						_escapedModelProxyProviderFunction;
-
-			_escapedModel = escapedModelProxyProviderFunction.apply(
+			_escapedModel = _escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -1299,13 +1294,8 @@ public class DataEntryModelImpl
 		return sb.toString();
 	}
 
-	private static class EscapedModelProxyProviderFunctionHolder {
-
-		private static final Function<InvocationHandler, DataEntry>
-			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
-
-	}
-
+	private static final Function<InvocationHandler, DataEntry>
+		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 

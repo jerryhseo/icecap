@@ -220,6 +220,22 @@ public class DataPackLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
+	public static java.util.List<com.osp.icecap.model.DataEntry>
+		getDataEntriesByDataPackId(long dataPackId) {
+
+		return getService().getDataEntriesByDataPackId(dataPackId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataEntry>
+		getDataEntriesByDataPackId(long dataPackId, int start, int end) {
+
+		return getService().getDataEntriesByDataPackId(dataPackId, start, end);
+	}
+
+	public static int getDataEntriesCountByDataPackId(long dataPackId) {
+		return getService().getDataEntriesCountByDataPackId(dataPackId);
+	}
+
 	/**
 	 * Returns the data pack with the primary key.
 	 *

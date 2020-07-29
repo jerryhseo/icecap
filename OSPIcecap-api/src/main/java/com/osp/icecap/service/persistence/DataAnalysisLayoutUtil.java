@@ -166,22 +166,18 @@ public class DataAnalysisLayoutUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
 	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
-	@Deprecated
 	public static List<DataAnalysisLayout> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<DataAnalysisLayout> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
 
 		return getPersistence().findByDataCollectionId(
-			dataCollectionId, start, end, orderByComparator, useFinderCache);
+			dataCollectionId, start, end, orderByComparator);
 	}
 
 	/**
@@ -195,14 +191,16 @@ public class DataAnalysisLayoutUtil {
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
 	public static List<DataAnalysisLayout> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean retrieveFromCache) {
 
 		return getPersistence().findByDataCollectionId(
-			dataCollectionId, start, end, orderByComparator);
+			dataCollectionId, start, end, orderByComparator, retrieveFromCache);
 	}
 
 	/**
@@ -341,22 +339,18 @@ public class DataAnalysisLayoutUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSetId(long, int, int, OrderByComparator)}
 	 * @param dataSetId the data set ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
-	@Deprecated
 	public static List<DataAnalysisLayout> findByDataSetId(
 		long dataSetId, int start, int end,
-		OrderByComparator<DataAnalysisLayout> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
 
 		return getPersistence().findByDataSetId(
-			dataSetId, start, end, orderByComparator, useFinderCache);
+			dataSetId, start, end, orderByComparator);
 	}
 
 	/**
@@ -370,14 +364,16 @@ public class DataAnalysisLayoutUtil {
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
 	public static List<DataAnalysisLayout> findByDataSetId(
 		long dataSetId, int start, int end,
-		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean retrieveFromCache) {
 
 		return getPersistence().findByDataSetId(
-			dataSetId, start, end, orderByComparator);
+			dataSetId, start, end, orderByComparator, retrieveFromCache);
 	}
 
 	/**
@@ -518,22 +514,18 @@ public class DataAnalysisLayoutUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSectionId(long, int, int, OrderByComparator)}
 	 * @param dataSectionId the data section ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
-	@Deprecated
 	public static List<DataAnalysisLayout> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		OrderByComparator<DataAnalysisLayout> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
 
 		return getPersistence().findByDataSectionId(
-			dataSectionId, start, end, orderByComparator, useFinderCache);
+			dataSectionId, start, end, orderByComparator);
 	}
 
 	/**
@@ -547,14 +539,16 @@ public class DataAnalysisLayoutUtil {
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
 	public static List<DataAnalysisLayout> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean retrieveFromCache) {
 
 		return getPersistence().findByDataSectionId(
-			dataSectionId, start, end, orderByComparator);
+			dataSectionId, start, end, orderByComparator, retrieveFromCache);
 	}
 
 	/**
@@ -693,22 +687,18 @@ public class DataAnalysisLayoutUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataPackId(long, int, int, OrderByComparator)}
 	 * @param dataPackId the data pack ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
-	@Deprecated
 	public static List<DataAnalysisLayout> findByDataPackId(
 		long dataPackId, int start, int end,
-		OrderByComparator<DataAnalysisLayout> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
 
 		return getPersistence().findByDataPackId(
-			dataPackId, start, end, orderByComparator, useFinderCache);
+			dataPackId, start, end, orderByComparator);
 	}
 
 	/**
@@ -722,14 +712,16 @@ public class DataAnalysisLayoutUtil {
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
 	public static List<DataAnalysisLayout> findByDataPackId(
 		long dataPackId, int start, int end,
-		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean retrieveFromCache) {
 
 		return getPersistence().findByDataPackId(
-			dataPackId, start, end, orderByComparator);
+			dataPackId, start, end, orderByComparator, retrieveFromCache);
 	}
 
 	/**
@@ -936,21 +928,16 @@ public class DataAnalysisLayoutUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data analysis layouts
 	 */
-	@Deprecated
 	public static List<DataAnalysisLayout> findAll(
 		int start, int end,
-		OrderByComparator<DataAnalysisLayout> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, useFinderCache);
+		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
@@ -963,13 +950,16 @@ public class DataAnalysisLayoutUtil {
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data analysis layouts
 	 */
 	public static List<DataAnalysisLayout> findAll(
 		int start, int end,
-		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean retrieveFromCache) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findAll(
+			start, end, orderByComparator, retrieveFromCache);
 	}
 
 	/**

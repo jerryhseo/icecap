@@ -26,9 +26,10 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.persistence.CompanyProvider;
+import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -135,21 +136,18 @@ public class DataPackPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid(String, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data packs
 	 */
-	@Deprecated
 	@Override
 	public List<DataPack> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataPack> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<DataPack> orderByComparator) {
 
-		return findByUuid(uuid, start, end, orderByComparator);
+		return findByUuid(uuid, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -163,12 +161,14 @@ public class DataPackPersistenceImpl
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data packs
 	 */
 	@Override
 	public List<DataPack> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataPack> orderByComparator) {
+		OrderByComparator<DataPack> orderByComparator,
+		boolean retrieveFromCache) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -188,15 +188,19 @@ public class DataPackPersistenceImpl
 			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
-		List<DataPack> list = (List<DataPack>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataPack> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataPack dataPack : list) {
-				if (!uuid.equals(dataPack.getUuid())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataPack>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataPack dataPack : list) {
+					if (!uuid.equals(dataPack.getUuid())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -675,20 +679,15 @@ public class DataPackPersistenceImpl
 	}
 
 	/**
-	 * Returns the data pack where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns the data pack where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByUUID_G(String,long)}
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data pack, or <code>null</code> if a matching data pack could not be found
 	 */
-	@Deprecated
 	@Override
-	public DataPack fetchByUUID_G(
-		String uuid, long groupId, boolean useFinderCache) {
-
-		return fetchByUUID_G(uuid, groupId);
+	public DataPack fetchByUUID_G(String uuid, long groupId) {
+		return fetchByUUID_G(uuid, groupId, true);
 	}
 
 	/**
@@ -696,17 +695,23 @@ public class DataPackPersistenceImpl
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param useFinderCache whether to use the finder cache
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching data pack, or <code>null</code> if a matching data pack could not be found
 	 */
 	@Override
-	public DataPack fetchByUUID_G(String uuid, long groupId) {
+	public DataPack fetchByUUID_G(
+		String uuid, long groupId, boolean retrieveFromCache) {
+
 		uuid = Objects.toString(uuid, "");
 
 		Object[] finderArgs = new Object[] {uuid, groupId};
 
-		Object result = finderCache.getResult(
-			_finderPathFetchByUUID_G, finderArgs, this);
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = finderCache.getResult(
+				_finderPathFetchByUUID_G, finderArgs, this);
+		}
 
 		if (result instanceof DataPack) {
 			DataPack dataPack = (DataPack)result;
@@ -923,22 +928,20 @@ public class DataPackPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid_C(String,long, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data packs
 	 */
-	@Deprecated
 	@Override
 	public List<DataPack> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<DataPack> orderByComparator) {
 
-		return findByUuid_C(uuid, companyId, start, end, orderByComparator);
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -953,12 +956,14 @@ public class DataPackPersistenceImpl
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data packs
 	 */
 	@Override
 	public List<DataPack> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator) {
+		OrderByComparator<DataPack> orderByComparator,
+		boolean retrieveFromCache) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -980,17 +985,21 @@ public class DataPackPersistenceImpl
 			};
 		}
 
-		List<DataPack> list = (List<DataPack>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataPack> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataPack dataPack : list) {
-				if (!uuid.equals(dataPack.getUuid()) ||
-					(companyId != dataPack.getCompanyId())) {
+		if (retrieveFromCache) {
+			list = (List<DataPack>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					list = null;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataPack dataPack : list) {
+					if (!uuid.equals(dataPack.getUuid()) ||
+						(companyId != dataPack.getCompanyId())) {
 
-					break;
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -1505,21 +1514,18 @@ public class DataPackPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByGroupId(long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data packs
 	 */
-	@Deprecated
 	@Override
 	public List<DataPack> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<DataPack> orderByComparator) {
 
-		return findByGroupId(groupId, start, end, orderByComparator);
+		return findByGroupId(groupId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -1533,12 +1539,14 @@ public class DataPackPersistenceImpl
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data packs
 	 */
 	@Override
 	public List<DataPack> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator) {
+		OrderByComparator<DataPack> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1556,15 +1564,19 @@ public class DataPackPersistenceImpl
 			finderArgs = new Object[] {groupId, start, end, orderByComparator};
 		}
 
-		List<DataPack> list = (List<DataPack>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataPack> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataPack dataPack : list) {
-				if ((groupId != dataPack.getGroupId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataPack>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataPack dataPack : list) {
+					if ((groupId != dataPack.getGroupId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -2002,21 +2014,18 @@ public class DataPackPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUserId(long, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data packs
 	 */
-	@Deprecated
 	@Override
 	public List<DataPack> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<DataPack> orderByComparator) {
 
-		return findByUserId(userId, start, end, orderByComparator);
+		return findByUserId(userId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -2030,12 +2039,14 @@ public class DataPackPersistenceImpl
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data packs
 	 */
 	@Override
 	public List<DataPack> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator) {
+		OrderByComparator<DataPack> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2053,15 +2064,19 @@ public class DataPackPersistenceImpl
 			finderArgs = new Object[] {userId, start, end, orderByComparator};
 		}
 
-		List<DataPack> list = (List<DataPack>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataPack> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataPack dataPack : list) {
-				if ((userId != dataPack.getUserId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataPack>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataPack dataPack : list) {
+					if ((userId != dataPack.getUserId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -2499,21 +2514,18 @@ public class DataPackPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByStatus(int, int, int, OrderByComparator)}
 	 * @param status the status
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data packs
 	 */
-	@Deprecated
 	@Override
 	public List<DataPack> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataPack> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<DataPack> orderByComparator) {
 
-		return findByStatus(status, start, end, orderByComparator);
+		return findByStatus(status, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -2527,12 +2539,14 @@ public class DataPackPersistenceImpl
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data packs
 	 */
 	@Override
 	public List<DataPack> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataPack> orderByComparator) {
+		OrderByComparator<DataPack> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2550,15 +2564,19 @@ public class DataPackPersistenceImpl
 			finderArgs = new Object[] {status, start, end, orderByComparator};
 		}
 
-		List<DataPack> list = (List<DataPack>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataPack> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataPack dataPack : list) {
-				if ((status != dataPack.getStatus())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataPack>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataPack dataPack : list) {
+					if ((status != dataPack.getStatus())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -2999,22 +3017,19 @@ public class DataPackPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
 	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data packs
 	 */
-	@Deprecated
 	@Override
 	public List<DataPack> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<DataPack> orderByComparator) {
 
 		return findByDataCollectionId(
-			dataCollectionId, start, end, orderByComparator);
+			dataCollectionId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -3028,12 +3043,14 @@ public class DataPackPersistenceImpl
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data packs
 	 */
 	@Override
 	public List<DataPack> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator) {
+		OrderByComparator<DataPack> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3053,15 +3070,19 @@ public class DataPackPersistenceImpl
 			};
 		}
 
-		List<DataPack> list = (List<DataPack>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataPack> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataPack dataPack : list) {
-				if ((dataCollectionId != dataPack.getDataCollectionId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataPack>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataPack dataPack : list) {
+					if ((dataCollectionId != dataPack.getDataCollectionId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -3507,21 +3528,18 @@ public class DataPackPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSetId(long, int, int, OrderByComparator)}
 	 * @param dataSetId the data set ID
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data packs
 	 */
-	@Deprecated
 	@Override
 	public List<DataPack> findByDataSetId(
 		long dataSetId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<DataPack> orderByComparator) {
 
-		return findByDataSetId(dataSetId, start, end, orderByComparator);
+		return findByDataSetId(dataSetId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -3535,12 +3553,14 @@ public class DataPackPersistenceImpl
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data packs
 	 */
 	@Override
 	public List<DataPack> findByDataSetId(
 		long dataSetId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator) {
+		OrderByComparator<DataPack> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3560,15 +3580,19 @@ public class DataPackPersistenceImpl
 			};
 		}
 
-		List<DataPack> list = (List<DataPack>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataPack> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataPack dataPack : list) {
-				if ((dataSetId != dataPack.getDataSetId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataPack>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataPack dataPack : list) {
+					if ((dataSetId != dataPack.getDataSetId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -4011,22 +4035,19 @@ public class DataPackPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSectionId(long, int, int, OrderByComparator)}
 	 * @param dataSectionId the data section ID
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data packs
 	 */
-	@Deprecated
 	@Override
 	public List<DataPack> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<DataPack> orderByComparator) {
 
 		return findByDataSectionId(
-			dataSectionId, start, end, orderByComparator);
+			dataSectionId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -4040,12 +4061,14 @@ public class DataPackPersistenceImpl
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data packs
 	 */
 	@Override
 	public List<DataPack> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		OrderByComparator<DataPack> orderByComparator) {
+		OrderByComparator<DataPack> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -4065,15 +4088,19 @@ public class DataPackPersistenceImpl
 			};
 		}
 
-		List<DataPack> list = (List<DataPack>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataPack> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataPack dataPack : list) {
-				if ((dataSectionId != dataPack.getDataSectionId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataPack>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataPack dataPack : list) {
+					if ((dataSectionId != dataPack.getDataSectionId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -4518,21 +4545,19 @@ public class DataPackPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByCopiedFrom(long, int, int, OrderByComparator)}
 	 * @param copiedFrom the copied from
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data packs
 	 */
-	@Deprecated
 	@Override
 	public List<DataPack> findByCopiedFrom(
 		long copiedFrom, int start, int end,
-		OrderByComparator<DataPack> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<DataPack> orderByComparator) {
 
-		return findByCopiedFrom(copiedFrom, start, end, orderByComparator);
+		return findByCopiedFrom(
+			copiedFrom, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -4546,12 +4571,14 @@ public class DataPackPersistenceImpl
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data packs
 	 */
 	@Override
 	public List<DataPack> findByCopiedFrom(
 		long copiedFrom, int start, int end,
-		OrderByComparator<DataPack> orderByComparator) {
+		OrderByComparator<DataPack> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -4571,15 +4598,19 @@ public class DataPackPersistenceImpl
 			};
 		}
 
-		List<DataPack> list = (List<DataPack>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataPack> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataPack dataPack : list) {
-				if ((copiedFrom != dataPack.getCopiedFrom())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataPack>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataPack dataPack : list) {
+					if ((copiedFrom != dataPack.getCopiedFrom())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -5020,21 +5051,18 @@ public class DataPackPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName(String, int, int, OrderByComparator)}
 	 * @param name the name
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data packs
 	 */
-	@Deprecated
 	@Override
 	public List<DataPack> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataPack> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<DataPack> orderByComparator) {
 
-		return findByName(name, start, end, orderByComparator);
+		return findByName(name, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -5048,12 +5076,14 @@ public class DataPackPersistenceImpl
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data packs
 	 */
 	@Override
 	public List<DataPack> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataPack> orderByComparator) {
+		OrderByComparator<DataPack> orderByComparator,
+		boolean retrieveFromCache) {
 
 		name = Objects.toString(name, "");
 
@@ -5073,15 +5103,19 @@ public class DataPackPersistenceImpl
 			finderArgs = new Object[] {name, start, end, orderByComparator};
 		}
 
-		List<DataPack> list = (List<DataPack>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataPack> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataPack dataPack : list) {
-				if (!name.equals(dataPack.getName())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataPack>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataPack dataPack : list) {
+					if (!name.equals(dataPack.getName())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -5673,7 +5707,7 @@ public class DataPackPersistenceImpl
 
 		dataPack.setUuid(uuid);
 
-		dataPack.setCompanyId(CompanyThreadLocal.getCompanyId());
+		dataPack.setCompanyId(companyProvider.getCompanyId());
 
 		return dataPack;
 	}
@@ -6198,20 +6232,16 @@ public class DataPackPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data packs
 	 */
-	@Deprecated
 	@Override
 	public List<DataPack> findAll(
-		int start, int end, OrderByComparator<DataPack> orderByComparator,
-		boolean useFinderCache) {
+		int start, int end, OrderByComparator<DataPack> orderByComparator) {
 
-		return findAll(start, end, orderByComparator);
+		return findAll(start, end, orderByComparator, true);
 	}
 
 	/**
@@ -6224,11 +6254,13 @@ public class DataPackPersistenceImpl
 	 * @param start the lower bound of the range of data packs
 	 * @param end the upper bound of the range of data packs (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data packs
 	 */
 	@Override
 	public List<DataPack> findAll(
-		int start, int end, OrderByComparator<DataPack> orderByComparator) {
+		int start, int end, OrderByComparator<DataPack> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -6246,8 +6278,12 @@ public class DataPackPersistenceImpl
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
-		List<DataPack> list = (List<DataPack>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataPack> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<DataPack>)finderCache.getResult(
+				finderPath, finderArgs, this);
+		}
 
 		if (list == null) {
 			StringBundler query = null;
@@ -6651,6 +6687,9 @@ public class DataPackPersistenceImpl
 
 	private boolean _columnBitmaskEnabled;
 
+	@Reference(service = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
+
 	@Reference
 	protected EntityCache entityCache;
 
@@ -6682,14 +6721,5 @@ public class DataPackPersistenceImpl
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
-
-	static {
-		try {
-			Class.forName(ICECAPPersistenceConstants.class.getName());
-		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
-		}
-	}
 
 }

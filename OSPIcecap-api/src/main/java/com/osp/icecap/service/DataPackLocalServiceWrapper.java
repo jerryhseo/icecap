@@ -227,6 +227,27 @@ public class DataPackLocalServiceWrapper
 		return _dataPackLocalService.getActionableDynamicQuery();
 	}
 
+	@Override
+	public java.util.List<com.osp.icecap.model.DataEntry>
+		getDataEntriesByDataPackId(long dataPackId) {
+
+		return _dataPackLocalService.getDataEntriesByDataPackId(dataPackId);
+	}
+
+	@Override
+	public java.util.List<com.osp.icecap.model.DataEntry>
+		getDataEntriesByDataPackId(long dataPackId, int start, int end) {
+
+		return _dataPackLocalService.getDataEntriesByDataPackId(
+			dataPackId, start, end);
+	}
+
+	@Override
+	public int getDataEntriesCountByDataPackId(long dataPackId) {
+		return _dataPackLocalService.getDataEntriesCountByDataPackId(
+			dataPackId);
+	}
+
 	/**
 	 * Returns the data pack with the primary key.
 	 *

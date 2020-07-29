@@ -299,6 +299,25 @@ public class DataCollectionLocalServiceWrapper
 			userId);
 	}
 
+	@Override
+	public String getDataCollectionLayout(long dataCollectionId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchDataCollectionException {
+
+		return _dataCollectionLocalService.getDataCollectionLayout(
+			dataCollectionId);
+	}
+
+	@Override
+	public com.osp.icecap.model.MetaData getDataCollectionMetaData(
+			long dataCollectionId)
+		throws com.osp.icecap.exception.NoSuchDataCollectionException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		return _dataCollectionLocalService.getDataCollectionMetaData(
+			dataCollectionId);
+	}
+
 	/**
 	 * Returns a range of all the data collections.
 	 *
@@ -444,6 +463,29 @@ public class DataCollectionLocalServiceWrapper
 
 		return _dataCollectionLocalService.getDataCollectionVariants(
 			dataCollectionId, start, end);
+	}
+
+	@Override
+	public java.util.List<com.osp.icecap.model.DataSet>
+		getDataSetsByDataCollectionId(long dataCollectionId) {
+
+		return _dataCollectionLocalService.getDataSetsByDataCollectionId(
+			dataCollectionId);
+	}
+
+	@Override
+	public java.util.List<com.osp.icecap.model.DataSet>
+		getDataSetsByDataCollectionId(
+			long dataCollectionId, int start, int end) {
+
+		return _dataCollectionLocalService.getDataSetsByDataCollectionId(
+			dataCollectionId, start, end);
+	}
+
+	@Override
+	public int getDataSetsCountByDataCollectionId(long dataCollectionId) {
+		return _dataCollectionLocalService.getDataSetsCountByDataCollectionId(
+			dataCollectionId);
 	}
 
 	@Override

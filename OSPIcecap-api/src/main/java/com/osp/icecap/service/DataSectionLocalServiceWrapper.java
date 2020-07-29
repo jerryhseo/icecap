@@ -233,6 +233,50 @@ public class DataSectionLocalServiceWrapper
 		return _dataSectionLocalService.getActionableDynamicQuery();
 	}
 
+	@Override
+	public java.util.List<com.osp.icecap.model.DataEntry>
+		getDataEntriesByDataSectionId(long dataSectionId) {
+
+		return _dataSectionLocalService.getDataEntriesByDataSectionId(
+			dataSectionId);
+	}
+
+	@Override
+	public java.util.List<com.osp.icecap.model.DataEntry>
+		getDataEntriesByDataSectionId(long dataSectionId, int start, int end) {
+
+		return _dataSectionLocalService.getDataEntriesByDataSectionId(
+			dataSectionId, start, end);
+	}
+
+	@Override
+	public int getDataEntriesCountByDataSectionId(long dataSectionId) {
+		return _dataSectionLocalService.getDataEntriesCountByDataSectionId(
+			dataSectionId);
+	}
+
+	@Override
+	public java.util.List<com.osp.icecap.model.DataPack>
+		getDataPacksByDataSectionId(long dataSectionId) {
+
+		return _dataSectionLocalService.getDataPacksByDataSectionId(
+			dataSectionId);
+	}
+
+	@Override
+	public java.util.List<com.osp.icecap.model.DataPack>
+		getDataPacksByDataSectionId(long dataSectionId, int start, int end) {
+
+		return _dataSectionLocalService.getDataPacksByDataSectionId(
+			dataSectionId, start, end);
+	}
+
+	@Override
+	public int getDataPacksCountByDataSectionId(long dataSectionId) {
+		return _dataSectionLocalService.getDataPacksCountByDataSectionId(
+			dataSectionId);
+	}
+
 	/**
 	 * Returns the data section with the primary key.
 	 *

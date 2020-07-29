@@ -36,6 +36,8 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchDataSectionException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
+import com.osp.icecap.model.DataEntry;
+import com.osp.icecap.model.DataPack;
 import com.osp.icecap.model.DataSection;
 
 import java.io.Serializable;
@@ -201,6 +203,26 @@ public interface DataSectionLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataEntry> getDataEntriesByDataSectionId(long dataSectionId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataEntry> getDataEntriesByDataSectionId(
+		long dataSectionId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataEntriesCountByDataSectionId(long dataSectionId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataPack> getDataPacksByDataSectionId(long dataSectionId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataPack> getDataPacksByDataSectionId(
+		long dataSectionId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataPacksCountByDataSectionId(long dataSectionId);
 
 	/**
 	 * Returns the data section with the primary key.

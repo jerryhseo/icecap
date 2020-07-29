@@ -938,12 +938,7 @@ public class DataSectionModelImpl
 	@Override
 	public DataSection toEscapedModel() {
 		if (_escapedModel == null) {
-			Function<InvocationHandler, DataSection>
-				escapedModelProxyProviderFunction =
-					EscapedModelProxyProviderFunctionHolder.
-						_escapedModelProxyProviderFunction;
-
-			_escapedModel = escapedModelProxyProviderFunction.apply(
+			_escapedModel = _escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -1239,13 +1234,8 @@ public class DataSectionModelImpl
 		return sb.toString();
 	}
 
-	private static class EscapedModelProxyProviderFunctionHolder {
-
-		private static final Function<InvocationHandler, DataSection>
-			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
-
-	}
-
+	private static final Function<InvocationHandler, DataSection>
+		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 

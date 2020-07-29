@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -33,12 +34,14 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.osp.icecap.exception.NoSuchDataEntryException;
+import com.osp.icecap.exception.NoSuchMetaDataException;
+import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataEntry;
 
 import java.io.Serializable;
 
 import java.util.List;
-import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -75,6 +78,13 @@ public interface DataEntryLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataEntry addDataEntry(DataEntry dataEntry);
 
+	public DataEntry addDataEntry(
+			long dataCollectionId, long dataSetId, long dataSectionId,
+			long dataPackId, long dataTypeId, String accessURL,
+			String sequenceId, String accessType, long copiedFrom,
+			JSONObject metaDataJSON, ServiceContext sc)
+		throws PortalException;
+
 	/**
 	 * Creates a new data entry with the primary key. Does not add the data entry to the database.
 	 *
@@ -83,13 +93,6 @@ public interface DataEntryLocalService
 	 */
 	@Transactional(enabled = false)
 	public DataEntry createDataEntry(long dataEntryId);
-
-	public DataEntry createDataEntry(
-			long dataCollectionId, long dataSetId, long dataSectionId,
-			long dataPackId, String accessURL, String sequenceId,
-			String accessType, long copiedFrom,
-			Map<String, String> descriptionMap, ServiceContext sc)
-		throws PortalException;
 
 	/**
 	 * Deletes the data entry from the database. Also notifies the appropriate model listeners.
@@ -288,7 +291,8 @@ public interface DataEntryLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	public DataEntry removeDataEntry(long dataEntryId);
+	public DataEntry removeDataEntry(long dataEntryId)
+		throws NoSuchDataEntryException, NoSuchMetaDataException;
 
 	/**
 	 * Updates the data entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
@@ -300,7 +304,10 @@ public interface DataEntryLocalService
 	public DataEntry updateDataEntry(DataEntry dataEntry);
 
 	public DataEntry updateDataEntry(
-		long dataEntryId, long dataCollectionId, long dataSetId,
-		long dataSectionId, long dataPackId, ServiceContext sc);
+			long dataEntryId, long dataCollectionId, long dataSetId,
+			long dataSectionId, long dataPackId, long dataTypeId,
+			String accessURL, String sequenceId, String accessType,
+			long copiedFrom, JSONObject metaDataJSON, ServiceContext sc)
+		throws NoSuchMetaDataFieldException;
 
 }

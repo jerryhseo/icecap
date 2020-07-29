@@ -20,7 +20,11 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
+import com.osp.icecap.exception.NoSuchDataEntryException;
+import com.osp.icecap.exception.NoSuchMetaDataException;
+import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataEntry;
+import com.osp.icecap.model.MetaData;
 import com.osp.icecap.service.base.DataEntryLocalServiceBaseImpl;
 
 import java.util.Date;
@@ -58,29 +62,10 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 			String sequenceId,
 			String accessType,
 			long copiedFrom,
-			JSONObject metaData,
+			JSONObject metaDataJSON,
 			ServiceContext sc ) throws PortalException {
 		long dataEntryId = super.counterLocalService.increment();
 		DataEntry dataEntry = super.dataEntryPersistence.create(dataEntryId);
-		
-		dataEntry.setDataCollectionId(dataCollectionId);
-		dataEntry.setDataSetId(dataSetId);
-		dataEntry.setDataSectionId(dataSectionId);
-		dataEntry.setDataPackId(dataPackId);
-		
-		dataEntry.setAccessURL(accessURL);
-		dataEntry.setSequenceId(sequenceId);
-		dataEntry.setAccessURL(accessType);
-		dataEntry.setCopiedFrom(copiedFrom);
-		
-		if( Validator.isNotNull(descriptionMap) ) {
-			dataEntry.setHasDescription(true);
-			
-			super.dataEntryDescriptionPersistence.addDataEntryDescriptionMap( descriptionMap );
-		}
-		else {
-			dataEntry.setHasDescription(false);
-		}
 		
 		dataEntry.setCompanyId(sc.getCompanyId());
 		dataEntry.setGroupId(sc.getScopeGroupId());
@@ -88,15 +73,29 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 		dataEntry.setUserId(user.getUserId());
 		dataEntry.setCreateDate(new Date());
 		
+		dataEntry = this.assignDataEntryAttributes(
+						dataEntry, 
+						dataCollectionId, 
+						dataSetId, 
+						dataSectionId, 
+						dataPackId, 
+						dataTypeId, 
+						accessURL, 
+						sequenceId, 
+						accessType, 
+						copiedFrom, 
+						metaDataJSON);
+		
 		super.dataEntryPersistence.update(dataEntry);
 		
 		return dataEntry;
 	}
 	
-	public DataEntry removeDataEntry( long dataEntryId ) {
-		DataEntry dataEntry = super.dataEntryPersistence.fetchByPrimaryKey(dataEntryId);
+	public DataEntry removeDataEntry( long dataEntryId ) throws NoSuchDataEntryException, NoSuchMetaDataException {
+		DataEntry dataEntry = super.dataEntryPersistence.findByPrimaryKey(dataEntryId);
+		super.metaDataPersistence.remove(dataEntry.getUuid());
 		
-		return super.dataEntryPersistence.remove( dataEntry );
+		return super.dataEntryPersistence.remove( dataEntryId );
 	}
 	
 	public DataEntry updateDataEntry(
@@ -105,16 +104,66 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 			long dataSetId, 
 			long dataSectionId, 
 			long dataPackId, 
-			ServiceContext sc ) {
+			long dataTypeId,
+			String accessURL,
+			String sequenceId,
+			String accessType,
+			long copiedFrom,
+			JSONObject metaDataJSON,
+			ServiceContext sc ) throws NoSuchMetaDataFieldException {
 		DataEntry dataEntry = super.dataEntryPersistence.fetchByPrimaryKey(dataEntryId);
-		
-		dataEntry.setDataCollectionId(dataCollectionId);
-		dataEntry.setDataSetId(dataSetId);
-		dataEntry.setDataSectionId(dataSectionId);
-		dataEntry.setDataPackId(dataPackId);
+
+		dataEntry = this.assignDataEntryAttributes(
+						dataEntry, 
+						dataCollectionId, 
+						dataSetId, 
+						dataSectionId, 
+						dataPackId, 
+						dataTypeId, 
+						accessURL, 
+						sequenceId, 
+						accessType, 
+						copiedFrom, 
+						metaDataJSON);
 		
 		dataEntry.setModifiedDate(sc.getModifiedDate());
 		
 		return super.dataEntryPersistence.update(dataEntry);
+	}
+
+	private DataEntry assignDataEntryAttributes(
+			DataEntry dataEntry,
+			long dataCollectionId, 
+			long dataSetId, 
+			long dataSectionId, 
+			long dataPackId, 
+			long dataTypeId,
+			String accessURL,
+			String sequenceId,
+			String accessType,
+			long copiedFrom,
+			JSONObject metaDataJSON) throws NoSuchMetaDataFieldException{
+		dataEntry.setDataCollectionId(dataCollectionId);
+		dataEntry.setDataSetId(dataSetId);
+		dataEntry.setDataSectionId(dataSectionId);
+		dataEntry.setDataPackId(dataPackId);
+		dataEntry.setDataTypeId(dataTypeId);
+		
+		dataEntry.setAccessURL(accessURL);
+		dataEntry.setSequenceId(sequenceId);
+		dataEntry.setAccessURL(accessType);
+		dataEntry.setCopiedFrom(copiedFrom);
+
+		if( Validator.isNotNull(metaDataJSON) ) {
+			dataEntry.setHasMetaData(true);
+			MetaData metaData = super.metaDataPersistence.create(dataEntry.getUuid());
+			metaData.setMetaData(metaDataJSON);
+			super.metaDataPersistence.update(metaData);
+		}
+		else {
+			dataEntry.setHasMetaData(false);;
+		}
+		
+		return dataEntry;
 	}
 }

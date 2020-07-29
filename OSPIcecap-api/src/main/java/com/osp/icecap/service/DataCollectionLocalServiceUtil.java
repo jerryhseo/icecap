@@ -275,6 +275,21 @@ public class DataCollectionLocalServiceUtil {
 		return getService().getDataCollectionCountByUserId(userId);
 	}
 
+	public static String getDataCollectionLayout(long dataCollectionId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchDataCollectionException {
+
+		return getService().getDataCollectionLayout(dataCollectionId);
+	}
+
+	public static com.osp.icecap.model.MetaData getDataCollectionMetaData(
+			long dataCollectionId)
+		throws com.osp.icecap.exception.NoSuchDataCollectionException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		return getService().getDataCollectionMetaData(dataCollectionId);
+	}
+
 	/**
 	 * Returns a range of all the data collections.
 	 *
@@ -400,6 +415,27 @@ public class DataCollectionLocalServiceUtil {
 
 		return getService().getDataCollectionVariants(
 			dataCollectionId, start, end);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataSet>
+		getDataSetsByDataCollectionId(long dataCollectionId) {
+
+		return getService().getDataSetsByDataCollectionId(dataCollectionId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataSet>
+		getDataSetsByDataCollectionId(
+			long dataCollectionId, int start, int end) {
+
+		return getService().getDataSetsByDataCollectionId(
+			dataCollectionId, start, end);
+	}
+
+	public static int getDataSetsCountByDataCollectionId(
+		long dataCollectionId) {
+
+		return getService().getDataSetsCountByDataCollectionId(
+			dataCollectionId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery

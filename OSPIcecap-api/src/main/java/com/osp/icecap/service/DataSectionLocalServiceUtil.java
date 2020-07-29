@@ -223,6 +223,40 @@ public class DataSectionLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
+	public static java.util.List<com.osp.icecap.model.DataEntry>
+		getDataEntriesByDataSectionId(long dataSectionId) {
+
+		return getService().getDataEntriesByDataSectionId(dataSectionId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataEntry>
+		getDataEntriesByDataSectionId(long dataSectionId, int start, int end) {
+
+		return getService().getDataEntriesByDataSectionId(
+			dataSectionId, start, end);
+	}
+
+	public static int getDataEntriesCountByDataSectionId(long dataSectionId) {
+		return getService().getDataEntriesCountByDataSectionId(dataSectionId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataPack>
+		getDataPacksByDataSectionId(long dataSectionId) {
+
+		return getService().getDataPacksByDataSectionId(dataSectionId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataPack>
+		getDataPacksByDataSectionId(long dataSectionId, int start, int end) {
+
+		return getService().getDataPacksByDataSectionId(
+			dataSectionId, start, end);
+	}
+
+	public static int getDataPacksCountByDataSectionId(long dataSectionId) {
+		return getService().getDataPacksCountByDataSectionId(dataSectionId);
+	}
+
 	/**
 	 * Returns the data section with the primary key.
 	 *

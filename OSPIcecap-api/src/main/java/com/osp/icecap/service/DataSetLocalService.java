@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchDataSetException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
+import com.osp.icecap.model.DataSection;
 import com.osp.icecap.model.DataSet;
 
 import java.io.Serializable;
@@ -198,6 +199,16 @@ public interface DataSetLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataSection> getDataSectionsByDataSetId(long dataSetId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataSection> getDataSectionsByDataSetId(
+		long dataSetId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataSectionsCountByDataSetId(long dataSetId);
 
 	/**
 	 * Returns the data set with the primary key.

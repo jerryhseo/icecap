@@ -34,9 +34,13 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
 import com.osp.icecap.exception.NoSuchDataCollectionException;
+import com.osp.icecap.exception.NoSuchMetaDataException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataCollection;
+import com.osp.icecap.model.DataSet;
+import com.osp.icecap.model.MetaData;
 
 import java.io.Serializable;
 
@@ -242,6 +246,14 @@ public interface DataCollectionLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getDataCollectionCountByUserId(long userId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public String getDataCollectionLayout(long dataCollectionId)
+		throws NoSuchDataAnalysisLayoutException, NoSuchDataCollectionException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public MetaData getDataCollectionMetaData(long dataCollectionId)
+		throws NoSuchDataCollectionException, NoSuchMetaDataException;
+
 	/**
 	 * Returns a range of all the data collections.
 	 *
@@ -328,6 +340,16 @@ public interface DataCollectionLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DataCollection> getDataCollectionVariants(
 		long dataCollectionId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataSet> getDataSetsByDataCollectionId(long dataCollectionId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataSet> getDataSetsByDataCollectionId(
+		long dataCollectionId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataSetsCountByDataCollectionId(long dataCollectionId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
