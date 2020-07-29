@@ -4013,6 +4013,543 @@ public class DataSetPersistenceImpl
 	private static final String _FINDER_COLUMN_COPIEDFROM_COPIEDFROM_2 =
 		"dataSet.copiedFrom = ?";
 
+	private FinderPath _finderPathWithPaginationFindByName;
+	private FinderPath _finderPathWithoutPaginationFindByName;
+	private FinderPath _finderPathCountByName;
+
+	/**
+	 * Returns all the data sets where name = &#63;.
+	 *
+	 * @param name the name
+	 * @return the matching data sets
+	 */
+	@Override
+	public List<DataSet> findByName(String name) {
+		return findByName(name, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data sets where name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param name the name
+	 * @param start the lower bound of the range of data sets
+	 * @param end the upper bound of the range of data sets (not inclusive)
+	 * @return the range of matching data sets
+	 */
+	@Override
+	public List<DataSet> findByName(String name, int start, int end) {
+		return findByName(name, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data sets where name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName(String, int, int, OrderByComparator)}
+	 * @param name the name
+	 * @param start the lower bound of the range of data sets
+	 * @param end the upper bound of the range of data sets (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data sets
+	 */
+	@Deprecated
+	@Override
+	public List<DataSet> findByName(
+		String name, int start, int end,
+		OrderByComparator<DataSet> orderByComparator, boolean useFinderCache) {
+
+		return findByName(name, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns an ordered range of all the data sets where name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param name the name
+	 * @param start the lower bound of the range of data sets
+	 * @param end the upper bound of the range of data sets (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data sets
+	 */
+	@Override
+	public List<DataSet> findByName(
+		String name, int start, int end,
+		OrderByComparator<DataSet> orderByComparator) {
+
+		name = Objects.toString(name, "");
+
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			pagination = false;
+			finderPath = _finderPathWithoutPaginationFindByName;
+			finderArgs = new Object[] {name};
+		}
+		else {
+			finderPath = _finderPathWithPaginationFindByName;
+			finderArgs = new Object[] {name, start, end, orderByComparator};
+		}
+
+		List<DataSet> list = (List<DataSet>)finderCache.getResult(
+			finderPath, finderArgs, this);
+
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSet dataSet : list) {
+				if (!name.equals(dataSet.getName())) {
+					list = null;
+
+					break;
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
+
+			query.append(_SQL_SELECT_DATASET_WHERE);
+
+			boolean bindName = false;
+
+			if (name.isEmpty()) {
+				query.append(_FINDER_COLUMN_NAME_NAME_3);
+			}
+			else {
+				bindName = true;
+
+				query.append(_FINDER_COLUMN_NAME_NAME_2);
+			}
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else if (pagination) {
+				query.append(DataSetModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				if (bindName) {
+					qPos.add(name);
+				}
+
+				if (!pagination) {
+					list = (List<DataSet>)QueryUtil.list(
+						q, getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<DataSet>)QueryUtil.list(
+						q, getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first data set in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data set
+	 * @throws NoSuchDataSetException if a matching data set could not be found
+	 */
+	@Override
+	public DataSet findByName_First(
+			String name, OrderByComparator<DataSet> orderByComparator)
+		throws NoSuchDataSetException {
+
+		DataSet dataSet = fetchByName_First(name, orderByComparator);
+
+		if (dataSet != null) {
+			return dataSet;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("name=");
+		msg.append(name);
+
+		msg.append("}");
+
+		throw new NoSuchDataSetException(msg.toString());
+	}
+
+	/**
+	 * Returns the first data set in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data set, or <code>null</code> if a matching data set could not be found
+	 */
+	@Override
+	public DataSet fetchByName_First(
+		String name, OrderByComparator<DataSet> orderByComparator) {
+
+		List<DataSet> list = findByName(name, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last data set in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data set
+	 * @throws NoSuchDataSetException if a matching data set could not be found
+	 */
+	@Override
+	public DataSet findByName_Last(
+			String name, OrderByComparator<DataSet> orderByComparator)
+		throws NoSuchDataSetException {
+
+		DataSet dataSet = fetchByName_Last(name, orderByComparator);
+
+		if (dataSet != null) {
+			return dataSet;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("name=");
+		msg.append(name);
+
+		msg.append("}");
+
+		throw new NoSuchDataSetException(msg.toString());
+	}
+
+	/**
+	 * Returns the last data set in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data set, or <code>null</code> if a matching data set could not be found
+	 */
+	@Override
+	public DataSet fetchByName_Last(
+		String name, OrderByComparator<DataSet> orderByComparator) {
+
+		int count = countByName(name);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<DataSet> list = findByName(
+			name, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the data sets before and after the current data set in the ordered set where name = &#63;.
+	 *
+	 * @param dataSetId the primary key of the current data set
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data set
+	 * @throws NoSuchDataSetException if a data set with the primary key could not be found
+	 */
+	@Override
+	public DataSet[] findByName_PrevAndNext(
+			long dataSetId, String name,
+			OrderByComparator<DataSet> orderByComparator)
+		throws NoSuchDataSetException {
+
+		name = Objects.toString(name, "");
+
+		DataSet dataSet = findByPrimaryKey(dataSetId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataSet[] array = new DataSetImpl[3];
+
+			array[0] = getByName_PrevAndNext(
+				session, dataSet, name, orderByComparator, true);
+
+			array[1] = dataSet;
+
+			array[2] = getByName_PrevAndNext(
+				session, dataSet, name, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataSet getByName_PrevAndNext(
+		Session session, DataSet dataSet, String name,
+		OrderByComparator<DataSet> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_DATASET_WHERE);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_NAME_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DataSetModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		if (bindName) {
+			qPos.add(name);
+		}
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataSet)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataSet> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the data sets where name = &#63; from the database.
+	 *
+	 * @param name the name
+	 */
+	@Override
+	public void removeByName(String name) {
+		for (DataSet dataSet :
+				findByName(name, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
+			remove(dataSet);
+		}
+	}
+
+	/**
+	 * Returns the number of data sets where name = &#63;.
+	 *
+	 * @param name the name
+	 * @return the number of matching data sets
+	 */
+	@Override
+	public int countByName(String name) {
+		name = Objects.toString(name, "");
+
+		FinderPath finderPath = _finderPathCountByName;
+
+		Object[] finderArgs = new Object[] {name};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_DATASET_WHERE);
+
+			boolean bindName = false;
+
+			if (name.isEmpty()) {
+				query.append(_FINDER_COLUMN_NAME_NAME_3);
+			}
+			else {
+				bindName = true;
+
+				query.append(_FINDER_COLUMN_NAME_NAME_2);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				if (bindName) {
+					qPos.add(name);
+				}
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_NAME_NAME_2 = "dataSet.name = ?";
+
+	private static final String _FINDER_COLUMN_NAME_NAME_3 =
+		"(dataSet.name IS NULL OR dataSet.name = '')";
+
 	public DataSetPersistenceImpl() {
 		setModelClass(DataSet.class);
 
@@ -4376,6 +4913,12 @@ public class DataSetPersistenceImpl
 			finderCache.removeResult(
 				_finderPathWithoutPaginationFindByCopiedFrom, args);
 
+			args = new Object[] {dataSetModelImpl.getName()};
+
+			finderCache.removeResult(_finderPathCountByName, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByName, args);
+
 			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(
 				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
@@ -4520,6 +5063,25 @@ public class DataSetPersistenceImpl
 				finderCache.removeResult(_finderPathCountByCopiedFrom, args);
 				finderCache.removeResult(
 					_finderPathWithoutPaginationFindByCopiedFrom, args);
+			}
+
+			if ((dataSetModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByName.getColumnBitmask()) !=
+					 0) {
+
+				Object[] args = new Object[] {
+					dataSetModelImpl.getOriginalName()
+				};
+
+				finderCache.removeResult(_finderPathCountByName, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByName, args);
+
+				args = new Object[] {dataSetModelImpl.getName()};
+
+				finderCache.removeResult(_finderPathCountByName, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByName, args);
 			}
 		}
 
@@ -4972,6 +5534,25 @@ public class DataSetPersistenceImpl
 			entityCacheEnabled, finderCacheEnabled, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCopiedFrom",
 			new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByName = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, DataSetImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByName",
+			new String[] {
+				String.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByName = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, DataSetImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByName",
+			new String[] {String.class.getName()},
+			DataSetModelImpl.NAME_COLUMN_BITMASK);
+
+		_finderPathCountByName = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByName",
+			new String[] {String.class.getName()});
 	}
 
 	@Deactivate

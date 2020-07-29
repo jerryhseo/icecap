@@ -20,24 +20,24 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * Provides the remote service utility for DataCollectionLayout. This utility wraps
- * <code>com.osp.icecap.service.impl.DataCollectionLayoutServiceImpl</code> and is an
+ * Provides the remote service utility for DataTypeLayout. This utility wraps
+ * <code>com.osp.icecap.service.impl.DataTypeLayoutServiceImpl</code> and is an
  * access point for service operations in application layer code running on a
  * remote server. Methods of this service are expected to have security checks
  * based on the propagated JAAS credentials because this service can be
  * accessed remotely.
  *
  * @author Jerry H. Seo
- * @see DataCollectionLayoutService
+ * @see DataTypeLayoutService
  * @generated
  */
 @ProviderType
-public class DataCollectionLayoutServiceUtil {
+public class DataTypeLayoutServiceUtil {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this class directly. Add custom service methods to <code>com.osp.icecap.service.impl.DataCollectionLayoutServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
+	 * Never modify this class directly. Add custom service methods to <code>com.osp.icecap.service.impl.DataTypeLayoutServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
 	 */
 
 	/**
@@ -49,24 +49,22 @@ public class DataCollectionLayoutServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
-	public static DataCollectionLayoutService getService() {
+	public static DataTypeLayoutService getService() {
 		return _serviceTracker.getService();
 	}
 
-	private static ServiceTracker
-		<DataCollectionLayoutService, DataCollectionLayoutService>
-			_serviceTracker;
+	private static ServiceTracker<DataTypeLayoutService, DataTypeLayoutService>
+		_serviceTracker;
 
 	static {
-		Bundle bundle = FrameworkUtil.getBundle(
-			DataCollectionLayoutService.class);
+		Bundle bundle = FrameworkUtil.getBundle(DataTypeLayoutService.class);
 
-		ServiceTracker<DataCollectionLayoutService, DataCollectionLayoutService>
+		ServiceTracker<DataTypeLayoutService, DataTypeLayoutService>
 			serviceTracker =
 				new ServiceTracker
-					<DataCollectionLayoutService, DataCollectionLayoutService>(
-						bundle.getBundleContext(),
-						DataCollectionLayoutService.class, null);
+					<DataTypeLayoutService, DataTypeLayoutService>(
+						bundle.getBundleContext(), DataTypeLayoutService.class,
+						null);
 
 		serviceTracker.open();
 

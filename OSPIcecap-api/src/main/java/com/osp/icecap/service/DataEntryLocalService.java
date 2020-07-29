@@ -38,6 +38,7 @@ import com.osp.icecap.model.DataEntry;
 import java.io.Serializable;
 
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -85,7 +86,9 @@ public interface DataEntryLocalService
 
 	public DataEntry createDataEntry(
 			long dataCollectionId, long dataSetId, long dataSectionId,
-			long dataPackId, ServiceContext sc)
+			long dataPackId, String accessURL, String sequenceId,
+			String accessType, long copiedFrom,
+			Map<String, String> descriptionMap, ServiceContext sc)
 		throws PortalException;
 
 	/**
@@ -285,8 +288,6 @@ public interface DataEntryLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	public DataEntry removeDataEntry(DataEntry dataEntry);
-
 	public DataEntry removeDataEntry(long dataEntryId);
 
 	/**
@@ -297,5 +298,9 @@ public interface DataEntryLocalService
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public DataEntry updateDataEntry(DataEntry dataEntry);
+
+	public DataEntry updateDataEntry(
+		long dataEntryId, long dataCollectionId, long dataSetId,
+		long dataSectionId, long dataPackId, ServiceContext sc);
 
 }

@@ -6,7 +6,7 @@
 	<namespace>ICECAP</namespace>
 	<!--<entity data-source="sampleDataSource" local-service="true" name="Foo" remote-service="false" session-factory="sampleSessionFactory" table="foo" tx-manager="sampleTransactionManager uuid="true"">-->
 	<!--  DataType: type of data -->
-    <entity name="DataType" local-service="true" uuid="true"  remote-service="false" uuid-accessor="true">
+    <entity name="DataType" local-service="true" uuid="true" remote-service="false" uuid-accessor="true">
 
 		<!-- PK fields -->
 		<column name="dataTypeId" primary="true" type="long"></column>
@@ -159,16 +159,16 @@
 		<column name="statusByUserName" type="String" />
 		<column name="statusDate" type="Date" />
 
-		<!-- Other fields -->
+		<!-- Desctiptive fields -->
         <column name="name" primary="false" type="String"></column>
         <column name="version" type="String"></column>
         
 		<column name="copiedFrom" type="long"></column>
-		<column name="title" type="String" localized="true" />
-		<column name="description" type="String" localized="true" />
         <column name="organizationId" type="long"></column>
 
 		<!-- Order -->
+        <column name="hasMetaData" type="boolean"></column>
+        <column name="hasLayout" type="boolean"></column>
 		<order by="asc">
 			<order-column name="createDate" />
 		</order>
@@ -208,21 +208,84 @@
         <finder name="OrganizationId" return-type="DataCollection">
             <finder-column name="organizationId"></finder-column>
         </finder>
-        
-        <!-- References -->
         <finder name="NameVersion" return-type="DataCollection">
             <finder-column name="name"></finder-column>
             <finder-column name="version"></finder-column>
         </finder>
+
+        <!-- References -->
+        <finder name="Variants" return-type="Collection">
+            <finder-column name="copiedFrom"></finder-column>
+        </finder>
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
+        <reference entity="AssetCategory" package-path="com.liferay.portlet.asset"></reference>
 	</entity>
-    
+    <entity name="DataAnalysisLayout" remote-service="false" local-service="true">
+        <column name="dataUuid" type="String" primary="true"></column>
+        <column name="dataCollectionId" type="long" primary="false"></column>
+        <column name="dataSetId" type="long"></column>
+        <column name="dataSectionId" type="long"></column>
+        <column name="dataPackId" type="long"></column>
+        <column name="layout" type="String"></column>
+        <finder name="DataCollectionId" return-type="Collection">
+            <finder-column name="dataCollectionId"></finder-column>
+        </finder>
+        <finder name="DataSetId" return-type="Collection">
+            <finder-column name="dataSetId"></finder-column>
+        </finder>
+        <finder name="DataSectionId" return-type="Collection">
+            <finder-column name="dataSectionId"></finder-column>
+        </finder>
+        <finder name="DataPackId" return-type="Collection">
+            <finder-column name="dataPackId"></finder-column>
+        </finder>
+    </entity>
+    <entity name="MetaData" remote-service="false"
+    	local-service="true">
+    	<!-- Primary Key -->
+    	<column name="dataUuid" primary="true" type="String"></column>
+
+    	<!-- Descriptive Fields -->
+    	<column name="creator" type="String"></column>
+    	<column name="created" type="String"></column>
+    	<column name="title" type="String" localized="true"></column>
+    	<column name="description" type="String" localized="true"></column>
+    	<column name="summary" type="String" localized="true"></column>
+    	<column name="doi" type="String"></column>
+    	<column name="dateAccepted" type="String"></column>
+    	<column name="dateCopyrighted" type="String"></column>
+    	<column name="dateSubmitted" type="String"></column>
+    	<column name="format" type="String"></column>
+    	<column name="version" type="String"></column>
+    	<column name="issued" type="String"></column>
+    	<column name="license" type="String"></column>
+    	<column name="datePattern" type="String"></column>
+        <column name="dataCollectionId" type="long"></column>
+        <column name="dataSetId" type="long"></column>
+        <column name="dataSectionId" type="long"></column>
+        <column name="dataPackId" type="long"></column>
+        <finder name="DataCollectionId" return-type="Collection">
+            <finder-column name="dataCollectionId"></finder-column>
+        </finder>
+        <finder name="DataSetId" return-type="Collection">
+            <finder-column name="dataSetId"></finder-column>
+        </finder>
+        <finder name="DataSectionId" return-type="Collection">
+            <finder-column name="dataSectionId"></finder-column>
+        </finder>
+        <finder name="DataPackId" return-type="Collection">
+            <finder-column name="dataPackId"></finder-column>
+        </finder>
+        <finder name="Creator" return-type="Collection">
+            <finder-column name="creator"></finder-column>
+        </finder>
+    </entity>
+
 	<entity name="DataSet" local-service="true" uuid="true" uuid-accessor="true">
 
 		<!-- PK fields -->
-
 		<column name="dataSetId" primary="true" type="long"></column>
 
 		<!-- Group Instance -->
@@ -243,14 +306,16 @@
 
 		<!--  Foreign Fields -->		
 		<column name="dataCollectionId" type="long"></column>
+        <column name="dataTypeId" type="long"></column>
 		
-		<!-- Description Fields -->
-		<column name="title" type="String" localized="true"></column>
+		<!-- Descriptive Fields -->
+        <column name="name" type="String"></column>
 		<column name="version" type="String"></column>
-		<column name="description" type="String" localized="true"></column>
         <column name="copiedFrom" type="long"></column>
 		
-		<!-- References -->
+		<!-- Finders -->
+        <column name="hasMetaData" type="boolean"></column>
+        <column name="hasLayout" type="boolean"></column>
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
         </finder>
@@ -266,6 +331,11 @@
         </finder>
         <finder name="CopiedFrom" return-type="Collection">
             <finder-column name="copiedFrom"></finder-column>
+        </finder>
+        
+        <!-- References -->
+        <finder name="Name" return-type="Collection">
+            <finder-column name="name"></finder-column>
         </finder>
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
@@ -296,14 +366,16 @@
 		<!-- Foreign Keys -->
         <column name="dataCollectionId" type="long"></column>
         <column name="dataSetId" type="long"></column>
+        <column name="dataTypeId" type="long"></column>
         
-        <!-- Description Fields -->
-        <column name="title" type="String" localized="true"></column>
+        <!-- Descriptive Fields -->
+        <column name="name" type="String"></column>
         <column name="version" type="String"></column>
-        <column name="description" type="String" localized="true"></column>
 
 		<!-- Finders -->
         <column name="copiedFrom" type="long"></column>
+        <column name="hasMetaData" type="boolean"></column>
+        <column name="hasLayout" type="boolean"></column>
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
         </finder>
@@ -319,10 +391,13 @@
         <finder name="DataSetId" return-type="Collection">
             <finder-column name="dataSetId"></finder-column>
         </finder>
-
-		<!-- References -->
         <finder name="CopiedFrom" return-type="Collection">
             <finder-column name="copiedFrom"></finder-column>
+        </finder>
+
+		<!-- References -->
+        <finder name="Name" return-type="Collection">
+            <finder-column name="name"></finder-column>
         </finder>
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
@@ -354,12 +429,15 @@
 	    <column name="dataSetId" type="long"></column>
 	    <column name="dataSectionId" type="long"></column>
 	
-		<column name="title" type="String" localized="true"></column>
+		<!-- Descriptive Fields -->
+        <column name="name" type="String"></column>
         <column name="version" type="String" primary="false"></column>
-		<column name="description" type="String" localized="true"></column>
+		<column name="component" type="String"></column>
+        <column name="copiedFrom" type="long"></column>
 		
 		<!-- Finders -->
-        <column name="copiedFrom" type="long"></column>
+        <column name="hasMetaData" type="boolean"></column>
+        <column name="hasLayout" type="boolean"></column>
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
         </finder>
@@ -378,17 +456,21 @@
         <finder name="DataSectionId" return-type="Collection">
             <finder-column name="dataSectionId"></finder-column>
         </finder>
-
-		<!-- References -->
         <finder name="CopiedFrom" return-type="Collection">
             <finder-column name="copiedFrom"></finder-column>
+        </finder>
+
+		<!-- References -->
+        <finder name="Name" return-type="Collection">
+            <finder-column name="name"></finder-column>
         </finder>
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
 	</entity>
-	
+
     <entity name="DataEntry" local-service="true" remote-service="true" uuid="true" uuid-accessor="true">
+    	<!-- Primary Key -->
     	<column name="dataEntryId" type="long" primary="true"></column>
 
 		<!-- Group Instance -->
@@ -408,16 +490,20 @@
 		<column name="statusDate" type="Date" />
 
 		<!-- Foreign Keys -->
+        <column name="dataTypeId" type="long"></column>
         <column name="dataPackId" type="long"></column>
         <column name="dataSectionId" type="long"></column>
         <column name="dataSetId" type="long"></column>
         <column name="dataCollectionId" type="long"></column>
         
+        <!-- Descriptive Fields -->
     	<column name="accessURL" type="String"></column>
-        <column name="pathType" type="String"></column>
+        <column name="sequenceId" type="String"></column>
+        <column name="accessType" type="String"></column>
+        <column name="copiedFrom" type="long"></column>
+        <column name="hasMetaData" type="boolean"></column>
 
 		<!-- Finders -->
-        <column name="copiedFrom" type="long"></column>
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
         </finder>
@@ -439,32 +525,17 @@
         <finder name="DataPackId" return-type="Collection">
             <finder-column name="dataPackId"></finder-column>
         </finder>
-    	
-        <!-- References -->
         <finder name="CopiedFrom" return-type="Collection">
             <finder-column name="copiedFrom"></finder-column>
         </finder>
+    	
+        <!-- References -->
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
     </entity>
-    
-    <entity name="DataTypeLink" local-service="true" remote-service="false">
-        <column name="dataUuid" type="String" primary="true"></column>
-        <column name="dataTypeId" type="long"></column>
-    </entity>
-    
-    <entity name="DataAnalysisLayout" local-service="true" remote-service="false">
-        <column name="dataUuid" type="String" primary="true"></column>
-        <column name="layout" type="String"></column>
-        <column name="applyLevel" type="String"></column>
-        <finder name="ApplyLevel" return-type="Collection">
-            <finder-column name="applyLevel"></finder-column>
-        </finder>
-        <finder name="DataUuidApplyLevel" return-type="DataAnalysisLayout">
-            <finder-column name="dataUuid"></finder-column>
-            <finder-column name="applyLevel"></finder-column>
-        </finder>
-    </entity>
+    <exceptions>
+        <exception>NoSuchMetaDataField</exception>
+    </exceptions>
 
 </service-builder>

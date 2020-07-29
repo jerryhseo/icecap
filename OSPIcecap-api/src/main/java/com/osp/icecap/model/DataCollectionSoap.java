@@ -49,9 +49,9 @@ public class DataCollectionSoap implements Serializable {
 		soapModel.setName(model.getName());
 		soapModel.setVersion(model.getVersion());
 		soapModel.setCopiedFrom(model.getCopiedFrom());
-		soapModel.setTitle(model.getTitle());
-		soapModel.setDescription(model.getDescription());
 		soapModel.setOrganizationId(model.getOrganizationId());
+		soapModel.setHasMetaData(model.isHasMetaData());
+		soapModel.setHasLayout(model.isHasLayout());
 
 		return soapModel;
 	}
@@ -230,28 +230,36 @@ public class DataCollectionSoap implements Serializable {
 		_copiedFrom = copiedFrom;
 	}
 
-	public String getTitle() {
-		return _title;
-	}
-
-	public void setTitle(String title) {
-		_title = title;
-	}
-
-	public String getDescription() {
-		return _description;
-	}
-
-	public void setDescription(String description) {
-		_description = description;
-	}
-
 	public long getOrganizationId() {
 		return _organizationId;
 	}
 
 	public void setOrganizationId(long organizationId) {
 		_organizationId = organizationId;
+	}
+
+	public boolean getHasMetaData() {
+		return _hasMetaData;
+	}
+
+	public boolean isHasMetaData() {
+		return _hasMetaData;
+	}
+
+	public void setHasMetaData(boolean hasMetaData) {
+		_hasMetaData = hasMetaData;
+	}
+
+	public boolean getHasLayout() {
+		return _hasLayout;
+	}
+
+	public boolean isHasLayout() {
+		return _hasLayout;
+	}
+
+	public void setHasLayout(boolean hasLayout) {
+		_hasLayout = hasLayout;
 	}
 
 	private String _uuid;
@@ -269,8 +277,8 @@ public class DataCollectionSoap implements Serializable {
 	private String _name;
 	private String _version;
 	private long _copiedFrom;
-	private String _title;
-	private String _description;
 	private long _organizationId;
+	private boolean _hasMetaData;
+	private boolean _hasLayout;
 
 }

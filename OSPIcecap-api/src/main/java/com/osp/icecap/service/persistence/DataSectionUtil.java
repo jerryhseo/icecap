@@ -1567,6 +1567,172 @@ public class DataSectionUtil {
 	}
 
 	/**
+	 * Returns all the data sections where name = &#63;.
+	 *
+	 * @param name the name
+	 * @return the matching data sections
+	 */
+	public static List<DataSection> findByName(String name) {
+		return getPersistence().findByName(name);
+	}
+
+	/**
+	 * Returns a range of all the data sections where name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param name the name
+	 * @param start the lower bound of the range of data sections
+	 * @param end the upper bound of the range of data sections (not inclusive)
+	 * @return the range of matching data sections
+	 */
+	public static List<DataSection> findByName(
+		String name, int start, int end) {
+
+		return getPersistence().findByName(name, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the data sections where name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName(String, int, int, OrderByComparator)}
+	 * @param name the name
+	 * @param start the lower bound of the range of data sections
+	 * @param end the upper bound of the range of data sections (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data sections
+	 */
+	@Deprecated
+	public static List<DataSection> findByName(
+		String name, int start, int end,
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache) {
+
+		return getPersistence().findByName(
+			name, start, end, orderByComparator, useFinderCache);
+	}
+
+	/**
+	 * Returns an ordered range of all the data sections where name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param name the name
+	 * @param start the lower bound of the range of data sections
+	 * @param end the upper bound of the range of data sections (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data sections
+	 */
+	public static List<DataSection> findByName(
+		String name, int start, int end,
+		OrderByComparator<DataSection> orderByComparator) {
+
+		return getPersistence().findByName(name, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns the first data section in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data section
+	 * @throws NoSuchDataSectionException if a matching data section could not be found
+	 */
+	public static DataSection findByName_First(
+			String name, OrderByComparator<DataSection> orderByComparator)
+		throws com.osp.icecap.exception.NoSuchDataSectionException {
+
+		return getPersistence().findByName_First(name, orderByComparator);
+	}
+
+	/**
+	 * Returns the first data section in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data section, or <code>null</code> if a matching data section could not be found
+	 */
+	public static DataSection fetchByName_First(
+		String name, OrderByComparator<DataSection> orderByComparator) {
+
+		return getPersistence().fetchByName_First(name, orderByComparator);
+	}
+
+	/**
+	 * Returns the last data section in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data section
+	 * @throws NoSuchDataSectionException if a matching data section could not be found
+	 */
+	public static DataSection findByName_Last(
+			String name, OrderByComparator<DataSection> orderByComparator)
+		throws com.osp.icecap.exception.NoSuchDataSectionException {
+
+		return getPersistence().findByName_Last(name, orderByComparator);
+	}
+
+	/**
+	 * Returns the last data section in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data section, or <code>null</code> if a matching data section could not be found
+	 */
+	public static DataSection fetchByName_Last(
+		String name, OrderByComparator<DataSection> orderByComparator) {
+
+		return getPersistence().fetchByName_Last(name, orderByComparator);
+	}
+
+	/**
+	 * Returns the data sections before and after the current data section in the ordered set where name = &#63;.
+	 *
+	 * @param dataSectionId the primary key of the current data section
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data section
+	 * @throws NoSuchDataSectionException if a data section with the primary key could not be found
+	 */
+	public static DataSection[] findByName_PrevAndNext(
+			long dataSectionId, String name,
+			OrderByComparator<DataSection> orderByComparator)
+		throws com.osp.icecap.exception.NoSuchDataSectionException {
+
+		return getPersistence().findByName_PrevAndNext(
+			dataSectionId, name, orderByComparator);
+	}
+
+	/**
+	 * Removes all the data sections where name = &#63; from the database.
+	 *
+	 * @param name the name
+	 */
+	public static void removeByName(String name) {
+		getPersistence().removeByName(name);
+	}
+
+	/**
+	 * Returns the number of data sections where name = &#63;.
+	 *
+	 * @param name the name
+	 * @return the number of matching data sections
+	 */
+	public static int countByName(String name) {
+		return getPersistence().countByName(name);
+	}
+
+	/**
 	 * Caches the data section in the entity cache if it is enabled.
 	 *
 	 * @param dataSection the data section

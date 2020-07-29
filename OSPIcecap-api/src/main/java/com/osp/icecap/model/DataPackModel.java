@@ -15,17 +15,13 @@
 package com.osp.icecap.model;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.GroupedModel;
-import com.liferay.portal.kernel.model.LocalizedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.model.StagedAuditedModel;
 import com.liferay.portal.kernel.model.WorkflowedModel;
 
 import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -42,8 +38,8 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface DataPackModel
-	extends BaseModel<DataPack>, GroupedModel, LocalizedModel, ShardedModel,
-			StagedAuditedModel, WorkflowedModel {
+	extends BaseModel<DataPack>, GroupedModel, ShardedModel, StagedAuditedModel,
+			WorkflowedModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -333,103 +329,19 @@ public interface DataPackModel
 	public void setDataSectionId(long dataSectionId);
 
 	/**
-	 * Returns the title of this data pack.
+	 * Returns the name of this data pack.
 	 *
-	 * @return the title of this data pack
-	 */
-	public String getTitle();
-
-	/**
-	 * Returns the localized title of this data pack in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the locale of the language
-	 * @return the localized title of this data pack
+	 * @return the name of this data pack
 	 */
 	@AutoEscape
-	public String getTitle(Locale locale);
+	public String getName();
 
 	/**
-	 * Returns the localized title of this data pack in the language, optionally using the default language if no localization exists for the requested language.
+	 * Sets the name of this data pack.
 	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized title of this data pack. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 * @param name the name of this data pack
 	 */
-	@AutoEscape
-	public String getTitle(Locale locale, boolean useDefault);
-
-	/**
-	 * Returns the localized title of this data pack in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized title of this data pack
-	 */
-	@AutoEscape
-	public String getTitle(String languageId);
-
-	/**
-	 * Returns the localized title of this data pack in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized title of this data pack
-	 */
-	@AutoEscape
-	public String getTitle(String languageId, boolean useDefault);
-
-	@AutoEscape
-	public String getTitleCurrentLanguageId();
-
-	@AutoEscape
-	public String getTitleCurrentValue();
-
-	/**
-	 * Returns a map of the locales and localized titles of this data pack.
-	 *
-	 * @return the locales and localized titles of this data pack
-	 */
-	public Map<Locale, String> getTitleMap();
-
-	/**
-	 * Sets the title of this data pack.
-	 *
-	 * @param title the title of this data pack
-	 */
-	public void setTitle(String title);
-
-	/**
-	 * Sets the localized title of this data pack in the language.
-	 *
-	 * @param title the localized title of this data pack
-	 * @param locale the locale of the language
-	 */
-	public void setTitle(String title, Locale locale);
-
-	/**
-	 * Sets the localized title of this data pack in the language, and sets the default locale.
-	 *
-	 * @param title the localized title of this data pack
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
-	 */
-	public void setTitle(String title, Locale locale, Locale defaultLocale);
-
-	public void setTitleCurrentLanguageId(String languageId);
-
-	/**
-	 * Sets the localized titles of this data pack from the map of locales and localized titles.
-	 *
-	 * @param titleMap the locales and localized titles of this data pack
-	 */
-	public void setTitleMap(Map<Locale, String> titleMap);
-
-	/**
-	 * Sets the localized titles of this data pack from the map of locales and localized titles, and sets the default locale.
-	 *
-	 * @param titleMap the locales and localized titles of this data pack
-	 * @param defaultLocale the default locale
-	 */
-	public void setTitleMap(Map<Locale, String> titleMap, Locale defaultLocale);
+	public void setName(String name);
 
 	/**
 	 * Returns the version of this data pack.
@@ -447,105 +359,19 @@ public interface DataPackModel
 	public void setVersion(String version);
 
 	/**
-	 * Returns the description of this data pack.
+	 * Returns the component of this data pack.
 	 *
-	 * @return the description of this data pack
-	 */
-	public String getDescription();
-
-	/**
-	 * Returns the localized description of this data pack in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the locale of the language
-	 * @return the localized description of this data pack
+	 * @return the component of this data pack
 	 */
 	@AutoEscape
-	public String getDescription(Locale locale);
+	public String getComponent();
 
 	/**
-	 * Returns the localized description of this data pack in the language, optionally using the default language if no localization exists for the requested language.
+	 * Sets the component of this data pack.
 	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized description of this data pack. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 * @param component the component of this data pack
 	 */
-	@AutoEscape
-	public String getDescription(Locale locale, boolean useDefault);
-
-	/**
-	 * Returns the localized description of this data pack in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized description of this data pack
-	 */
-	@AutoEscape
-	public String getDescription(String languageId);
-
-	/**
-	 * Returns the localized description of this data pack in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized description of this data pack
-	 */
-	@AutoEscape
-	public String getDescription(String languageId, boolean useDefault);
-
-	@AutoEscape
-	public String getDescriptionCurrentLanguageId();
-
-	@AutoEscape
-	public String getDescriptionCurrentValue();
-
-	/**
-	 * Returns a map of the locales and localized descriptions of this data pack.
-	 *
-	 * @return the locales and localized descriptions of this data pack
-	 */
-	public Map<Locale, String> getDescriptionMap();
-
-	/**
-	 * Sets the description of this data pack.
-	 *
-	 * @param description the description of this data pack
-	 */
-	public void setDescription(String description);
-
-	/**
-	 * Sets the localized description of this data pack in the language.
-	 *
-	 * @param description the localized description of this data pack
-	 * @param locale the locale of the language
-	 */
-	public void setDescription(String description, Locale locale);
-
-	/**
-	 * Sets the localized description of this data pack in the language, and sets the default locale.
-	 *
-	 * @param description the localized description of this data pack
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
-	 */
-	public void setDescription(
-		String description, Locale locale, Locale defaultLocale);
-
-	public void setDescriptionCurrentLanguageId(String languageId);
-
-	/**
-	 * Sets the localized descriptions of this data pack from the map of locales and localized descriptions.
-	 *
-	 * @param descriptionMap the locales and localized descriptions of this data pack
-	 */
-	public void setDescriptionMap(Map<Locale, String> descriptionMap);
-
-	/**
-	 * Sets the localized descriptions of this data pack from the map of locales and localized descriptions, and sets the default locale.
-	 *
-	 * @param descriptionMap the locales and localized descriptions of this data pack
-	 * @param defaultLocale the default locale
-	 */
-	public void setDescriptionMap(
-		Map<Locale, String> descriptionMap, Locale defaultLocale);
+	public void setComponent(String component);
 
 	/**
 	 * Returns the copied from of this data pack.
@@ -560,6 +386,48 @@ public interface DataPackModel
 	 * @param copiedFrom the copied from of this data pack
 	 */
 	public void setCopiedFrom(long copiedFrom);
+
+	/**
+	 * Returns the has meta data of this data pack.
+	 *
+	 * @return the has meta data of this data pack
+	 */
+	public boolean getHasMetaData();
+
+	/**
+	 * Returns <code>true</code> if this data pack is has meta data.
+	 *
+	 * @return <code>true</code> if this data pack is has meta data; <code>false</code> otherwise
+	 */
+	public boolean isHasMetaData();
+
+	/**
+	 * Sets whether this data pack is has meta data.
+	 *
+	 * @param hasMetaData the has meta data of this data pack
+	 */
+	public void setHasMetaData(boolean hasMetaData);
+
+	/**
+	 * Returns the has layout of this data pack.
+	 *
+	 * @return the has layout of this data pack
+	 */
+	public boolean getHasLayout();
+
+	/**
+	 * Returns <code>true</code> if this data pack is has layout.
+	 *
+	 * @return <code>true</code> if this data pack is has layout; <code>false</code> otherwise
+	 */
+	public boolean isHasLayout();
+
+	/**
+	 * Sets whether this data pack is has layout.
+	 *
+	 * @param hasLayout the has layout of this data pack
+	 */
+	public void setHasLayout(boolean hasLayout);
 
 	/**
 	 * Returns <code>true</code> if this data pack is approved.
@@ -624,18 +492,5 @@ public interface DataPackModel
 	 */
 	@Override
 	public boolean isScheduled();
-
-	@Override
-	public String[] getAvailableLanguageIds();
-
-	@Override
-	public String getDefaultLanguageId();
-
-	@Override
-	public void prepareLocalizedFieldsForImport() throws LocaleException;
-
-	@Override
-	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
-		throws LocaleException;
 
 }

@@ -19,7 +19,6 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
@@ -30,11 +29,8 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import com.osp.icecap.model.DataCollection;
@@ -54,10 +50,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -94,8 +87,8 @@ public class DataCollectionModelImpl
 		{"status", Types.INTEGER}, {"statusByUserId", Types.BIGINT},
 		{"statusByUserName", Types.VARCHAR}, {"statusDate", Types.TIMESTAMP},
 		{"name", Types.VARCHAR}, {"version", Types.VARCHAR},
-		{"copiedFrom", Types.BIGINT}, {"title", Types.VARCHAR},
-		{"description", Types.VARCHAR}, {"organizationId", Types.BIGINT}
+		{"copiedFrom", Types.BIGINT}, {"organizationId", Types.BIGINT},
+		{"hasMetaData", Types.BOOLEAN}, {"hasLayout", Types.BOOLEAN}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -117,13 +110,13 @@ public class DataCollectionModelImpl
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("version", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("copiedFrom", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("title", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("organizationId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("hasMetaData", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("hasLayout", Types.BOOLEAN);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataCollection (uuid_ VARCHAR(75) null,dataCollectionId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,name VARCHAR(75) null,version VARCHAR(75) null,copiedFrom LONG,title STRING null,description STRING null,organizationId LONG)";
+		"create table ICECAP_DataCollection (uuid_ VARCHAR(75) null,dataCollectionId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,name VARCHAR(75) null,version VARCHAR(75) null,copiedFrom LONG,organizationId LONG,hasMetaData BOOLEAN,hasLayout BOOLEAN)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table ICECAP_DataCollection";
@@ -142,21 +135,23 @@ public class DataCollectionModelImpl
 
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
 
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
+	public static final long COPIEDFROM_COLUMN_BITMASK = 2L;
 
-	public static final long NAME_COLUMN_BITMASK = 4L;
+	public static final long GROUPID_COLUMN_BITMASK = 4L;
 
-	public static final long ORGANIZATIONID_COLUMN_BITMASK = 8L;
+	public static final long NAME_COLUMN_BITMASK = 8L;
 
-	public static final long STATUS_COLUMN_BITMASK = 16L;
+	public static final long ORGANIZATIONID_COLUMN_BITMASK = 16L;
 
-	public static final long USERID_COLUMN_BITMASK = 32L;
+	public static final long STATUS_COLUMN_BITMASK = 32L;
 
-	public static final long UUID_COLUMN_BITMASK = 64L;
+	public static final long USERID_COLUMN_BITMASK = 64L;
 
-	public static final long VERSION_COLUMN_BITMASK = 128L;
+	public static final long UUID_COLUMN_BITMASK = 128L;
 
-	public static final long CREATEDATE_COLUMN_BITMASK = 256L;
+	public static final long VERSION_COLUMN_BITMASK = 256L;
+
+	public static final long CREATEDATE_COLUMN_BITMASK = 512L;
 
 	public static void setEntityCacheEnabled(boolean entityCacheEnabled) {
 		_entityCacheEnabled = entityCacheEnabled;
@@ -194,9 +189,9 @@ public class DataCollectionModelImpl
 		model.setName(soapModel.getName());
 		model.setVersion(soapModel.getVersion());
 		model.setCopiedFrom(soapModel.getCopiedFrom());
-		model.setTitle(soapModel.getTitle());
-		model.setDescription(soapModel.getDescription());
 		model.setOrganizationId(soapModel.getOrganizationId());
+		model.setHasMetaData(soapModel.isHasMetaData());
+		model.setHasLayout(soapModel.isHasLayout());
 
 		return model;
 	}
@@ -419,21 +414,22 @@ public class DataCollectionModelImpl
 		attributeSetterBiConsumers.put(
 			"copiedFrom",
 			(BiConsumer<DataCollection, Long>)DataCollection::setCopiedFrom);
-		attributeGetterFunctions.put("title", DataCollection::getTitle);
-		attributeSetterBiConsumers.put(
-			"title",
-			(BiConsumer<DataCollection, String>)DataCollection::setTitle);
-		attributeGetterFunctions.put(
-			"description", DataCollection::getDescription);
-		attributeSetterBiConsumers.put(
-			"description",
-			(BiConsumer<DataCollection, String>)DataCollection::setDescription);
 		attributeGetterFunctions.put(
 			"organizationId", DataCollection::getOrganizationId);
 		attributeSetterBiConsumers.put(
 			"organizationId",
 			(BiConsumer<DataCollection, Long>)
 				DataCollection::setOrganizationId);
+		attributeGetterFunctions.put(
+			"hasMetaData", DataCollection::getHasMetaData);
+		attributeSetterBiConsumers.put(
+			"hasMetaData",
+			(BiConsumer<DataCollection, Boolean>)
+				DataCollection::setHasMetaData);
+		attributeGetterFunctions.put("hasLayout", DataCollection::getHasLayout);
+		attributeSetterBiConsumers.put(
+			"hasLayout",
+			(BiConsumer<DataCollection, Boolean>)DataCollection::setHasLayout);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -746,220 +742,19 @@ public class DataCollectionModelImpl
 
 	@Override
 	public void setCopiedFrom(long copiedFrom) {
+		_columnBitmask |= COPIEDFROM_COLUMN_BITMASK;
+
+		if (!_setOriginalCopiedFrom) {
+			_setOriginalCopiedFrom = true;
+
+			_originalCopiedFrom = _copiedFrom;
+		}
+
 		_copiedFrom = copiedFrom;
 	}
 
-	@JSON
-	@Override
-	public String getTitle() {
-		if (_title == null) {
-			return "";
-		}
-		else {
-			return _title;
-		}
-	}
-
-	@Override
-	public String getTitle(Locale locale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getTitle(languageId);
-	}
-
-	@Override
-	public String getTitle(Locale locale, boolean useDefault) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getTitle(languageId, useDefault);
-	}
-
-	@Override
-	public String getTitle(String languageId) {
-		return LocalizationUtil.getLocalization(getTitle(), languageId);
-	}
-
-	@Override
-	public String getTitle(String languageId, boolean useDefault) {
-		return LocalizationUtil.getLocalization(
-			getTitle(), languageId, useDefault);
-	}
-
-	@Override
-	public String getTitleCurrentLanguageId() {
-		return _titleCurrentLanguageId;
-	}
-
-	@JSON
-	@Override
-	public String getTitleCurrentValue() {
-		Locale locale = getLocale(_titleCurrentLanguageId);
-
-		return getTitle(locale);
-	}
-
-	@Override
-	public Map<Locale, String> getTitleMap() {
-		return LocalizationUtil.getLocalizationMap(getTitle());
-	}
-
-	@Override
-	public void setTitle(String title) {
-		_title = title;
-	}
-
-	@Override
-	public void setTitle(String title, Locale locale) {
-		setTitle(title, locale, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setTitle(String title, Locale locale, Locale defaultLocale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
-
-		if (Validator.isNotNull(title)) {
-			setTitle(
-				LocalizationUtil.updateLocalization(
-					getTitle(), "Title", title, languageId, defaultLanguageId));
-		}
-		else {
-			setTitle(
-				LocalizationUtil.removeLocalization(
-					getTitle(), "Title", languageId));
-		}
-	}
-
-	@Override
-	public void setTitleCurrentLanguageId(String languageId) {
-		_titleCurrentLanguageId = languageId;
-	}
-
-	@Override
-	public void setTitleMap(Map<Locale, String> titleMap) {
-		setTitleMap(titleMap, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setTitleMap(
-		Map<Locale, String> titleMap, Locale defaultLocale) {
-
-		if (titleMap == null) {
-			return;
-		}
-
-		setTitle(
-			LocalizationUtil.updateLocalization(
-				titleMap, getTitle(), "Title",
-				LocaleUtil.toLanguageId(defaultLocale)));
-	}
-
-	@JSON
-	@Override
-	public String getDescription() {
-		if (_description == null) {
-			return "";
-		}
-		else {
-			return _description;
-		}
-	}
-
-	@Override
-	public String getDescription(Locale locale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getDescription(languageId);
-	}
-
-	@Override
-	public String getDescription(Locale locale, boolean useDefault) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getDescription(languageId, useDefault);
-	}
-
-	@Override
-	public String getDescription(String languageId) {
-		return LocalizationUtil.getLocalization(getDescription(), languageId);
-	}
-
-	@Override
-	public String getDescription(String languageId, boolean useDefault) {
-		return LocalizationUtil.getLocalization(
-			getDescription(), languageId, useDefault);
-	}
-
-	@Override
-	public String getDescriptionCurrentLanguageId() {
-		return _descriptionCurrentLanguageId;
-	}
-
-	@JSON
-	@Override
-	public String getDescriptionCurrentValue() {
-		Locale locale = getLocale(_descriptionCurrentLanguageId);
-
-		return getDescription(locale);
-	}
-
-	@Override
-	public Map<Locale, String> getDescriptionMap() {
-		return LocalizationUtil.getLocalizationMap(getDescription());
-	}
-
-	@Override
-	public void setDescription(String description) {
-		_description = description;
-	}
-
-	@Override
-	public void setDescription(String description, Locale locale) {
-		setDescription(description, locale, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setDescription(
-		String description, Locale locale, Locale defaultLocale) {
-
-		String languageId = LocaleUtil.toLanguageId(locale);
-		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
-
-		if (Validator.isNotNull(description)) {
-			setDescription(
-				LocalizationUtil.updateLocalization(
-					getDescription(), "Description", description, languageId,
-					defaultLanguageId));
-		}
-		else {
-			setDescription(
-				LocalizationUtil.removeLocalization(
-					getDescription(), "Description", languageId));
-		}
-	}
-
-	@Override
-	public void setDescriptionCurrentLanguageId(String languageId) {
-		_descriptionCurrentLanguageId = languageId;
-	}
-
-	@Override
-	public void setDescriptionMap(Map<Locale, String> descriptionMap) {
-		setDescriptionMap(descriptionMap, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setDescriptionMap(
-		Map<Locale, String> descriptionMap, Locale defaultLocale) {
-
-		if (descriptionMap == null) {
-			return;
-		}
-
-		setDescription(
-			LocalizationUtil.updateLocalization(
-				descriptionMap, getDescription(), "Description",
-				LocaleUtil.toLanguageId(defaultLocale)));
+	public long getOriginalCopiedFrom() {
+		return _originalCopiedFrom;
 	}
 
 	@JSON
@@ -983,6 +778,40 @@ public class DataCollectionModelImpl
 
 	public long getOriginalOrganizationId() {
 		return _originalOrganizationId;
+	}
+
+	@JSON
+	@Override
+	public boolean getHasMetaData() {
+		return _hasMetaData;
+	}
+
+	@JSON
+	@Override
+	public boolean isHasMetaData() {
+		return _hasMetaData;
+	}
+
+	@Override
+	public void setHasMetaData(boolean hasMetaData) {
+		_hasMetaData = hasMetaData;
+	}
+
+	@JSON
+	@Override
+	public boolean getHasLayout() {
+		return _hasLayout;
+	}
+
+	@JSON
+	@Override
+	public boolean isHasLayout() {
+		return _hasLayout;
+	}
+
+	@Override
+	public void setHasLayout(boolean hasLayout) {
+		_hasLayout = hasLayout;
 	}
 
 	@Override
@@ -1089,94 +918,6 @@ public class DataCollectionModelImpl
 	}
 
 	@Override
-	public String[] getAvailableLanguageIds() {
-		Set<String> availableLanguageIds = new TreeSet<String>();
-
-		Map<Locale, String> titleMap = getTitleMap();
-
-		for (Map.Entry<Locale, String> entry : titleMap.entrySet()) {
-			Locale locale = entry.getKey();
-			String value = entry.getValue();
-
-			if (Validator.isNotNull(value)) {
-				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
-			}
-		}
-
-		Map<Locale, String> descriptionMap = getDescriptionMap();
-
-		for (Map.Entry<Locale, String> entry : descriptionMap.entrySet()) {
-			Locale locale = entry.getKey();
-			String value = entry.getValue();
-
-			if (Validator.isNotNull(value)) {
-				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
-			}
-		}
-
-		return availableLanguageIds.toArray(
-			new String[availableLanguageIds.size()]);
-	}
-
-	@Override
-	public String getDefaultLanguageId() {
-		String xml = getTitle();
-
-		if (xml == null) {
-			return "";
-		}
-
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
-
-		return LocalizationUtil.getDefaultLanguageId(xml, defaultLocale);
-	}
-
-	@Override
-	public void prepareLocalizedFieldsForImport() throws LocaleException {
-		Locale defaultLocale = LocaleUtil.fromLanguageId(
-			getDefaultLanguageId());
-
-		Locale[] availableLocales = LocaleUtil.fromLanguageIds(
-			getAvailableLanguageIds());
-
-		Locale defaultImportLocale = LocalizationUtil.getDefaultImportLocale(
-			DataCollection.class.getName(), getPrimaryKey(), defaultLocale,
-			availableLocales);
-
-		prepareLocalizedFieldsForImport(defaultImportLocale);
-	}
-
-	@Override
-	@SuppressWarnings("unused")
-	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
-		throws LocaleException {
-
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
-
-		String modelDefaultLanguageId = getDefaultLanguageId();
-
-		String title = getTitle(defaultLocale);
-
-		if (Validator.isNull(title)) {
-			setTitle(getTitle(modelDefaultLanguageId), defaultLocale);
-		}
-		else {
-			setTitle(getTitle(defaultLocale), defaultLocale, defaultLocale);
-		}
-
-		String description = getDescription(defaultLocale);
-
-		if (Validator.isNull(description)) {
-			setDescription(
-				getDescription(modelDefaultLanguageId), defaultLocale);
-		}
-		else {
-			setDescription(
-				getDescription(defaultLocale), defaultLocale, defaultLocale);
-		}
-	}
-
-	@Override
 	public DataCollection toEscapedModel() {
 		if (_escapedModel == null) {
 			Function<InvocationHandler, DataCollection>
@@ -1210,9 +951,9 @@ public class DataCollectionModelImpl
 		dataCollectionImpl.setName(getName());
 		dataCollectionImpl.setVersion(getVersion());
 		dataCollectionImpl.setCopiedFrom(getCopiedFrom());
-		dataCollectionImpl.setTitle(getTitle());
-		dataCollectionImpl.setDescription(getDescription());
 		dataCollectionImpl.setOrganizationId(getOrganizationId());
+		dataCollectionImpl.setHasMetaData(isHasMetaData());
+		dataCollectionImpl.setHasLayout(isHasLayout());
 
 		dataCollectionImpl.resetOriginalValues();
 
@@ -1302,6 +1043,11 @@ public class DataCollectionModelImpl
 
 		dataCollectionModelImpl._originalVersion =
 			dataCollectionModelImpl._version;
+
+		dataCollectionModelImpl._originalCopiedFrom =
+			dataCollectionModelImpl._copiedFrom;
+
+		dataCollectionModelImpl._setOriginalCopiedFrom = false;
 
 		dataCollectionModelImpl._originalOrganizationId =
 			dataCollectionModelImpl._organizationId;
@@ -1397,23 +1143,11 @@ public class DataCollectionModelImpl
 
 		dataCollectionCacheModel.copiedFrom = getCopiedFrom();
 
-		dataCollectionCacheModel.title = getTitle();
-
-		String title = dataCollectionCacheModel.title;
-
-		if ((title != null) && (title.length() == 0)) {
-			dataCollectionCacheModel.title = null;
-		}
-
-		dataCollectionCacheModel.description = getDescription();
-
-		String description = dataCollectionCacheModel.description;
-
-		if ((description != null) && (description.length() == 0)) {
-			dataCollectionCacheModel.description = null;
-		}
-
 		dataCollectionCacheModel.organizationId = getOrganizationId();
+
+		dataCollectionCacheModel.hasMetaData = isHasMetaData();
+
+		dataCollectionCacheModel.hasLayout = isHasLayout();
 
 		return dataCollectionCacheModel;
 	}
@@ -1518,13 +1252,13 @@ public class DataCollectionModelImpl
 	private String _version;
 	private String _originalVersion;
 	private long _copiedFrom;
-	private String _title;
-	private String _titleCurrentLanguageId;
-	private String _description;
-	private String _descriptionCurrentLanguageId;
+	private long _originalCopiedFrom;
+	private boolean _setOriginalCopiedFrom;
 	private long _organizationId;
 	private long _originalOrganizationId;
 	private boolean _setOriginalOrganizationId;
+	private boolean _hasMetaData;
+	private boolean _hasLayout;
 	private long _columnBitmask;
 	private DataCollection _escapedModel;
 

@@ -61,9 +61,9 @@ public class DataCollectionWrapper
 		attributes.put("name", getName());
 		attributes.put("version", getVersion());
 		attributes.put("copiedFrom", getCopiedFrom());
-		attributes.put("title", getTitle());
-		attributes.put("description", getDescription());
 		attributes.put("organizationId", getOrganizationId());
+		attributes.put("hasMetaData", isHasMetaData());
+		attributes.put("hasLayout", isHasLayout());
 
 		return attributes;
 	}
@@ -160,28 +160,23 @@ public class DataCollectionWrapper
 			setCopiedFrom(copiedFrom);
 		}
 
-		String title = (String)attributes.get("title");
-
-		if (title != null) {
-			setTitle(title);
-		}
-
-		String description = (String)attributes.get("description");
-
-		if (description != null) {
-			setDescription(description);
-		}
-
 		Long organizationId = (Long)attributes.get("organizationId");
 
 		if (organizationId != null) {
 			setOrganizationId(organizationId);
 		}
-	}
 
-	@Override
-	public String[] getAvailableLanguageIds() {
-		return model.getAvailableLanguageIds();
+		Boolean hasMetaData = (Boolean)attributes.get("hasMetaData");
+
+		if (hasMetaData != null) {
+			setHasMetaData(hasMetaData);
+		}
+
+		Boolean hasLayout = (Boolean)attributes.get("hasLayout");
+
+		if (hasLayout != null) {
+			setHasLayout(hasLayout);
+		}
 	}
 
 	/**
@@ -224,87 +219,6 @@ public class DataCollectionWrapper
 		return model.getDataCollectionId();
 	}
 
-	@Override
-	public String getDefaultLanguageId() {
-		return model.getDefaultLanguageId();
-	}
-
-	/**
-	 * Returns the description of this data collection.
-	 *
-	 * @return the description of this data collection
-	 */
-	@Override
-	public String getDescription() {
-		return model.getDescription();
-	}
-
-	/**
-	 * Returns the localized description of this data collection in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the locale of the language
-	 * @return the localized description of this data collection
-	 */
-	@Override
-	public String getDescription(java.util.Locale locale) {
-		return model.getDescription(locale);
-	}
-
-	/**
-	 * Returns the localized description of this data collection in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized description of this data collection. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	 */
-	@Override
-	public String getDescription(java.util.Locale locale, boolean useDefault) {
-		return model.getDescription(locale, useDefault);
-	}
-
-	/**
-	 * Returns the localized description of this data collection in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized description of this data collection
-	 */
-	@Override
-	public String getDescription(String languageId) {
-		return model.getDescription(languageId);
-	}
-
-	/**
-	 * Returns the localized description of this data collection in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized description of this data collection
-	 */
-	@Override
-	public String getDescription(String languageId, boolean useDefault) {
-		return model.getDescription(languageId, useDefault);
-	}
-
-	@Override
-	public String getDescriptionCurrentLanguageId() {
-		return model.getDescriptionCurrentLanguageId();
-	}
-
-	@Override
-	public String getDescriptionCurrentValue() {
-		return model.getDescriptionCurrentValue();
-	}
-
-	/**
-	 * Returns a map of the locales and localized descriptions of this data collection.
-	 *
-	 * @return the locales and localized descriptions of this data collection
-	 */
-	@Override
-	public Map<java.util.Locale, String> getDescriptionMap() {
-		return model.getDescriptionMap();
-	}
-
 	/**
 	 * Returns the group ID of this data collection.
 	 *
@@ -313,6 +227,26 @@ public class DataCollectionWrapper
 	@Override
 	public long getGroupId() {
 		return model.getGroupId();
+	}
+
+	/**
+	 * Returns the has layout of this data collection.
+	 *
+	 * @return the has layout of this data collection
+	 */
+	@Override
+	public boolean getHasLayout() {
+		return model.getHasLayout();
+	}
+
+	/**
+	 * Returns the has meta data of this data collection.
+	 *
+	 * @return the has meta data of this data collection
+	 */
+	@Override
+	public boolean getHasMetaData() {
+		return model.getHasMetaData();
 	}
 
 	/**
@@ -406,82 +340,6 @@ public class DataCollectionWrapper
 	}
 
 	/**
-	 * Returns the title of this data collection.
-	 *
-	 * @return the title of this data collection
-	 */
-	@Override
-	public String getTitle() {
-		return model.getTitle();
-	}
-
-	/**
-	 * Returns the localized title of this data collection in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the locale of the language
-	 * @return the localized title of this data collection
-	 */
-	@Override
-	public String getTitle(java.util.Locale locale) {
-		return model.getTitle(locale);
-	}
-
-	/**
-	 * Returns the localized title of this data collection in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized title of this data collection. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	 */
-	@Override
-	public String getTitle(java.util.Locale locale, boolean useDefault) {
-		return model.getTitle(locale, useDefault);
-	}
-
-	/**
-	 * Returns the localized title of this data collection in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized title of this data collection
-	 */
-	@Override
-	public String getTitle(String languageId) {
-		return model.getTitle(languageId);
-	}
-
-	/**
-	 * Returns the localized title of this data collection in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized title of this data collection
-	 */
-	@Override
-	public String getTitle(String languageId, boolean useDefault) {
-		return model.getTitle(languageId, useDefault);
-	}
-
-	@Override
-	public String getTitleCurrentLanguageId() {
-		return model.getTitleCurrentLanguageId();
-	}
-
-	@Override
-	public String getTitleCurrentValue() {
-		return model.getTitleCurrentValue();
-	}
-
-	/**
-	 * Returns a map of the locales and localized titles of this data collection.
-	 *
-	 * @return the locales and localized titles of this data collection
-	 */
-	@Override
-	public Map<java.util.Locale, String> getTitleMap() {
-		return model.getTitleMap();
-	}
-
-	/**
 	 * Returns the user ID of this data collection.
 	 *
 	 * @return the user ID of this data collection
@@ -572,6 +430,26 @@ public class DataCollectionWrapper
 	}
 
 	/**
+	 * Returns <code>true</code> if this data collection is has layout.
+	 *
+	 * @return <code>true</code> if this data collection is has layout; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isHasLayout() {
+		return model.isHasLayout();
+	}
+
+	/**
+	 * Returns <code>true</code> if this data collection is has meta data.
+	 *
+	 * @return <code>true</code> if this data collection is has meta data; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isHasMetaData() {
+		return model.isHasMetaData();
+	}
+
+	/**
 	 * Returns <code>true</code> if this data collection is inactive.
 	 *
 	 * @return <code>true</code> if this data collection is inactive; <code>false</code> otherwise
@@ -616,21 +494,6 @@ public class DataCollectionWrapper
 		model.persist();
 	}
 
-	@Override
-	public void prepareLocalizedFieldsForImport()
-		throws com.liferay.portal.kernel.exception.LocaleException {
-
-		model.prepareLocalizedFieldsForImport();
-	}
-
-	@Override
-	public void prepareLocalizedFieldsForImport(
-			java.util.Locale defaultImportLocale)
-		throws com.liferay.portal.kernel.exception.LocaleException {
-
-		model.prepareLocalizedFieldsForImport(defaultImportLocale);
-	}
-
 	/**
 	 * Sets the company ID of this data collection.
 	 *
@@ -672,73 +535,6 @@ public class DataCollectionWrapper
 	}
 
 	/**
-	 * Sets the description of this data collection.
-	 *
-	 * @param description the description of this data collection
-	 */
-	@Override
-	public void setDescription(String description) {
-		model.setDescription(description);
-	}
-
-	/**
-	 * Sets the localized description of this data collection in the language.
-	 *
-	 * @param description the localized description of this data collection
-	 * @param locale the locale of the language
-	 */
-	@Override
-	public void setDescription(String description, java.util.Locale locale) {
-		model.setDescription(description, locale);
-	}
-
-	/**
-	 * Sets the localized description of this data collection in the language, and sets the default locale.
-	 *
-	 * @param description the localized description of this data collection
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
-	 */
-	@Override
-	public void setDescription(
-		String description, java.util.Locale locale,
-		java.util.Locale defaultLocale) {
-
-		model.setDescription(description, locale, defaultLocale);
-	}
-
-	@Override
-	public void setDescriptionCurrentLanguageId(String languageId) {
-		model.setDescriptionCurrentLanguageId(languageId);
-	}
-
-	/**
-	 * Sets the localized descriptions of this data collection from the map of locales and localized descriptions.
-	 *
-	 * @param descriptionMap the locales and localized descriptions of this data collection
-	 */
-	@Override
-	public void setDescriptionMap(
-		Map<java.util.Locale, String> descriptionMap) {
-
-		model.setDescriptionMap(descriptionMap);
-	}
-
-	/**
-	 * Sets the localized descriptions of this data collection from the map of locales and localized descriptions, and sets the default locale.
-	 *
-	 * @param descriptionMap the locales and localized descriptions of this data collection
-	 * @param defaultLocale the default locale
-	 */
-	@Override
-	public void setDescriptionMap(
-		Map<java.util.Locale, String> descriptionMap,
-		java.util.Locale defaultLocale) {
-
-		model.setDescriptionMap(descriptionMap, defaultLocale);
-	}
-
-	/**
 	 * Sets the group ID of this data collection.
 	 *
 	 * @param groupId the group ID of this data collection
@@ -746,6 +542,26 @@ public class DataCollectionWrapper
 	@Override
 	public void setGroupId(long groupId) {
 		model.setGroupId(groupId);
+	}
+
+	/**
+	 * Sets whether this data collection is has layout.
+	 *
+	 * @param hasLayout the has layout of this data collection
+	 */
+	@Override
+	public void setHasLayout(boolean hasLayout) {
+		model.setHasLayout(hasLayout);
+	}
+
+	/**
+	 * Sets whether this data collection is has meta data.
+	 *
+	 * @param hasMetaData the has meta data of this data collection
+	 */
+	@Override
+	public void setHasMetaData(boolean hasMetaData) {
+		model.setHasMetaData(hasMetaData);
 	}
 
 	/**
@@ -836,70 +652,6 @@ public class DataCollectionWrapper
 	@Override
 	public void setStatusDate(Date statusDate) {
 		model.setStatusDate(statusDate);
-	}
-
-	/**
-	 * Sets the title of this data collection.
-	 *
-	 * @param title the title of this data collection
-	 */
-	@Override
-	public void setTitle(String title) {
-		model.setTitle(title);
-	}
-
-	/**
-	 * Sets the localized title of this data collection in the language.
-	 *
-	 * @param title the localized title of this data collection
-	 * @param locale the locale of the language
-	 */
-	@Override
-	public void setTitle(String title, java.util.Locale locale) {
-		model.setTitle(title, locale);
-	}
-
-	/**
-	 * Sets the localized title of this data collection in the language, and sets the default locale.
-	 *
-	 * @param title the localized title of this data collection
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
-	 */
-	@Override
-	public void setTitle(
-		String title, java.util.Locale locale, java.util.Locale defaultLocale) {
-
-		model.setTitle(title, locale, defaultLocale);
-	}
-
-	@Override
-	public void setTitleCurrentLanguageId(String languageId) {
-		model.setTitleCurrentLanguageId(languageId);
-	}
-
-	/**
-	 * Sets the localized titles of this data collection from the map of locales and localized titles.
-	 *
-	 * @param titleMap the locales and localized titles of this data collection
-	 */
-	@Override
-	public void setTitleMap(Map<java.util.Locale, String> titleMap) {
-		model.setTitleMap(titleMap);
-	}
-
-	/**
-	 * Sets the localized titles of this data collection from the map of locales and localized titles, and sets the default locale.
-	 *
-	 * @param titleMap the locales and localized titles of this data collection
-	 * @param defaultLocale the default locale
-	 */
-	@Override
-	public void setTitleMap(
-		Map<java.util.Locale, String> titleMap,
-		java.util.Locale defaultLocale) {
-
-		model.setTitleMap(titleMap, defaultLocale);
 	}
 
 	/**

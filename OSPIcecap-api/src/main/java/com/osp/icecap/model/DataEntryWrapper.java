@@ -58,13 +58,16 @@ public class DataEntryWrapper
 		attributes.put("statusByUserId", getStatusByUserId());
 		attributes.put("statusByUserName", getStatusByUserName());
 		attributes.put("statusDate", getStatusDate());
+		attributes.put("dataTypeId", getDataTypeId());
 		attributes.put("dataPackId", getDataPackId());
 		attributes.put("dataSectionId", getDataSectionId());
 		attributes.put("dataSetId", getDataSetId());
 		attributes.put("dataCollectionId", getDataCollectionId());
 		attributes.put("accessURL", getAccessURL());
-		attributes.put("pathType", getPathType());
+		attributes.put("sequenceId", getSequenceId());
+		attributes.put("accessType", getAccessType());
 		attributes.put("copiedFrom", getCopiedFrom());
+		attributes.put("hasMetaData", isHasMetaData());
 
 		return attributes;
 	}
@@ -143,6 +146,12 @@ public class DataEntryWrapper
 			setStatusDate(statusDate);
 		}
 
+		Long dataTypeId = (Long)attributes.get("dataTypeId");
+
+		if (dataTypeId != null) {
+			setDataTypeId(dataTypeId);
+		}
+
 		Long dataPackId = (Long)attributes.get("dataPackId");
 
 		if (dataPackId != null) {
@@ -173,10 +182,16 @@ public class DataEntryWrapper
 			setAccessURL(accessURL);
 		}
 
-		String pathType = (String)attributes.get("pathType");
+		String sequenceId = (String)attributes.get("sequenceId");
 
-		if (pathType != null) {
-			setPathType(pathType);
+		if (sequenceId != null) {
+			setSequenceId(sequenceId);
+		}
+
+		String accessType = (String)attributes.get("accessType");
+
+		if (accessType != null) {
+			setAccessType(accessType);
 		}
 
 		Long copiedFrom = (Long)attributes.get("copiedFrom");
@@ -184,6 +199,22 @@ public class DataEntryWrapper
 		if (copiedFrom != null) {
 			setCopiedFrom(copiedFrom);
 		}
+
+		Boolean hasMetaData = (Boolean)attributes.get("hasMetaData");
+
+		if (hasMetaData != null) {
+			setHasMetaData(hasMetaData);
+		}
+	}
+
+	/**
+	 * Returns the access type of this data entry.
+	 *
+	 * @return the access type of this data entry
+	 */
+	@Override
+	public String getAccessType() {
+		return model.getAccessType();
 	}
 
 	/**
@@ -277,6 +308,16 @@ public class DataEntryWrapper
 	}
 
 	/**
+	 * Returns the data type ID of this data entry.
+	 *
+	 * @return the data type ID of this data entry
+	 */
+	@Override
+	public long getDataTypeId() {
+		return model.getDataTypeId();
+	}
+
+	/**
 	 * Returns the group ID of this data entry.
 	 *
 	 * @return the group ID of this data entry
@@ -284,6 +325,16 @@ public class DataEntryWrapper
 	@Override
 	public long getGroupId() {
 		return model.getGroupId();
+	}
+
+	/**
+	 * Returns the has meta data of this data entry.
+	 *
+	 * @return the has meta data of this data entry
+	 */
+	@Override
+	public boolean getHasMetaData() {
+		return model.getHasMetaData();
 	}
 
 	/**
@@ -297,16 +348,6 @@ public class DataEntryWrapper
 	}
 
 	/**
-	 * Returns the path type of this data entry.
-	 *
-	 * @return the path type of this data entry
-	 */
-	@Override
-	public String getPathType() {
-		return model.getPathType();
-	}
-
-	/**
 	 * Returns the primary key of this data entry.
 	 *
 	 * @return the primary key of this data entry
@@ -314,6 +355,16 @@ public class DataEntryWrapper
 	@Override
 	public long getPrimaryKey() {
 		return model.getPrimaryKey();
+	}
+
+	/**
+	 * Returns the sequence ID of this data entry.
+	 *
+	 * @return the sequence ID of this data entry
+	 */
+	@Override
+	public String getSequenceId() {
+		return model.getSequenceId();
 	}
 
 	/**
@@ -447,6 +498,16 @@ public class DataEntryWrapper
 	}
 
 	/**
+	 * Returns <code>true</code> if this data entry is has meta data.
+	 *
+	 * @return <code>true</code> if this data entry is has meta data; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isHasMetaData() {
+		return model.isHasMetaData();
+	}
+
+	/**
 	 * Returns <code>true</code> if this data entry is inactive.
 	 *
 	 * @return <code>true</code> if this data entry is inactive; <code>false</code> otherwise
@@ -489,6 +550,16 @@ public class DataEntryWrapper
 	@Override
 	public void persist() {
 		model.persist();
+	}
+
+	/**
+	 * Sets the access type of this data entry.
+	 *
+	 * @param accessType the access type of this data entry
+	 */
+	@Override
+	public void setAccessType(String accessType) {
+		model.setAccessType(accessType);
 	}
 
 	/**
@@ -582,6 +653,16 @@ public class DataEntryWrapper
 	}
 
 	/**
+	 * Sets the data type ID of this data entry.
+	 *
+	 * @param dataTypeId the data type ID of this data entry
+	 */
+	@Override
+	public void setDataTypeId(long dataTypeId) {
+		model.setDataTypeId(dataTypeId);
+	}
+
+	/**
 	 * Sets the group ID of this data entry.
 	 *
 	 * @param groupId the group ID of this data entry
@@ -589,6 +670,16 @@ public class DataEntryWrapper
 	@Override
 	public void setGroupId(long groupId) {
 		model.setGroupId(groupId);
+	}
+
+	/**
+	 * Sets whether this data entry is has meta data.
+	 *
+	 * @param hasMetaData the has meta data of this data entry
+	 */
+	@Override
+	public void setHasMetaData(boolean hasMetaData) {
+		model.setHasMetaData(hasMetaData);
 	}
 
 	/**
@@ -602,16 +693,6 @@ public class DataEntryWrapper
 	}
 
 	/**
-	 * Sets the path type of this data entry.
-	 *
-	 * @param pathType the path type of this data entry
-	 */
-	@Override
-	public void setPathType(String pathType) {
-		model.setPathType(pathType);
-	}
-
-	/**
 	 * Sets the primary key of this data entry.
 	 *
 	 * @param primaryKey the primary key of this data entry
@@ -619,6 +700,16 @@ public class DataEntryWrapper
 	@Override
 	public void setPrimaryKey(long primaryKey) {
 		model.setPrimaryKey(primaryKey);
+	}
+
+	/**
+	 * Sets the sequence ID of this data entry.
+	 *
+	 * @param sequenceId the sequence ID of this data entry
+	 */
+	@Override
+	public void setSequenceId(String sequenceId) {
+		model.setSequenceId(sequenceId);
 	}
 
 	/**

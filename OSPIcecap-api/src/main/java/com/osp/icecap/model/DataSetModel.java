@@ -15,17 +15,13 @@
 package com.osp.icecap.model;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.GroupedModel;
-import com.liferay.portal.kernel.model.LocalizedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.model.StagedAuditedModel;
 import com.liferay.portal.kernel.model.WorkflowedModel;
 
 import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -42,8 +38,8 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface DataSetModel
-	extends BaseModel<DataSet>, GroupedModel, LocalizedModel, ShardedModel,
-			StagedAuditedModel, WorkflowedModel {
+	extends BaseModel<DataSet>, GroupedModel, ShardedModel, StagedAuditedModel,
+			WorkflowedModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -305,103 +301,33 @@ public interface DataSetModel
 	public void setDataCollectionId(long dataCollectionId);
 
 	/**
-	 * Returns the title of this data set.
+	 * Returns the data type ID of this data set.
 	 *
-	 * @return the title of this data set
+	 * @return the data type ID of this data set
 	 */
-	public String getTitle();
+	public long getDataTypeId();
 
 	/**
-	 * Returns the localized title of this data set in the language. Uses the default language if no localization exists for the requested language.
+	 * Sets the data type ID of this data set.
 	 *
-	 * @param locale the locale of the language
-	 * @return the localized title of this data set
+	 * @param dataTypeId the data type ID of this data set
+	 */
+	public void setDataTypeId(long dataTypeId);
+
+	/**
+	 * Returns the name of this data set.
+	 *
+	 * @return the name of this data set
 	 */
 	@AutoEscape
-	public String getTitle(Locale locale);
+	public String getName();
 
 	/**
-	 * Returns the localized title of this data set in the language, optionally using the default language if no localization exists for the requested language.
+	 * Sets the name of this data set.
 	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized title of this data set. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 * @param name the name of this data set
 	 */
-	@AutoEscape
-	public String getTitle(Locale locale, boolean useDefault);
-
-	/**
-	 * Returns the localized title of this data set in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized title of this data set
-	 */
-	@AutoEscape
-	public String getTitle(String languageId);
-
-	/**
-	 * Returns the localized title of this data set in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized title of this data set
-	 */
-	@AutoEscape
-	public String getTitle(String languageId, boolean useDefault);
-
-	@AutoEscape
-	public String getTitleCurrentLanguageId();
-
-	@AutoEscape
-	public String getTitleCurrentValue();
-
-	/**
-	 * Returns a map of the locales and localized titles of this data set.
-	 *
-	 * @return the locales and localized titles of this data set
-	 */
-	public Map<Locale, String> getTitleMap();
-
-	/**
-	 * Sets the title of this data set.
-	 *
-	 * @param title the title of this data set
-	 */
-	public void setTitle(String title);
-
-	/**
-	 * Sets the localized title of this data set in the language.
-	 *
-	 * @param title the localized title of this data set
-	 * @param locale the locale of the language
-	 */
-	public void setTitle(String title, Locale locale);
-
-	/**
-	 * Sets the localized title of this data set in the language, and sets the default locale.
-	 *
-	 * @param title the localized title of this data set
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
-	 */
-	public void setTitle(String title, Locale locale, Locale defaultLocale);
-
-	public void setTitleCurrentLanguageId(String languageId);
-
-	/**
-	 * Sets the localized titles of this data set from the map of locales and localized titles.
-	 *
-	 * @param titleMap the locales and localized titles of this data set
-	 */
-	public void setTitleMap(Map<Locale, String> titleMap);
-
-	/**
-	 * Sets the localized titles of this data set from the map of locales and localized titles, and sets the default locale.
-	 *
-	 * @param titleMap the locales and localized titles of this data set
-	 * @param defaultLocale the default locale
-	 */
-	public void setTitleMap(Map<Locale, String> titleMap, Locale defaultLocale);
+	public void setName(String name);
 
 	/**
 	 * Returns the version of this data set.
@@ -419,107 +345,6 @@ public interface DataSetModel
 	public void setVersion(String version);
 
 	/**
-	 * Returns the description of this data set.
-	 *
-	 * @return the description of this data set
-	 */
-	public String getDescription();
-
-	/**
-	 * Returns the localized description of this data set in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the locale of the language
-	 * @return the localized description of this data set
-	 */
-	@AutoEscape
-	public String getDescription(Locale locale);
-
-	/**
-	 * Returns the localized description of this data set in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized description of this data set. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	 */
-	@AutoEscape
-	public String getDescription(Locale locale, boolean useDefault);
-
-	/**
-	 * Returns the localized description of this data set in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized description of this data set
-	 */
-	@AutoEscape
-	public String getDescription(String languageId);
-
-	/**
-	 * Returns the localized description of this data set in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized description of this data set
-	 */
-	@AutoEscape
-	public String getDescription(String languageId, boolean useDefault);
-
-	@AutoEscape
-	public String getDescriptionCurrentLanguageId();
-
-	@AutoEscape
-	public String getDescriptionCurrentValue();
-
-	/**
-	 * Returns a map of the locales and localized descriptions of this data set.
-	 *
-	 * @return the locales and localized descriptions of this data set
-	 */
-	public Map<Locale, String> getDescriptionMap();
-
-	/**
-	 * Sets the description of this data set.
-	 *
-	 * @param description the description of this data set
-	 */
-	public void setDescription(String description);
-
-	/**
-	 * Sets the localized description of this data set in the language.
-	 *
-	 * @param description the localized description of this data set
-	 * @param locale the locale of the language
-	 */
-	public void setDescription(String description, Locale locale);
-
-	/**
-	 * Sets the localized description of this data set in the language, and sets the default locale.
-	 *
-	 * @param description the localized description of this data set
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
-	 */
-	public void setDescription(
-		String description, Locale locale, Locale defaultLocale);
-
-	public void setDescriptionCurrentLanguageId(String languageId);
-
-	/**
-	 * Sets the localized descriptions of this data set from the map of locales and localized descriptions.
-	 *
-	 * @param descriptionMap the locales and localized descriptions of this data set
-	 */
-	public void setDescriptionMap(Map<Locale, String> descriptionMap);
-
-	/**
-	 * Sets the localized descriptions of this data set from the map of locales and localized descriptions, and sets the default locale.
-	 *
-	 * @param descriptionMap the locales and localized descriptions of this data set
-	 * @param defaultLocale the default locale
-	 */
-	public void setDescriptionMap(
-		Map<Locale, String> descriptionMap, Locale defaultLocale);
-
-	/**
 	 * Returns the copied from of this data set.
 	 *
 	 * @return the copied from of this data set
@@ -532,6 +357,48 @@ public interface DataSetModel
 	 * @param copiedFrom the copied from of this data set
 	 */
 	public void setCopiedFrom(long copiedFrom);
+
+	/**
+	 * Returns the has meta data of this data set.
+	 *
+	 * @return the has meta data of this data set
+	 */
+	public boolean getHasMetaData();
+
+	/**
+	 * Returns <code>true</code> if this data set is has meta data.
+	 *
+	 * @return <code>true</code> if this data set is has meta data; <code>false</code> otherwise
+	 */
+	public boolean isHasMetaData();
+
+	/**
+	 * Sets whether this data set is has meta data.
+	 *
+	 * @param hasMetaData the has meta data of this data set
+	 */
+	public void setHasMetaData(boolean hasMetaData);
+
+	/**
+	 * Returns the has layout of this data set.
+	 *
+	 * @return the has layout of this data set
+	 */
+	public boolean getHasLayout();
+
+	/**
+	 * Returns <code>true</code> if this data set is has layout.
+	 *
+	 * @return <code>true</code> if this data set is has layout; <code>false</code> otherwise
+	 */
+	public boolean isHasLayout();
+
+	/**
+	 * Sets whether this data set is has layout.
+	 *
+	 * @param hasLayout the has layout of this data set
+	 */
+	public void setHasLayout(boolean hasLayout);
 
 	/**
 	 * Returns <code>true</code> if this data set is approved.
@@ -596,18 +463,5 @@ public interface DataSetModel
 	 */
 	@Override
 	public boolean isScheduled();
-
-	@Override
-	public String[] getAvailableLanguageIds();
-
-	@Override
-	public String getDefaultLanguageId();
-
-	@Override
-	public void prepareLocalizedFieldsForImport() throws LocaleException;
-
-	@Override
-	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
-		throws LocaleException;
 
 }

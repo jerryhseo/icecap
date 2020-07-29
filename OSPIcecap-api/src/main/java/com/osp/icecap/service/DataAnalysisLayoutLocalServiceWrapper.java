@@ -50,14 +50,6 @@ public class DataAnalysisLayoutLocalServiceWrapper
 			dataAnalysisLayout);
 	}
 
-	@Override
-	public com.osp.icecap.model.DataAnalysisLayout addDataAnalysisLayout(
-		String dataUuid, String layout) {
-
-		return _dataAnalysisLayoutLocalService.addDataAnalysisLayout(
-			dataUuid, layout);
-	}
-
 	/**
 	 * Creates a new data analysis layout with the primary key. Does not add the data analysis layout to the database.
 	 *
@@ -275,15 +267,6 @@ public class DataAnalysisLayoutLocalServiceWrapper
 		return _dataAnalysisLayoutLocalService.getPersistedModel(primaryKeyObj);
 	}
 
-	@Override
-	public com.osp.icecap.model.DataAnalysisLayout removeDataAnalysisLayout(
-			String dataUuid)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return _dataAnalysisLayoutLocalService.removeDataAnalysisLayout(
-			dataUuid);
-	}
-
 	/**
 	 * Updates the data analysis layout in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -296,14 +279,6 @@ public class DataAnalysisLayoutLocalServiceWrapper
 
 		return _dataAnalysisLayoutLocalService.updateDataAnalysisLayout(
 			dataAnalysisLayout);
-	}
-
-	@Override
-	public com.osp.icecap.model.DataAnalysisLayout updateDataAnalysisLayout(
-		String dataUuid, String layout) {
-
-		return _dataAnalysisLayoutLocalService.updateDataAnalysisLayout(
-			dataUuid, layout);
 	}
 
 	@Override

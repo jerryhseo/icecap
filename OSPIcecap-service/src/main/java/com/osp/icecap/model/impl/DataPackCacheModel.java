@@ -65,7 +65,7 @@ public class DataPackCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(39);
+		StringBundler sb = new StringBundler(43);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -97,14 +97,18 @@ public class DataPackCacheModel
 		sb.append(dataSetId);
 		sb.append(", dataSectionId=");
 		sb.append(dataSectionId);
-		sb.append(", title=");
-		sb.append(title);
+		sb.append(", name=");
+		sb.append(name);
 		sb.append(", version=");
 		sb.append(version);
-		sb.append(", description=");
-		sb.append(description);
+		sb.append(", component=");
+		sb.append(component);
 		sb.append(", copiedFrom=");
 		sb.append(copiedFrom);
+		sb.append(", hasMetaData=");
+		sb.append(hasMetaData);
+		sb.append(", hasLayout=");
+		sb.append(hasLayout);
 		sb.append("}");
 
 		return sb.toString();
@@ -168,11 +172,11 @@ public class DataPackCacheModel
 		dataPackImpl.setDataSetId(dataSetId);
 		dataPackImpl.setDataSectionId(dataSectionId);
 
-		if (title == null) {
-			dataPackImpl.setTitle("");
+		if (name == null) {
+			dataPackImpl.setName("");
 		}
 		else {
-			dataPackImpl.setTitle(title);
+			dataPackImpl.setName(name);
 		}
 
 		if (version == null) {
@@ -182,14 +186,16 @@ public class DataPackCacheModel
 			dataPackImpl.setVersion(version);
 		}
 
-		if (description == null) {
-			dataPackImpl.setDescription("");
+		if (component == null) {
+			dataPackImpl.setComponent("");
 		}
 		else {
-			dataPackImpl.setDescription(description);
+			dataPackImpl.setComponent(component);
 		}
 
 		dataPackImpl.setCopiedFrom(copiedFrom);
+		dataPackImpl.setHasMetaData(hasMetaData);
+		dataPackImpl.setHasLayout(hasLayout);
 
 		dataPackImpl.resetOriginalValues();
 
@@ -222,11 +228,15 @@ public class DataPackCacheModel
 		dataSetId = objectInput.readLong();
 
 		dataSectionId = objectInput.readLong();
-		title = objectInput.readUTF();
+		name = objectInput.readUTF();
 		version = objectInput.readUTF();
-		description = objectInput.readUTF();
+		component = objectInput.readUTF();
 
 		copiedFrom = objectInput.readLong();
+
+		hasMetaData = objectInput.readBoolean();
+
+		hasLayout = objectInput.readBoolean();
 	}
 
 	@Override
@@ -275,11 +285,11 @@ public class DataPackCacheModel
 
 		objectOutput.writeLong(dataSectionId);
 
-		if (title == null) {
+		if (name == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(title);
+			objectOutput.writeUTF(name);
 		}
 
 		if (version == null) {
@@ -289,14 +299,18 @@ public class DataPackCacheModel
 			objectOutput.writeUTF(version);
 		}
 
-		if (description == null) {
+		if (component == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(description);
+			objectOutput.writeUTF(component);
 		}
 
 		objectOutput.writeLong(copiedFrom);
+
+		objectOutput.writeBoolean(hasMetaData);
+
+		objectOutput.writeBoolean(hasLayout);
 	}
 
 	public String uuid;
@@ -314,9 +328,11 @@ public class DataPackCacheModel
 	public long dataCollectionId;
 	public long dataSetId;
 	public long dataSectionId;
-	public String title;
+	public String name;
 	public String version;
-	public String description;
+	public String component;
 	public long copiedFrom;
+	public boolean hasMetaData;
+	public boolean hasLayout;
 
 }

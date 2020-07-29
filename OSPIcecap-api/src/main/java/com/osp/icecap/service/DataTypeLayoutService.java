@@ -25,12 +25,12 @@ import com.liferay.portal.kernel.transaction.Transactional;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * Provides the remote service interface for DataCollectionLayout. Methods of this
+ * Provides the remote service interface for DataTypeLayout. Methods of this
  * service are expected to have security checks based on the propagated JAAS
  * credentials because this service can be accessed remotely.
  *
  * @author Jerry H. Seo
- * @see DataCollectionLayoutServiceUtil
+ * @see DataTypeLayoutServiceUtil
  * @generated
  */
 @AccessControlled
@@ -40,12 +40,12 @@ import org.osgi.annotation.versioning.ProviderType;
 	isolation = Isolation.PORTAL,
 	rollbackFor = {PortalException.class, SystemException.class}
 )
-public interface DataCollectionLayoutService extends BaseService {
+public interface DataTypeLayoutService extends BaseService {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this interface directly. Always use {@link DataCollectionLayoutServiceUtil} to access the data collection layout remote service. Add custom service methods to <code>com.osp.icecap.service.impl.DataCollectionLayoutServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify or reference this interface directly. Always use {@link DataTypeLayoutServiceUtil} to access the data type layout remote service. Add custom service methods to <code>com.osp.icecap.service.impl.DataTypeLayoutServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
 
 	/**

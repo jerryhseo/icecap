@@ -1719,6 +1719,169 @@ public class DataPackUtil {
 	}
 
 	/**
+	 * Returns all the data packs where name = &#63;.
+	 *
+	 * @param name the name
+	 * @return the matching data packs
+	 */
+	public static List<DataPack> findByName(String name) {
+		return getPersistence().findByName(name);
+	}
+
+	/**
+	 * Returns a range of all the data packs where name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param name the name
+	 * @param start the lower bound of the range of data packs
+	 * @param end the upper bound of the range of data packs (not inclusive)
+	 * @return the range of matching data packs
+	 */
+	public static List<DataPack> findByName(String name, int start, int end) {
+		return getPersistence().findByName(name, start, end);
+	}
+
+	/**
+	 * Returns an ordered range of all the data packs where name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName(String, int, int, OrderByComparator)}
+	 * @param name the name
+	 * @param start the lower bound of the range of data packs
+	 * @param end the upper bound of the range of data packs (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data packs
+	 */
+	@Deprecated
+	public static List<DataPack> findByName(
+		String name, int start, int end,
+		OrderByComparator<DataPack> orderByComparator, boolean useFinderCache) {
+
+		return getPersistence().findByName(
+			name, start, end, orderByComparator, useFinderCache);
+	}
+
+	/**
+	 * Returns an ordered range of all the data packs where name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataPackModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param name the name
+	 * @param start the lower bound of the range of data packs
+	 * @param end the upper bound of the range of data packs (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data packs
+	 */
+	public static List<DataPack> findByName(
+		String name, int start, int end,
+		OrderByComparator<DataPack> orderByComparator) {
+
+		return getPersistence().findByName(name, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns the first data pack in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data pack
+	 * @throws NoSuchDataPackException if a matching data pack could not be found
+	 */
+	public static DataPack findByName_First(
+			String name, OrderByComparator<DataPack> orderByComparator)
+		throws com.osp.icecap.exception.NoSuchDataPackException {
+
+		return getPersistence().findByName_First(name, orderByComparator);
+	}
+
+	/**
+	 * Returns the first data pack in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data pack, or <code>null</code> if a matching data pack could not be found
+	 */
+	public static DataPack fetchByName_First(
+		String name, OrderByComparator<DataPack> orderByComparator) {
+
+		return getPersistence().fetchByName_First(name, orderByComparator);
+	}
+
+	/**
+	 * Returns the last data pack in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data pack
+	 * @throws NoSuchDataPackException if a matching data pack could not be found
+	 */
+	public static DataPack findByName_Last(
+			String name, OrderByComparator<DataPack> orderByComparator)
+		throws com.osp.icecap.exception.NoSuchDataPackException {
+
+		return getPersistence().findByName_Last(name, orderByComparator);
+	}
+
+	/**
+	 * Returns the last data pack in the ordered set where name = &#63;.
+	 *
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data pack, or <code>null</code> if a matching data pack could not be found
+	 */
+	public static DataPack fetchByName_Last(
+		String name, OrderByComparator<DataPack> orderByComparator) {
+
+		return getPersistence().fetchByName_Last(name, orderByComparator);
+	}
+
+	/**
+	 * Returns the data packs before and after the current data pack in the ordered set where name = &#63;.
+	 *
+	 * @param dataPackId the primary key of the current data pack
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data pack
+	 * @throws NoSuchDataPackException if a data pack with the primary key could not be found
+	 */
+	public static DataPack[] findByName_PrevAndNext(
+			long dataPackId, String name,
+			OrderByComparator<DataPack> orderByComparator)
+		throws com.osp.icecap.exception.NoSuchDataPackException {
+
+		return getPersistence().findByName_PrevAndNext(
+			dataPackId, name, orderByComparator);
+	}
+
+	/**
+	 * Removes all the data packs where name = &#63; from the database.
+	 *
+	 * @param name the name
+	 */
+	public static void removeByName(String name) {
+		getPersistence().removeByName(name);
+	}
+
+	/**
+	 * Returns the number of data packs where name = &#63;.
+	 *
+	 * @param name the name
+	 * @return the number of matching data packs
+	 */
+	public static int countByName(String name) {
+		return getPersistence().countByName(name);
+	}
+
+	/**
 	 * Caches the data pack in the entity cache if it is enabled.
 	 *
 	 * @param dataPack the data pack

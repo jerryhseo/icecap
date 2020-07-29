@@ -62,12 +62,15 @@ public class DataEntryLocalServiceWrapper
 	@Override
 	public com.osp.icecap.model.DataEntry createDataEntry(
 			long dataCollectionId, long dataSetId, long dataSectionId,
-			long dataPackId,
+			long dataPackId, String accessURL, String sequenceId,
+			String accessType, long copiedFrom,
+			java.util.Map<String, String> descriptionMap,
 			com.liferay.portal.kernel.service.ServiceContext sc)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataEntryLocalService.createDataEntry(
-			dataCollectionId, dataSetId, dataSectionId, dataPackId, sc);
+			dataCollectionId, dataSetId, dataSectionId, dataPackId, accessURL,
+			sequenceId, accessType, copiedFrom, descriptionMap, sc);
 	}
 
 	/**
@@ -356,13 +359,6 @@ public class DataEntryLocalServiceWrapper
 	}
 
 	@Override
-	public com.osp.icecap.model.DataEntry removeDataEntry(
-		com.osp.icecap.model.DataEntry dataEntry) {
-
-		return _dataEntryLocalService.removeDataEntry(dataEntry);
-	}
-
-	@Override
 	public com.osp.icecap.model.DataEntry removeDataEntry(long dataEntryId) {
 		return _dataEntryLocalService.removeDataEntry(dataEntryId);
 	}
@@ -378,6 +374,17 @@ public class DataEntryLocalServiceWrapper
 		com.osp.icecap.model.DataEntry dataEntry) {
 
 		return _dataEntryLocalService.updateDataEntry(dataEntry);
+	}
+
+	@Override
+	public com.osp.icecap.model.DataEntry updateDataEntry(
+		long dataEntryId, long dataCollectionId, long dataSetId,
+		long dataSectionId, long dataPackId,
+		com.liferay.portal.kernel.service.ServiceContext sc) {
+
+		return _dataEntryLocalService.updateDataEntry(
+			dataEntryId, dataCollectionId, dataSetId, dataSectionId, dataPackId,
+			sc);
 	}
 
 	@Override

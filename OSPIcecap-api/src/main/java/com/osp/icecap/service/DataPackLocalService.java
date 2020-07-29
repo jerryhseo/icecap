@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -34,13 +35,12 @@ import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchDataPackException;
+import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataPack;
 
 import java.io.Serializable;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -79,8 +79,8 @@ public interface DataPackLocalService
 
 	public DataPack addDataPack(
 			long dataCollectionId, long dataSetId, long dataSectionId,
-			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-			String version, long copiedFrom, ServiceContext sc)
+			String name, String version, long copiedFrom,
+			JSONObject metaDataJSON, String layout, ServiceContext sc)
 		throws PortalException;
 
 	/**
@@ -236,6 +236,13 @@ public interface DataPackLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DataPack> getDataPacks(int start, int end);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataPack> getDataPacksByDataSectionId(long dataSectionId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataPack> getDataPacksByDataSectionId(
+		long dataSectionId, int start, int end);
+
 	/**
 	 * Returns all the data packs matching the UUID and company.
 	 *
@@ -271,6 +278,9 @@ public interface DataPackLocalService
 	public int getDataPacksCount();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataPacksCountByDataSectionId(long dataSectionId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
 		PortletDataContext portletDataContext);
 
@@ -292,12 +302,6 @@ public interface DataPackLocalService
 	public DataPack removeDataPack(long dataPackId)
 		throws NoSuchDataPackException;
 
-	public void removeDataPacksByDataCollectionId(long dataCollectionId);
-
-	public void removeDataPacksByDataSectionId(long dataSectionId);
-
-	public void removeDataPacksByDataSetId(long dataSetId);
-
 	/**
 	 * Updates the data pack in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -308,9 +312,9 @@ public interface DataPackLocalService
 	public DataPack updateDataPack(DataPack dataPack);
 
 	public DataPack updateDataPack(
-			long dataPackId, Map<Locale, String> titleMap,
-			Map<Locale, String> descriptionMap, String version,
-			ServiceContext sc)
-		throws NoSuchDataPackException;
+			long dataPackId, long dataCollectionId, long dataSetId,
+			long dataSectionId, String name, String version, long copiedFrom,
+			JSONObject metaDataJSON, String layout, ServiceContext sc)
+		throws NoSuchDataPackException, NoSuchMetaDataFieldException;
 
 }

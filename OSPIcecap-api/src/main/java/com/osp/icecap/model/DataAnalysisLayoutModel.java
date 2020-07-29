@@ -69,6 +69,62 @@ public interface DataAnalysisLayoutModel extends BaseModel<DataAnalysisLayout> {
 	public void setDataUuid(String dataUuid);
 
 	/**
+	 * Returns the data collection ID of this data analysis layout.
+	 *
+	 * @return the data collection ID of this data analysis layout
+	 */
+	public long getDataCollectionId();
+
+	/**
+	 * Sets the data collection ID of this data analysis layout.
+	 *
+	 * @param dataCollectionId the data collection ID of this data analysis layout
+	 */
+	public void setDataCollectionId(long dataCollectionId);
+
+	/**
+	 * Returns the data set ID of this data analysis layout.
+	 *
+	 * @return the data set ID of this data analysis layout
+	 */
+	public long getDataSetId();
+
+	/**
+	 * Sets the data set ID of this data analysis layout.
+	 *
+	 * @param dataSetId the data set ID of this data analysis layout
+	 */
+	public void setDataSetId(long dataSetId);
+
+	/**
+	 * Returns the data section ID of this data analysis layout.
+	 *
+	 * @return the data section ID of this data analysis layout
+	 */
+	public long getDataSectionId();
+
+	/**
+	 * Sets the data section ID of this data analysis layout.
+	 *
+	 * @param dataSectionId the data section ID of this data analysis layout
+	 */
+	public void setDataSectionId(long dataSectionId);
+
+	/**
+	 * Returns the data pack ID of this data analysis layout.
+	 *
+	 * @return the data pack ID of this data analysis layout
+	 */
+	public long getDataPackId();
+
+	/**
+	 * Sets the data pack ID of this data analysis layout.
+	 *
+	 * @param dataPackId the data pack ID of this data analysis layout
+	 */
+	public void setDataPackId(long dataPackId);
+
+	/**
 	 * Returns the layout of this data analysis layout.
 	 *
 	 * @return the layout of this data analysis layout
@@ -82,20 +138,5 @@ public interface DataAnalysisLayoutModel extends BaseModel<DataAnalysisLayout> {
 	 * @param layout the layout of this data analysis layout
 	 */
 	public void setLayout(String layout);
-
-	/**
-	 * Returns the apply level of this data analysis layout.
-	 *
-	 * @return the apply level of this data analysis layout
-	 */
-	@AutoEscape
-	public String getApplyLevel();
-
-	/**
-	 * Sets the apply level of this data analysis layout.
-	 *
-	 * @param applyLevel the apply level of this data analysis layout
-	 */
-	public void setApplyLevel(String applyLevel);
 
 }

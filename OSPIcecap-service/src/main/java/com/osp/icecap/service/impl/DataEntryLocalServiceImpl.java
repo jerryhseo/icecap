@@ -16,12 +16,16 @@ package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.Validator;
 import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.service.base.DataEntryLocalServiceBaseImpl;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -44,19 +48,39 @@ import org.osgi.service.component.annotations.Component;
 )
 public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 
-	public DataEntry createDataEntry( 
+	public DataEntry addDataEntry( 
 			long dataCollectionId, 
 			long dataSetId, 
 			long dataSectionId, 
 			long dataPackId, 
+			long dataTypeId,
+			String accessURL,
+			String sequenceId,
+			String accessType,
+			long copiedFrom,
+			JSONObject metaData,
 			ServiceContext sc ) throws PortalException {
 		long dataEntryId = super.counterLocalService.increment();
-		DataEntry dataEntry = super.createDataEntry(dataEntryId);
+		DataEntry dataEntry = super.dataEntryPersistence.create(dataEntryId);
 		
 		dataEntry.setDataCollectionId(dataCollectionId);
 		dataEntry.setDataSetId(dataSetId);
 		dataEntry.setDataSectionId(dataSectionId);
 		dataEntry.setDataPackId(dataPackId);
+		
+		dataEntry.setAccessURL(accessURL);
+		dataEntry.setSequenceId(sequenceId);
+		dataEntry.setAccessURL(accessType);
+		dataEntry.setCopiedFrom(copiedFrom);
+		
+		if( Validator.isNotNull(descriptionMap) ) {
+			dataEntry.setHasDescription(true);
+			
+			super.dataEntryDescriptionPersistence.addDataEntryDescriptionMap( descriptionMap );
+		}
+		else {
+			dataEntry.setHasDescription(false);
+		}
 		
 		dataEntry.setCompanyId(sc.getCompanyId());
 		dataEntry.setGroupId(sc.getScopeGroupId());
@@ -64,20 +88,33 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 		dataEntry.setUserId(user.getUserId());
 		dataEntry.setCreateDate(new Date());
 		
-		super.updateDataEntry(dataEntry);
-		
-		return dataEntry;
-	}
-	
-	public DataEntry removeDataEntry( DataEntry dataEntry ) {
-		super.deleteDataEntry(dataEntry);
+		super.dataEntryPersistence.update(dataEntry);
 		
 		return dataEntry;
 	}
 	
 	public DataEntry removeDataEntry( long dataEntryId ) {
-		DataEntry dataEntry = super.fetchDataEntry(dataEntryId);
+		DataEntry dataEntry = super.dataEntryPersistence.fetchByPrimaryKey(dataEntryId);
 		
-		return removeDataEntry( dataEntry );
+		return super.dataEntryPersistence.remove( dataEntry );
+	}
+	
+	public DataEntry updateDataEntry(
+			long dataEntryId,
+			long dataCollectionId, 
+			long dataSetId, 
+			long dataSectionId, 
+			long dataPackId, 
+			ServiceContext sc ) {
+		DataEntry dataEntry = super.dataEntryPersistence.fetchByPrimaryKey(dataEntryId);
+		
+		dataEntry.setDataCollectionId(dataCollectionId);
+		dataEntry.setDataSetId(dataSetId);
+		dataEntry.setDataSectionId(dataSectionId);
+		dataEntry.setDataPackId(dataPackId);
+		
+		dataEntry.setModifiedDate(sc.getModifiedDate());
+		
+		return super.dataEntryPersistence.update(dataEntry);
 	}
 }

@@ -85,10 +85,11 @@ public class DataEntryModelImpl
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
 		{"status", Types.INTEGER}, {"statusByUserId", Types.BIGINT},
 		{"statusByUserName", Types.VARCHAR}, {"statusDate", Types.TIMESTAMP},
-		{"dataPackId", Types.BIGINT}, {"dataSectionId", Types.BIGINT},
-		{"dataSetId", Types.BIGINT}, {"dataCollectionId", Types.BIGINT},
-		{"accessURL", Types.VARCHAR}, {"pathType", Types.VARCHAR},
-		{"copiedFrom", Types.BIGINT}
+		{"dataTypeId", Types.BIGINT}, {"dataPackId", Types.BIGINT},
+		{"dataSectionId", Types.BIGINT}, {"dataSetId", Types.BIGINT},
+		{"dataCollectionId", Types.BIGINT}, {"accessURL", Types.VARCHAR},
+		{"sequenceId", Types.VARCHAR}, {"accessType", Types.VARCHAR},
+		{"copiedFrom", Types.BIGINT}, {"hasMetaData", Types.BOOLEAN}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -107,17 +108,20 @@ public class DataEntryModelImpl
 		TABLE_COLUMNS_MAP.put("statusByUserId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("statusByUserName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("dataTypeId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("dataPackId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("dataSectionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("dataSetId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("dataCollectionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("accessURL", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("pathType", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("sequenceId", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("accessType", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("copiedFrom", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("hasMetaData", Types.BOOLEAN);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataEntry (uuid_ VARCHAR(75) null,dataEntryId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,dataPackId LONG,dataSectionId LONG,dataSetId LONG,dataCollectionId LONG,accessURL VARCHAR(75) null,pathType VARCHAR(75) null,copiedFrom LONG)";
+		"create table ICECAP_DataEntry (uuid_ VARCHAR(75) null,dataEntryId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,dataTypeId LONG,dataPackId LONG,dataSectionId LONG,dataSetId LONG,dataCollectionId LONG,accessURL VARCHAR(75) null,sequenceId VARCHAR(75) null,accessType VARCHAR(75) null,copiedFrom LONG,hasMetaData BOOLEAN)";
 
 	public static final String TABLE_SQL_DROP = "drop table ICECAP_DataEntry";
 
@@ -188,13 +192,16 @@ public class DataEntryModelImpl
 		model.setStatusByUserId(soapModel.getStatusByUserId());
 		model.setStatusByUserName(soapModel.getStatusByUserName());
 		model.setStatusDate(soapModel.getStatusDate());
+		model.setDataTypeId(soapModel.getDataTypeId());
 		model.setDataPackId(soapModel.getDataPackId());
 		model.setDataSectionId(soapModel.getDataSectionId());
 		model.setDataSetId(soapModel.getDataSetId());
 		model.setDataCollectionId(soapModel.getDataCollectionId());
 		model.setAccessURL(soapModel.getAccessURL());
-		model.setPathType(soapModel.getPathType());
+		model.setSequenceId(soapModel.getSequenceId());
+		model.setAccessType(soapModel.getAccessType());
 		model.setCopiedFrom(soapModel.getCopiedFrom());
+		model.setHasMetaData(soapModel.isHasMetaData());
 
 		return model;
 	}
@@ -388,6 +395,10 @@ public class DataEntryModelImpl
 		attributeSetterBiConsumers.put(
 			"statusDate",
 			(BiConsumer<DataEntry, Date>)DataEntry::setStatusDate);
+		attributeGetterFunctions.put("dataTypeId", DataEntry::getDataTypeId);
+		attributeSetterBiConsumers.put(
+			"dataTypeId",
+			(BiConsumer<DataEntry, Long>)DataEntry::setDataTypeId);
 		attributeGetterFunctions.put("dataPackId", DataEntry::getDataPackId);
 		attributeSetterBiConsumers.put(
 			"dataPackId",
@@ -409,13 +420,22 @@ public class DataEntryModelImpl
 		attributeSetterBiConsumers.put(
 			"accessURL",
 			(BiConsumer<DataEntry, String>)DataEntry::setAccessURL);
-		attributeGetterFunctions.put("pathType", DataEntry::getPathType);
+		attributeGetterFunctions.put("sequenceId", DataEntry::getSequenceId);
 		attributeSetterBiConsumers.put(
-			"pathType", (BiConsumer<DataEntry, String>)DataEntry::setPathType);
+			"sequenceId",
+			(BiConsumer<DataEntry, String>)DataEntry::setSequenceId);
+		attributeGetterFunctions.put("accessType", DataEntry::getAccessType);
+		attributeSetterBiConsumers.put(
+			"accessType",
+			(BiConsumer<DataEntry, String>)DataEntry::setAccessType);
 		attributeGetterFunctions.put("copiedFrom", DataEntry::getCopiedFrom);
 		attributeSetterBiConsumers.put(
 			"copiedFrom",
 			(BiConsumer<DataEntry, Long>)DataEntry::setCopiedFrom);
+		attributeGetterFunctions.put("hasMetaData", DataEntry::getHasMetaData);
+		attributeSetterBiConsumers.put(
+			"hasMetaData",
+			(BiConsumer<DataEntry, Boolean>)DataEntry::setHasMetaData);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -668,6 +688,17 @@ public class DataEntryModelImpl
 
 	@JSON
 	@Override
+	public long getDataTypeId() {
+		return _dataTypeId;
+	}
+
+	@Override
+	public void setDataTypeId(long dataTypeId) {
+		_dataTypeId = dataTypeId;
+	}
+
+	@JSON
+	@Override
 	public long getDataPackId() {
 		return _dataPackId;
 	}
@@ -776,18 +807,34 @@ public class DataEntryModelImpl
 
 	@JSON
 	@Override
-	public String getPathType() {
-		if (_pathType == null) {
+	public String getSequenceId() {
+		if (_sequenceId == null) {
 			return "";
 		}
 		else {
-			return _pathType;
+			return _sequenceId;
 		}
 	}
 
 	@Override
-	public void setPathType(String pathType) {
-		_pathType = pathType;
+	public void setSequenceId(String sequenceId) {
+		_sequenceId = sequenceId;
+	}
+
+	@JSON
+	@Override
+	public String getAccessType() {
+		if (_accessType == null) {
+			return "";
+		}
+		else {
+			return _accessType;
+		}
+	}
+
+	@Override
+	public void setAccessType(String accessType) {
+		_accessType = accessType;
 	}
 
 	@JSON
@@ -811,6 +858,23 @@ public class DataEntryModelImpl
 
 	public long getOriginalCopiedFrom() {
 		return _originalCopiedFrom;
+	}
+
+	@JSON
+	@Override
+	public boolean getHasMetaData() {
+		return _hasMetaData;
+	}
+
+	@JSON
+	@Override
+	public boolean isHasMetaData() {
+		return _hasMetaData;
+	}
+
+	@Override
+	public void setHasMetaData(boolean hasMetaData) {
+		_hasMetaData = hasMetaData;
 	}
 
 	@Override
@@ -947,13 +1011,16 @@ public class DataEntryModelImpl
 		dataEntryImpl.setStatusByUserId(getStatusByUserId());
 		dataEntryImpl.setStatusByUserName(getStatusByUserName());
 		dataEntryImpl.setStatusDate(getStatusDate());
+		dataEntryImpl.setDataTypeId(getDataTypeId());
 		dataEntryImpl.setDataPackId(getDataPackId());
 		dataEntryImpl.setDataSectionId(getDataSectionId());
 		dataEntryImpl.setDataSetId(getDataSetId());
 		dataEntryImpl.setDataCollectionId(getDataCollectionId());
 		dataEntryImpl.setAccessURL(getAccessURL());
-		dataEntryImpl.setPathType(getPathType());
+		dataEntryImpl.setSequenceId(getSequenceId());
+		dataEntryImpl.setAccessType(getAccessType());
 		dataEntryImpl.setCopiedFrom(getCopiedFrom());
+		dataEntryImpl.setHasMetaData(isHasMetaData());
 
 		dataEntryImpl.resetOriginalValues();
 
@@ -1128,6 +1195,8 @@ public class DataEntryModelImpl
 			dataEntryCacheModel.statusDate = Long.MIN_VALUE;
 		}
 
+		dataEntryCacheModel.dataTypeId = getDataTypeId();
+
 		dataEntryCacheModel.dataPackId = getDataPackId();
 
 		dataEntryCacheModel.dataSectionId = getDataSectionId();
@@ -1144,15 +1213,25 @@ public class DataEntryModelImpl
 			dataEntryCacheModel.accessURL = null;
 		}
 
-		dataEntryCacheModel.pathType = getPathType();
+		dataEntryCacheModel.sequenceId = getSequenceId();
 
-		String pathType = dataEntryCacheModel.pathType;
+		String sequenceId = dataEntryCacheModel.sequenceId;
 
-		if ((pathType != null) && (pathType.length() == 0)) {
-			dataEntryCacheModel.pathType = null;
+		if ((sequenceId != null) && (sequenceId.length() == 0)) {
+			dataEntryCacheModel.sequenceId = null;
+		}
+
+		dataEntryCacheModel.accessType = getAccessType();
+
+		String accessType = dataEntryCacheModel.accessType;
+
+		if ((accessType != null) && (accessType.length() == 0)) {
+			dataEntryCacheModel.accessType = null;
 		}
 
 		dataEntryCacheModel.copiedFrom = getCopiedFrom();
+
+		dataEntryCacheModel.hasMetaData = isHasMetaData();
 
 		return dataEntryCacheModel;
 	}
@@ -1252,6 +1331,7 @@ public class DataEntryModelImpl
 	private long _statusByUserId;
 	private String _statusByUserName;
 	private Date _statusDate;
+	private long _dataTypeId;
 	private long _dataPackId;
 	private long _originalDataPackId;
 	private boolean _setOriginalDataPackId;
@@ -1265,10 +1345,12 @@ public class DataEntryModelImpl
 	private long _originalDataCollectionId;
 	private boolean _setOriginalDataCollectionId;
 	private String _accessURL;
-	private String _pathType;
+	private String _sequenceId;
+	private String _accessType;
 	private long _copiedFrom;
 	private long _originalCopiedFrom;
 	private boolean _setOriginalCopiedFrom;
+	private boolean _hasMetaData;
 	private long _columnBitmask;
 	private DataEntry _escapedModel;
 

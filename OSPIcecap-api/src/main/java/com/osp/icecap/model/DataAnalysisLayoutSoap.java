@@ -34,8 +34,11 @@ public class DataAnalysisLayoutSoap implements Serializable {
 		DataAnalysisLayoutSoap soapModel = new DataAnalysisLayoutSoap();
 
 		soapModel.setDataUuid(model.getDataUuid());
+		soapModel.setDataCollectionId(model.getDataCollectionId());
+		soapModel.setDataSetId(model.getDataSetId());
+		soapModel.setDataSectionId(model.getDataSectionId());
+		soapModel.setDataPackId(model.getDataPackId());
 		soapModel.setLayout(model.getLayout());
-		soapModel.setApplyLevel(model.getApplyLevel());
 
 		return soapModel;
 	}
@@ -106,6 +109,38 @@ public class DataAnalysisLayoutSoap implements Serializable {
 		_dataUuid = dataUuid;
 	}
 
+	public long getDataCollectionId() {
+		return _dataCollectionId;
+	}
+
+	public void setDataCollectionId(long dataCollectionId) {
+		_dataCollectionId = dataCollectionId;
+	}
+
+	public long getDataSetId() {
+		return _dataSetId;
+	}
+
+	public void setDataSetId(long dataSetId) {
+		_dataSetId = dataSetId;
+	}
+
+	public long getDataSectionId() {
+		return _dataSectionId;
+	}
+
+	public void setDataSectionId(long dataSectionId) {
+		_dataSectionId = dataSectionId;
+	}
+
+	public long getDataPackId() {
+		return _dataPackId;
+	}
+
+	public void setDataPackId(long dataPackId) {
+		_dataPackId = dataPackId;
+	}
+
 	public String getLayout() {
 		return _layout;
 	}
@@ -114,16 +149,11 @@ public class DataAnalysisLayoutSoap implements Serializable {
 		_layout = layout;
 	}
 
-	public String getApplyLevel() {
-		return _applyLevel;
-	}
-
-	public void setApplyLevel(String applyLevel) {
-		_applyLevel = applyLevel;
-	}
-
 	private String _dataUuid;
+	private long _dataCollectionId;
+	private long _dataSetId;
+	private long _dataSectionId;
+	private long _dataPackId;
 	private String _layout;
-	private String _applyLevel;
 
 }

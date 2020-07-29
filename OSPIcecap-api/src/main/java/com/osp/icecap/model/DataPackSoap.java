@@ -49,10 +49,12 @@ public class DataPackSoap implements Serializable {
 		soapModel.setDataCollectionId(model.getDataCollectionId());
 		soapModel.setDataSetId(model.getDataSetId());
 		soapModel.setDataSectionId(model.getDataSectionId());
-		soapModel.setTitle(model.getTitle());
+		soapModel.setName(model.getName());
 		soapModel.setVersion(model.getVersion());
-		soapModel.setDescription(model.getDescription());
+		soapModel.setComponent(model.getComponent());
 		soapModel.setCopiedFrom(model.getCopiedFrom());
+		soapModel.setHasMetaData(model.isHasMetaData());
+		soapModel.setHasLayout(model.isHasLayout());
 
 		return soapModel;
 	}
@@ -226,12 +228,12 @@ public class DataPackSoap implements Serializable {
 		_dataSectionId = dataSectionId;
 	}
 
-	public String getTitle() {
-		return _title;
+	public String getName() {
+		return _name;
 	}
 
-	public void setTitle(String title) {
-		_title = title;
+	public void setName(String name) {
+		_name = name;
 	}
 
 	public String getVersion() {
@@ -242,12 +244,12 @@ public class DataPackSoap implements Serializable {
 		_version = version;
 	}
 
-	public String getDescription() {
-		return _description;
+	public String getComponent() {
+		return _component;
 	}
 
-	public void setDescription(String description) {
-		_description = description;
+	public void setComponent(String component) {
+		_component = component;
 	}
 
 	public long getCopiedFrom() {
@@ -256,6 +258,30 @@ public class DataPackSoap implements Serializable {
 
 	public void setCopiedFrom(long copiedFrom) {
 		_copiedFrom = copiedFrom;
+	}
+
+	public boolean getHasMetaData() {
+		return _hasMetaData;
+	}
+
+	public boolean isHasMetaData() {
+		return _hasMetaData;
+	}
+
+	public void setHasMetaData(boolean hasMetaData) {
+		_hasMetaData = hasMetaData;
+	}
+
+	public boolean getHasLayout() {
+		return _hasLayout;
+	}
+
+	public boolean isHasLayout() {
+		return _hasLayout;
+	}
+
+	public void setHasLayout(boolean hasLayout) {
+		_hasLayout = hasLayout;
 	}
 
 	private String _uuid;
@@ -273,9 +299,11 @@ public class DataPackSoap implements Serializable {
 	private long _dataCollectionId;
 	private long _dataSetId;
 	private long _dataSectionId;
-	private String _title;
+	private String _name;
 	private String _version;
-	private String _description;
+	private String _component;
 	private long _copiedFrom;
+	private boolean _hasMetaData;
+	private boolean _hasLayout;
 
 }

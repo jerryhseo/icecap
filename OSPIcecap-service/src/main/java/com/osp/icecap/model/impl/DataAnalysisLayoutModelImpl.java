@@ -19,7 +19,6 @@ import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 
 import com.osp.icecap.model.DataAnalysisLayout;
@@ -65,8 +64,9 @@ public class DataAnalysisLayoutModelImpl
 	public static final String TABLE_NAME = "ICECAP_DataAnalysisLayout";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"dataUuid", Types.VARCHAR}, {"layout", Types.VARCHAR},
-		{"applyLevel", Types.VARCHAR}
+		{"dataUuid", Types.VARCHAR}, {"dataCollectionId", Types.BIGINT},
+		{"dataSetId", Types.BIGINT}, {"dataSectionId", Types.BIGINT},
+		{"dataPackId", Types.BIGINT}, {"layout", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -74,12 +74,15 @@ public class DataAnalysisLayoutModelImpl
 
 	static {
 		TABLE_COLUMNS_MAP.put("dataUuid", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("dataCollectionId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("dataSetId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("dataSectionId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("dataPackId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("layout", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("applyLevel", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataAnalysisLayout (dataUuid VARCHAR(75) not null primary key,layout VARCHAR(75) null,applyLevel VARCHAR(75) null)";
+		"create table ICECAP_DataAnalysisLayout (dataUuid VARCHAR(75) not null primary key,dataCollectionId LONG,dataSetId LONG,dataSectionId LONG,dataPackId LONG,layout VARCHAR(75) null)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table ICECAP_DataAnalysisLayout";
@@ -96,9 +99,15 @@ public class DataAnalysisLayoutModelImpl
 
 	public static final String TX_MANAGER = "liferayTransactionManager";
 
-	public static final long APPLYLEVEL_COLUMN_BITMASK = 1L;
+	public static final long DATACOLLECTIONID_COLUMN_BITMASK = 1L;
 
-	public static final long DATAUUID_COLUMN_BITMASK = 2L;
+	public static final long DATAPACKID_COLUMN_BITMASK = 2L;
+
+	public static final long DATASECTIONID_COLUMN_BITMASK = 4L;
+
+	public static final long DATASETID_COLUMN_BITMASK = 8L;
+
+	public static final long DATAUUID_COLUMN_BITMASK = 16L;
 
 	public static void setEntityCacheEnabled(boolean entityCacheEnabled) {
 		_entityCacheEnabled = entityCacheEnabled;
@@ -242,17 +251,35 @@ public class DataAnalysisLayoutModelImpl
 			"dataUuid",
 			(BiConsumer<DataAnalysisLayout, String>)
 				DataAnalysisLayout::setDataUuid);
+		attributeGetterFunctions.put(
+			"dataCollectionId", DataAnalysisLayout::getDataCollectionId);
+		attributeSetterBiConsumers.put(
+			"dataCollectionId",
+			(BiConsumer<DataAnalysisLayout, Long>)
+				DataAnalysisLayout::setDataCollectionId);
+		attributeGetterFunctions.put(
+			"dataSetId", DataAnalysisLayout::getDataSetId);
+		attributeSetterBiConsumers.put(
+			"dataSetId",
+			(BiConsumer<DataAnalysisLayout, Long>)
+				DataAnalysisLayout::setDataSetId);
+		attributeGetterFunctions.put(
+			"dataSectionId", DataAnalysisLayout::getDataSectionId);
+		attributeSetterBiConsumers.put(
+			"dataSectionId",
+			(BiConsumer<DataAnalysisLayout, Long>)
+				DataAnalysisLayout::setDataSectionId);
+		attributeGetterFunctions.put(
+			"dataPackId", DataAnalysisLayout::getDataPackId);
+		attributeSetterBiConsumers.put(
+			"dataPackId",
+			(BiConsumer<DataAnalysisLayout, Long>)
+				DataAnalysisLayout::setDataPackId);
 		attributeGetterFunctions.put("layout", DataAnalysisLayout::getLayout);
 		attributeSetterBiConsumers.put(
 			"layout",
 			(BiConsumer<DataAnalysisLayout, String>)
 				DataAnalysisLayout::setLayout);
-		attributeGetterFunctions.put(
-			"applyLevel", DataAnalysisLayout::getApplyLevel);
-		attributeSetterBiConsumers.put(
-			"applyLevel",
-			(BiConsumer<DataAnalysisLayout, String>)
-				DataAnalysisLayout::setApplyLevel);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -272,17 +299,95 @@ public class DataAnalysisLayoutModelImpl
 
 	@Override
 	public void setDataUuid(String dataUuid) {
-		_columnBitmask |= DATAUUID_COLUMN_BITMASK;
-
-		if (_originalDataUuid == null) {
-			_originalDataUuid = _dataUuid;
-		}
-
 		_dataUuid = dataUuid;
 	}
 
-	public String getOriginalDataUuid() {
-		return GetterUtil.getString(_originalDataUuid);
+	@Override
+	public long getDataCollectionId() {
+		return _dataCollectionId;
+	}
+
+	@Override
+	public void setDataCollectionId(long dataCollectionId) {
+		_columnBitmask |= DATACOLLECTIONID_COLUMN_BITMASK;
+
+		if (!_setOriginalDataCollectionId) {
+			_setOriginalDataCollectionId = true;
+
+			_originalDataCollectionId = _dataCollectionId;
+		}
+
+		_dataCollectionId = dataCollectionId;
+	}
+
+	public long getOriginalDataCollectionId() {
+		return _originalDataCollectionId;
+	}
+
+	@Override
+	public long getDataSetId() {
+		return _dataSetId;
+	}
+
+	@Override
+	public void setDataSetId(long dataSetId) {
+		_columnBitmask |= DATASETID_COLUMN_BITMASK;
+
+		if (!_setOriginalDataSetId) {
+			_setOriginalDataSetId = true;
+
+			_originalDataSetId = _dataSetId;
+		}
+
+		_dataSetId = dataSetId;
+	}
+
+	public long getOriginalDataSetId() {
+		return _originalDataSetId;
+	}
+
+	@Override
+	public long getDataSectionId() {
+		return _dataSectionId;
+	}
+
+	@Override
+	public void setDataSectionId(long dataSectionId) {
+		_columnBitmask |= DATASECTIONID_COLUMN_BITMASK;
+
+		if (!_setOriginalDataSectionId) {
+			_setOriginalDataSectionId = true;
+
+			_originalDataSectionId = _dataSectionId;
+		}
+
+		_dataSectionId = dataSectionId;
+	}
+
+	public long getOriginalDataSectionId() {
+		return _originalDataSectionId;
+	}
+
+	@Override
+	public long getDataPackId() {
+		return _dataPackId;
+	}
+
+	@Override
+	public void setDataPackId(long dataPackId) {
+		_columnBitmask |= DATAPACKID_COLUMN_BITMASK;
+
+		if (!_setOriginalDataPackId) {
+			_setOriginalDataPackId = true;
+
+			_originalDataPackId = _dataPackId;
+		}
+
+		_dataPackId = dataPackId;
+	}
+
+	public long getOriginalDataPackId() {
+		return _originalDataPackId;
 	}
 
 	@Override
@@ -298,31 +403,6 @@ public class DataAnalysisLayoutModelImpl
 	@Override
 	public void setLayout(String layout) {
 		_layout = layout;
-	}
-
-	@Override
-	public String getApplyLevel() {
-		if (_applyLevel == null) {
-			return "";
-		}
-		else {
-			return _applyLevel;
-		}
-	}
-
-	@Override
-	public void setApplyLevel(String applyLevel) {
-		_columnBitmask |= APPLYLEVEL_COLUMN_BITMASK;
-
-		if (_originalApplyLevel == null) {
-			_originalApplyLevel = _applyLevel;
-		}
-
-		_applyLevel = applyLevel;
-	}
-
-	public String getOriginalApplyLevel() {
-		return GetterUtil.getString(_originalApplyLevel);
 	}
 
 	public long getColumnBitmask() {
@@ -350,8 +430,11 @@ public class DataAnalysisLayoutModelImpl
 			new DataAnalysisLayoutImpl();
 
 		dataAnalysisLayoutImpl.setDataUuid(getDataUuid());
+		dataAnalysisLayoutImpl.setDataCollectionId(getDataCollectionId());
+		dataAnalysisLayoutImpl.setDataSetId(getDataSetId());
+		dataAnalysisLayoutImpl.setDataSectionId(getDataSectionId());
+		dataAnalysisLayoutImpl.setDataPackId(getDataPackId());
 		dataAnalysisLayoutImpl.setLayout(getLayout());
-		dataAnalysisLayoutImpl.setApplyLevel(getApplyLevel());
 
 		dataAnalysisLayoutImpl.resetOriginalValues();
 
@@ -406,11 +489,25 @@ public class DataAnalysisLayoutModelImpl
 	public void resetOriginalValues() {
 		DataAnalysisLayoutModelImpl dataAnalysisLayoutModelImpl = this;
 
-		dataAnalysisLayoutModelImpl._originalDataUuid =
-			dataAnalysisLayoutModelImpl._dataUuid;
+		dataAnalysisLayoutModelImpl._originalDataCollectionId =
+			dataAnalysisLayoutModelImpl._dataCollectionId;
 
-		dataAnalysisLayoutModelImpl._originalApplyLevel =
-			dataAnalysisLayoutModelImpl._applyLevel;
+		dataAnalysisLayoutModelImpl._setOriginalDataCollectionId = false;
+
+		dataAnalysisLayoutModelImpl._originalDataSetId =
+			dataAnalysisLayoutModelImpl._dataSetId;
+
+		dataAnalysisLayoutModelImpl._setOriginalDataSetId = false;
+
+		dataAnalysisLayoutModelImpl._originalDataSectionId =
+			dataAnalysisLayoutModelImpl._dataSectionId;
+
+		dataAnalysisLayoutModelImpl._setOriginalDataSectionId = false;
+
+		dataAnalysisLayoutModelImpl._originalDataPackId =
+			dataAnalysisLayoutModelImpl._dataPackId;
+
+		dataAnalysisLayoutModelImpl._setOriginalDataPackId = false;
 
 		dataAnalysisLayoutModelImpl._columnBitmask = 0;
 	}
@@ -428,20 +525,20 @@ public class DataAnalysisLayoutModelImpl
 			dataAnalysisLayoutCacheModel.dataUuid = null;
 		}
 
+		dataAnalysisLayoutCacheModel.dataCollectionId = getDataCollectionId();
+
+		dataAnalysisLayoutCacheModel.dataSetId = getDataSetId();
+
+		dataAnalysisLayoutCacheModel.dataSectionId = getDataSectionId();
+
+		dataAnalysisLayoutCacheModel.dataPackId = getDataPackId();
+
 		dataAnalysisLayoutCacheModel.layout = getLayout();
 
 		String layout = dataAnalysisLayoutCacheModel.layout;
 
 		if ((layout != null) && (layout.length() == 0)) {
 			dataAnalysisLayoutCacheModel.layout = null;
-		}
-
-		dataAnalysisLayoutCacheModel.applyLevel = getApplyLevel();
-
-		String applyLevel = dataAnalysisLayoutCacheModel.applyLevel;
-
-		if ((applyLevel != null) && (applyLevel.length() == 0)) {
-			dataAnalysisLayoutCacheModel.applyLevel = null;
 		}
 
 		return dataAnalysisLayoutCacheModel;
@@ -521,10 +618,19 @@ public class DataAnalysisLayoutModelImpl
 	private static boolean _finderCacheEnabled;
 
 	private String _dataUuid;
-	private String _originalDataUuid;
+	private long _dataCollectionId;
+	private long _originalDataCollectionId;
+	private boolean _setOriginalDataCollectionId;
+	private long _dataSetId;
+	private long _originalDataSetId;
+	private boolean _setOriginalDataSetId;
+	private long _dataSectionId;
+	private long _originalDataSectionId;
+	private boolean _setOriginalDataSectionId;
+	private long _dataPackId;
+	private long _originalDataPackId;
+	private boolean _setOriginalDataPackId;
 	private String _layout;
-	private String _applyLevel;
-	private String _originalApplyLevel;
 	private long _columnBitmask;
 	private DataAnalysisLayout _escapedModel;
 

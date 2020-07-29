@@ -48,15 +48,13 @@ public class DataSetLocalServiceWrapper
 
 	@Override
 	public com.osp.icecap.model.DataSet addDataSet(
-			long dataCollectionId,
-			java.util.Map<java.util.Locale, String> titleMap,
-			java.util.Map<java.util.Locale, String> descriptionMap,
-			String version, long copiedFrom,
-			com.liferay.portal.kernel.service.ServiceContext sc)
+			long dataCollectionId, String name, String version, long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataSetLocalService.addDataSet(
-			dataCollectionId, titleMap, descriptionMap, version, copiedFrom,
+			dataCollectionId, name, version, copiedFrom, metaDataJSON, layout,
 			sc);
 	}
 
@@ -289,20 +287,6 @@ public class DataSetLocalServiceWrapper
 			dataCollectionId, start, end);
 	}
 
-	@Override
-	public java.util.List<com.osp.icecap.model.DataSet> getDataSetsByOrigin(
-		long originId) {
-
-		return _dataSetLocalService.getDataSetsByOrigin(originId);
-	}
-
-	@Override
-	public java.util.List<com.osp.icecap.model.DataSet> getDataSetsByOrigin(
-		long originId, int start, int end) {
-
-		return _dataSetLocalService.getDataSetsByOrigin(originId, start, end);
-	}
-
 	/**
 	 * Returns all the data sets matching the UUID and company.
 	 *
@@ -356,8 +340,22 @@ public class DataSetLocalServiceWrapper
 	}
 
 	@Override
-	public int getDataSetsCountByOrigin(long originId) {
-		return _dataSetLocalService.getDataSetsCountByOrigin(originId);
+	public java.util.List<com.osp.icecap.model.DataSet> getDataSetsVariants(
+		long dataSetId, int start, int end) {
+
+		return _dataSetLocalService.getDataSetsVariants(dataSetId, start, end);
+	}
+
+	@Override
+	public java.util.List<com.osp.icecap.model.DataSet> getDataSetVariants(
+		long dataSetId) {
+
+		return _dataSetLocalService.getDataSetVariants(dataSetId);
+	}
+
+	@Override
+	public int getDataSetVariantsCount(long dataSetId) {
+		return _dataSetLocalService.getDataSetVariantsCount(dataSetId);
 	}
 
 	@Override
@@ -417,13 +415,15 @@ public class DataSetLocalServiceWrapper
 
 	@Override
 	public com.osp.icecap.model.DataSet updateDataSet(
-		long dataSetId, long dataCollectionId,
-		java.util.Map<java.util.Locale, String> titleMap,
-		java.util.Map<java.util.Locale, String> descriptionMap, String version,
-		com.liferay.portal.kernel.service.ServiceContext sc) {
+			long dataSetId, long dataCollectionId, String name, String version,
+			long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.osp.icecap.exception.NoSuchMetaDataFieldException {
 
 		return _dataSetLocalService.updateDataSet(
-			dataSetId, dataCollectionId, titleMap, descriptionMap, version, sc);
+			dataSetId, dataCollectionId, name, version, copiedFrom,
+			metaDataJSON, layout, sc);
 	}
 
 	@Override

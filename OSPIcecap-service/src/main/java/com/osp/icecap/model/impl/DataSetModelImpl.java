@@ -19,7 +19,6 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
@@ -29,11 +28,8 @@ import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import com.osp.icecap.model.DataSet;
@@ -53,10 +49,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -92,9 +85,10 @@ public class DataSetModelImpl
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
 		{"status", Types.INTEGER}, {"statusByUserId", Types.BIGINT},
 		{"statusByUserName", Types.VARCHAR}, {"statusDate", Types.TIMESTAMP},
-		{"dataCollectionId", Types.BIGINT}, {"title", Types.VARCHAR},
-		{"version", Types.VARCHAR}, {"description", Types.VARCHAR},
-		{"copiedFrom", Types.BIGINT}
+		{"dataCollectionId", Types.BIGINT}, {"dataTypeId", Types.BIGINT},
+		{"name", Types.VARCHAR}, {"version", Types.VARCHAR},
+		{"copiedFrom", Types.BIGINT}, {"hasMetaData", Types.BOOLEAN},
+		{"hasLayout", Types.BOOLEAN}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -114,14 +108,16 @@ public class DataSetModelImpl
 		TABLE_COLUMNS_MAP.put("statusByUserName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("dataCollectionId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("title", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("dataTypeId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("version", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("copiedFrom", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("hasMetaData", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("hasLayout", Types.BOOLEAN);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataSet (uuid_ VARCHAR(75) null,dataSetId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,dataCollectionId LONG,title STRING null,version VARCHAR(75) null,description STRING null,copiedFrom LONG)";
+		"create table ICECAP_DataSet (uuid_ VARCHAR(75) null,dataSetId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,dataCollectionId LONG,dataTypeId LONG,name VARCHAR(75) null,version VARCHAR(75) null,copiedFrom LONG,hasMetaData BOOLEAN,hasLayout BOOLEAN)";
 
 	public static final String TABLE_SQL_DROP = "drop table ICECAP_DataSet";
 
@@ -145,13 +141,15 @@ public class DataSetModelImpl
 
 	public static final long GROUPID_COLUMN_BITMASK = 8L;
 
-	public static final long STATUS_COLUMN_BITMASK = 16L;
+	public static final long NAME_COLUMN_BITMASK = 16L;
 
-	public static final long USERID_COLUMN_BITMASK = 32L;
+	public static final long STATUS_COLUMN_BITMASK = 32L;
 
-	public static final long UUID_COLUMN_BITMASK = 64L;
+	public static final long USERID_COLUMN_BITMASK = 64L;
 
-	public static final long DATASETID_COLUMN_BITMASK = 128L;
+	public static final long UUID_COLUMN_BITMASK = 128L;
+
+	public static final long DATASETID_COLUMN_BITMASK = 256L;
 
 	public static void setEntityCacheEnabled(boolean entityCacheEnabled) {
 		_entityCacheEnabled = entityCacheEnabled;
@@ -187,10 +185,12 @@ public class DataSetModelImpl
 		model.setStatusByUserName(soapModel.getStatusByUserName());
 		model.setStatusDate(soapModel.getStatusDate());
 		model.setDataCollectionId(soapModel.getDataCollectionId());
-		model.setTitle(soapModel.getTitle());
+		model.setDataTypeId(soapModel.getDataTypeId());
+		model.setName(soapModel.getName());
 		model.setVersion(soapModel.getVersion());
-		model.setDescription(soapModel.getDescription());
 		model.setCopiedFrom(soapModel.getCopiedFrom());
+		model.setHasMetaData(soapModel.isHasMetaData());
+		model.setHasLayout(soapModel.isHasLayout());
 
 		return model;
 	}
@@ -384,19 +384,25 @@ public class DataSetModelImpl
 		attributeSetterBiConsumers.put(
 			"dataCollectionId",
 			(BiConsumer<DataSet, Long>)DataSet::setDataCollectionId);
-		attributeGetterFunctions.put("title", DataSet::getTitle);
+		attributeGetterFunctions.put("dataTypeId", DataSet::getDataTypeId);
 		attributeSetterBiConsumers.put(
-			"title", (BiConsumer<DataSet, String>)DataSet::setTitle);
+			"dataTypeId", (BiConsumer<DataSet, Long>)DataSet::setDataTypeId);
+		attributeGetterFunctions.put("name", DataSet::getName);
+		attributeSetterBiConsumers.put(
+			"name", (BiConsumer<DataSet, String>)DataSet::setName);
 		attributeGetterFunctions.put("version", DataSet::getVersion);
 		attributeSetterBiConsumers.put(
 			"version", (BiConsumer<DataSet, String>)DataSet::setVersion);
-		attributeGetterFunctions.put("description", DataSet::getDescription);
-		attributeSetterBiConsumers.put(
-			"description",
-			(BiConsumer<DataSet, String>)DataSet::setDescription);
 		attributeGetterFunctions.put("copiedFrom", DataSet::getCopiedFrom);
 		attributeSetterBiConsumers.put(
 			"copiedFrom", (BiConsumer<DataSet, Long>)DataSet::setCopiedFrom);
+		attributeGetterFunctions.put("hasMetaData", DataSet::getHasMetaData);
+		attributeSetterBiConsumers.put(
+			"hasMetaData",
+			(BiConsumer<DataSet, Boolean>)DataSet::setHasMetaData);
+		attributeGetterFunctions.put("hasLayout", DataSet::getHasLayout);
+		attributeSetterBiConsumers.put(
+			"hasLayout", (BiConsumer<DataSet, Boolean>)DataSet::setHasLayout);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -672,107 +678,39 @@ public class DataSetModelImpl
 
 	@JSON
 	@Override
-	public String getTitle() {
-		if (_title == null) {
-			return "";
-		}
-		else {
-			return _title;
-		}
+	public long getDataTypeId() {
+		return _dataTypeId;
 	}
 
 	@Override
-	public String getTitle(Locale locale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getTitle(languageId);
-	}
-
-	@Override
-	public String getTitle(Locale locale, boolean useDefault) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getTitle(languageId, useDefault);
-	}
-
-	@Override
-	public String getTitle(String languageId) {
-		return LocalizationUtil.getLocalization(getTitle(), languageId);
-	}
-
-	@Override
-	public String getTitle(String languageId, boolean useDefault) {
-		return LocalizationUtil.getLocalization(
-			getTitle(), languageId, useDefault);
-	}
-
-	@Override
-	public String getTitleCurrentLanguageId() {
-		return _titleCurrentLanguageId;
+	public void setDataTypeId(long dataTypeId) {
+		_dataTypeId = dataTypeId;
 	}
 
 	@JSON
 	@Override
-	public String getTitleCurrentValue() {
-		Locale locale = getLocale(_titleCurrentLanguageId);
-
-		return getTitle(locale);
-	}
-
-	@Override
-	public Map<Locale, String> getTitleMap() {
-		return LocalizationUtil.getLocalizationMap(getTitle());
-	}
-
-	@Override
-	public void setTitle(String title) {
-		_title = title;
-	}
-
-	@Override
-	public void setTitle(String title, Locale locale) {
-		setTitle(title, locale, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setTitle(String title, Locale locale, Locale defaultLocale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
-
-		if (Validator.isNotNull(title)) {
-			setTitle(
-				LocalizationUtil.updateLocalization(
-					getTitle(), "Title", title, languageId, defaultLanguageId));
+	public String getName() {
+		if (_name == null) {
+			return "";
 		}
 		else {
-			setTitle(
-				LocalizationUtil.removeLocalization(
-					getTitle(), "Title", languageId));
+			return _name;
 		}
 	}
 
 	@Override
-	public void setTitleCurrentLanguageId(String languageId) {
-		_titleCurrentLanguageId = languageId;
-	}
+	public void setName(String name) {
+		_columnBitmask |= NAME_COLUMN_BITMASK;
 
-	@Override
-	public void setTitleMap(Map<Locale, String> titleMap) {
-		setTitleMap(titleMap, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setTitleMap(
-		Map<Locale, String> titleMap, Locale defaultLocale) {
-
-		if (titleMap == null) {
-			return;
+		if (_originalName == null) {
+			_originalName = _name;
 		}
 
-		setTitle(
-			LocalizationUtil.updateLocalization(
-				titleMap, getTitle(), "Title",
-				LocaleUtil.toLanguageId(defaultLocale)));
+		_name = name;
+	}
+
+	public String getOriginalName() {
+		return GetterUtil.getString(_originalName);
 	}
 
 	@JSON
@@ -789,114 +727,6 @@ public class DataSetModelImpl
 	@Override
 	public void setVersion(String version) {
 		_version = version;
-	}
-
-	@JSON
-	@Override
-	public String getDescription() {
-		if (_description == null) {
-			return "";
-		}
-		else {
-			return _description;
-		}
-	}
-
-	@Override
-	public String getDescription(Locale locale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getDescription(languageId);
-	}
-
-	@Override
-	public String getDescription(Locale locale, boolean useDefault) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getDescription(languageId, useDefault);
-	}
-
-	@Override
-	public String getDescription(String languageId) {
-		return LocalizationUtil.getLocalization(getDescription(), languageId);
-	}
-
-	@Override
-	public String getDescription(String languageId, boolean useDefault) {
-		return LocalizationUtil.getLocalization(
-			getDescription(), languageId, useDefault);
-	}
-
-	@Override
-	public String getDescriptionCurrentLanguageId() {
-		return _descriptionCurrentLanguageId;
-	}
-
-	@JSON
-	@Override
-	public String getDescriptionCurrentValue() {
-		Locale locale = getLocale(_descriptionCurrentLanguageId);
-
-		return getDescription(locale);
-	}
-
-	@Override
-	public Map<Locale, String> getDescriptionMap() {
-		return LocalizationUtil.getLocalizationMap(getDescription());
-	}
-
-	@Override
-	public void setDescription(String description) {
-		_description = description;
-	}
-
-	@Override
-	public void setDescription(String description, Locale locale) {
-		setDescription(description, locale, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setDescription(
-		String description, Locale locale, Locale defaultLocale) {
-
-		String languageId = LocaleUtil.toLanguageId(locale);
-		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
-
-		if (Validator.isNotNull(description)) {
-			setDescription(
-				LocalizationUtil.updateLocalization(
-					getDescription(), "Description", description, languageId,
-					defaultLanguageId));
-		}
-		else {
-			setDescription(
-				LocalizationUtil.removeLocalization(
-					getDescription(), "Description", languageId));
-		}
-	}
-
-	@Override
-	public void setDescriptionCurrentLanguageId(String languageId) {
-		_descriptionCurrentLanguageId = languageId;
-	}
-
-	@Override
-	public void setDescriptionMap(Map<Locale, String> descriptionMap) {
-		setDescriptionMap(descriptionMap, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setDescriptionMap(
-		Map<Locale, String> descriptionMap, Locale defaultLocale) {
-
-		if (descriptionMap == null) {
-			return;
-		}
-
-		setDescription(
-			LocalizationUtil.updateLocalization(
-				descriptionMap, getDescription(), "Description",
-				LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@JSON
@@ -920,6 +750,40 @@ public class DataSetModelImpl
 
 	public long getOriginalCopiedFrom() {
 		return _originalCopiedFrom;
+	}
+
+	@JSON
+	@Override
+	public boolean getHasMetaData() {
+		return _hasMetaData;
+	}
+
+	@JSON
+	@Override
+	public boolean isHasMetaData() {
+		return _hasMetaData;
+	}
+
+	@Override
+	public void setHasMetaData(boolean hasMetaData) {
+		_hasMetaData = hasMetaData;
+	}
+
+	@JSON
+	@Override
+	public boolean getHasLayout() {
+		return _hasLayout;
+	}
+
+	@JSON
+	@Override
+	public boolean isHasLayout() {
+		return _hasLayout;
+	}
+
+	@Override
+	public void setHasLayout(boolean hasLayout) {
+		_hasLayout = hasLayout;
 	}
 
 	@Override
@@ -1026,94 +890,6 @@ public class DataSetModelImpl
 	}
 
 	@Override
-	public String[] getAvailableLanguageIds() {
-		Set<String> availableLanguageIds = new TreeSet<String>();
-
-		Map<Locale, String> titleMap = getTitleMap();
-
-		for (Map.Entry<Locale, String> entry : titleMap.entrySet()) {
-			Locale locale = entry.getKey();
-			String value = entry.getValue();
-
-			if (Validator.isNotNull(value)) {
-				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
-			}
-		}
-
-		Map<Locale, String> descriptionMap = getDescriptionMap();
-
-		for (Map.Entry<Locale, String> entry : descriptionMap.entrySet()) {
-			Locale locale = entry.getKey();
-			String value = entry.getValue();
-
-			if (Validator.isNotNull(value)) {
-				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
-			}
-		}
-
-		return availableLanguageIds.toArray(
-			new String[availableLanguageIds.size()]);
-	}
-
-	@Override
-	public String getDefaultLanguageId() {
-		String xml = getTitle();
-
-		if (xml == null) {
-			return "";
-		}
-
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
-
-		return LocalizationUtil.getDefaultLanguageId(xml, defaultLocale);
-	}
-
-	@Override
-	public void prepareLocalizedFieldsForImport() throws LocaleException {
-		Locale defaultLocale = LocaleUtil.fromLanguageId(
-			getDefaultLanguageId());
-
-		Locale[] availableLocales = LocaleUtil.fromLanguageIds(
-			getAvailableLanguageIds());
-
-		Locale defaultImportLocale = LocalizationUtil.getDefaultImportLocale(
-			DataSet.class.getName(), getPrimaryKey(), defaultLocale,
-			availableLocales);
-
-		prepareLocalizedFieldsForImport(defaultImportLocale);
-	}
-
-	@Override
-	@SuppressWarnings("unused")
-	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
-		throws LocaleException {
-
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
-
-		String modelDefaultLanguageId = getDefaultLanguageId();
-
-		String title = getTitle(defaultLocale);
-
-		if (Validator.isNull(title)) {
-			setTitle(getTitle(modelDefaultLanguageId), defaultLocale);
-		}
-		else {
-			setTitle(getTitle(defaultLocale), defaultLocale, defaultLocale);
-		}
-
-		String description = getDescription(defaultLocale);
-
-		if (Validator.isNull(description)) {
-			setDescription(
-				getDescription(modelDefaultLanguageId), defaultLocale);
-		}
-		else {
-			setDescription(
-				getDescription(defaultLocale), defaultLocale, defaultLocale);
-		}
-	}
-
-	@Override
 	public DataSet toEscapedModel() {
 		if (_escapedModel == null) {
 			Function<InvocationHandler, DataSet>
@@ -1145,10 +921,12 @@ public class DataSetModelImpl
 		dataSetImpl.setStatusByUserName(getStatusByUserName());
 		dataSetImpl.setStatusDate(getStatusDate());
 		dataSetImpl.setDataCollectionId(getDataCollectionId());
-		dataSetImpl.setTitle(getTitle());
+		dataSetImpl.setDataTypeId(getDataTypeId());
+		dataSetImpl.setName(getName());
 		dataSetImpl.setVersion(getVersion());
-		dataSetImpl.setDescription(getDescription());
 		dataSetImpl.setCopiedFrom(getCopiedFrom());
+		dataSetImpl.setHasMetaData(isHasMetaData());
+		dataSetImpl.setHasLayout(isHasLayout());
 
 		dataSetImpl.resetOriginalValues();
 
@@ -1236,6 +1014,8 @@ public class DataSetModelImpl
 
 		dataSetModelImpl._setOriginalDataCollectionId = false;
 
+		dataSetModelImpl._originalName = dataSetModelImpl._name;
+
 		dataSetModelImpl._originalCopiedFrom = dataSetModelImpl._copiedFrom;
 
 		dataSetModelImpl._setOriginalCopiedFrom = false;
@@ -1312,12 +1092,14 @@ public class DataSetModelImpl
 
 		dataSetCacheModel.dataCollectionId = getDataCollectionId();
 
-		dataSetCacheModel.title = getTitle();
+		dataSetCacheModel.dataTypeId = getDataTypeId();
 
-		String title = dataSetCacheModel.title;
+		dataSetCacheModel.name = getName();
 
-		if ((title != null) && (title.length() == 0)) {
-			dataSetCacheModel.title = null;
+		String name = dataSetCacheModel.name;
+
+		if ((name != null) && (name.length() == 0)) {
+			dataSetCacheModel.name = null;
 		}
 
 		dataSetCacheModel.version = getVersion();
@@ -1328,15 +1110,11 @@ public class DataSetModelImpl
 			dataSetCacheModel.version = null;
 		}
 
-		dataSetCacheModel.description = getDescription();
-
-		String description = dataSetCacheModel.description;
-
-		if ((description != null) && (description.length() == 0)) {
-			dataSetCacheModel.description = null;
-		}
-
 		dataSetCacheModel.copiedFrom = getCopiedFrom();
+
+		dataSetCacheModel.hasMetaData = isHasMetaData();
+
+		dataSetCacheModel.hasLayout = isHasLayout();
 
 		return dataSetCacheModel;
 	}
@@ -1439,14 +1217,15 @@ public class DataSetModelImpl
 	private long _dataCollectionId;
 	private long _originalDataCollectionId;
 	private boolean _setOriginalDataCollectionId;
-	private String _title;
-	private String _titleCurrentLanguageId;
+	private long _dataTypeId;
+	private String _name;
+	private String _originalName;
 	private String _version;
-	private String _description;
-	private String _descriptionCurrentLanguageId;
 	private long _copiedFrom;
 	private long _originalCopiedFrom;
 	private boolean _setOriginalCopiedFrom;
+	private boolean _hasMetaData;
+	private boolean _hasLayout;
 	private long _columnBitmask;
 	private DataSet _escapedModel;
 

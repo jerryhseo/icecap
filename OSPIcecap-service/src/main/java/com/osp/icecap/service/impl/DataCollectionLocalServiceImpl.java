@@ -16,17 +16,20 @@ package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.Validator;
+import com.osp.icecap.exception.NoSuchDataCollectionException;
+import com.osp.icecap.exception.NoSuchMetaDataFieldException;
+import com.osp.icecap.model.DataAnalysisLayout;
 import com.osp.icecap.model.DataCollection;
-import com.osp.icecap.model.DataSection;
 import com.osp.icecap.model.DataSet;
+import com.osp.icecap.model.MetaData;
 import com.osp.icecap.service.base.DataCollectionLocalServiceBaseImpl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -53,13 +56,13 @@ public class DataCollectionLocalServiceImpl
 	public DataCollection addDataCollection( 
 			String name, 
 			String version,
-			Map<Locale, String> titleMap,
-			Map<Locale, String> descriptionMap,
 			long organizationId,
+			JSONObject metaDataJSON,
+			String layout,
 			ServiceContext sc ) throws PortalException {
 		long collectionId = super.counterLocalService.increment();
 		
-		DataCollection collection = super.createDataCollection(collectionId);
+		DataCollection collection = super.dataCollectionPersistence.create(collectionId);
 		
 		collection.setCompanyId(sc.getCompanyId());
 		collection.setGroupId(sc.getScopeGroupId());
@@ -69,36 +72,146 @@ public class DataCollectionLocalServiceImpl
 		collection.setUserName(user.getFullName());
 		collection.setCreateDate(new Date());
 		
-		collection.setName(name);
-		collection.setVersion(version);
-		collection.setTitleMap(titleMap);
-		collection.setDescriptionMap(descriptionMap);
+		collection = this.assignDataCollectionAttributes(collection, name, version, organizationId, metaDataJSON, layout);
+
+		return super.dataCollectionPersistence.update(collection);
+	}
+	
+	/**
+	 * Removes all DataCollection related stuff.
+	 * DataAnalysysLayout
+	 * DataSet
+	 * DataPack
+	 * DataEntry
+	 */
+	public DataCollection removeDataCollection( long dataCollectionId ) throws PortalException {
+		super.metaDataPersistence.removeByDataCollectionId(dataCollectionId);
+		super.dataSetPersistence.removeByDataCollectionId(dataCollectionId);
+		super.dataSectionPersistence.removeByDataCollectionId(dataCollectionId);
+		super.dataPackPersistence.removeByDataCollectionId(dataCollectionId);
+		super.dataEntryPersistence.removeByDataCollectionId(dataCollectionId);
+		super.dataAnalysisLayoutPersistence.removeByDataCollectionId(dataCollectionId);
+		return super.dataCollectionPersistence.remove(dataCollectionId);
+	}
+	
+	public DataCollection updateDataCollection(
+			long dataCollectionId,
+			String name, 
+			String version,
+			long organizationId,
+			JSONObject metaDataJSON,
+			String layout,
+			ServiceContext sc  ) throws NoSuchDataCollectionException, NoSuchMetaDataFieldException {
 		
-		super.addDataCollection(collection);
-		return collection;
-	}
-	
-	public DataCollection removeDataCollection( long collectionId ) throws PortalException {
-		return super.deleteDataCollection(collectionId);
-	}
-	
-	public void removeDataCollections( String collectionName ) {
-		List<DataCollection> collections = super.dataCollectionPersistence.findByName(collectionName);
+		DataCollection dataCollection = super.dataCollectionPersistence.findByPrimaryKey(dataCollectionId);
+
+		dataCollection = this.assignDataCollectionAttributes(dataCollection, name, version, organizationId, metaDataJSON, layout);
 		
-		for( DataCollection collection : collections ) {
-			super.dataSetPersistence.removeByDataCollectionId(collection.getDataCollectionId());
-			super.dataSectionPersistence.removeByDataCollectionId(collection.getDataCollectionId());
-			super.dataPackPersistence.removeByDataCollectionId(collection.getDataCollectionId());
-			super.dataEntryPersistence.removeByDataCollectionId(collection.getDataCollectionId());
-		}
-	}
-	
-	public DataCollection updateDataCollection( DataCollection collection ) {
-		collection.setModifiedDate(new Date());
-		super.updateDataCollection(collection);
+		dataCollection.setModifiedDate(sc.getModifiedDate());
+		super.dataCollectionPersistence.update(dataCollection, sc);
 
 		/* indexes for the collection updated here. */
 
-		return collection;
+		return dataCollection;
+	}
+	
+	public List<DataCollection> getDataCollectionsAll(){
+		return super.dataCollectionPersistence.findAll();
+	}
+	public List<DataCollection> getDataCollectionsAll(int start, int end){
+		return super.dataCollectionPersistence.findAll(start, end);
+	}
+	public int getDataCollectionCountAll() {
+		return super.dataCollectionPersistence.countAll();
+	}
+	
+	public List<DataCollection> getDataCollectionsByName( String dataCollectionName ){
+		return super.dataCollectionPersistence.findByName(dataCollectionName);
+	}
+	public List<DataCollection> getDataCollectionsByName(String dataCollectionName, int start, int end){
+		return super.dataCollectionPersistence.findByName(dataCollectionName,start, end);
+	}
+	public int getDataCollectionCountByName(String dataCollectionName) {
+		return super.dataCollectionPersistence.countByName(dataCollectionName);
+	}
+	
+	public List<DataCollection> getDataCollectionsByGroupId( long groupId ){
+		return super.dataCollectionPersistence.findByGroupId(groupId);
+	}
+	public List<DataCollection> getDataCollectionsByGroupId( long groupId, int start, int end ){
+		return super.dataCollectionPersistence.findByGroupId(groupId, start, end);
+	}
+	public int getDataCollectionCountByGroupId( long groupId ){
+		return super.dataCollectionPersistence.countByGroupId(groupId);
+	}
+	
+	public List<DataCollection> getDataCollectionsByUserId( long userId ){
+		return super.dataCollectionPersistence.findByUserId(userId);
+	}
+	public List<DataCollection> getDataCollectionsByUserId( long userId, int start, int end ){
+		return super.dataCollectionPersistence.findByUserId(userId, start, end);
+	}
+	public int getDataCollectionCountByUserId( long userId ){
+		return super.dataCollectionPersistence.countByUserId(userId);
+	}
+	
+	public List<DataCollection> getDataCollectionVariants( long dataCollectionId ){
+		return super.dataCollectionPersistence.findByVariants(dataCollectionId);
+	}
+	public List<DataCollection> getDataCollectionVariants( long dataCollectionId, int start, int end ){
+		return super.dataCollectionPersistence.findByVariants(dataCollectionId, start, end);
+	}
+	public int getDataCollectionVariantCount( long dataCollectionId ){
+		return super.dataCollectionPersistence.countByVariants(dataCollectionId);
+	}
+	
+	public List<DataSet> getDataSetsByDataCollectionId( long dataCollectionId ){
+		return super.dataSetPersistence.findByDataCollectionId(dataCollectionId);
+	}
+	public List<DataSet> getDataSetsByDataCollectionId( long dataCollectionId, int start, int end ){
+		return super.dataSetPersistence.findByDataCollectionId(dataCollectionId, start, end);
+	}
+	public int getDataSetsCountByDataCollectionId( long dataCollectionId ){
+		return super.dataSetPersistence.countByDataCollectionId(dataCollectionId);
+	}
+	
+	public DataCollection getDataCollectionByNameVersion( String dataCollectionName, String dataCollectionVersion ) throws NoSuchDataCollectionException {
+		return super.dataCollectionPersistence.findByNameVersion(dataCollectionName, dataCollectionVersion);
+	}
+	
+	public JSONObject getDataCollectionLayout() {
+		
+	}
+	
+	private DataCollection assignDataCollectionAttributes(
+			DataCollection dataCollection,
+			String name, 
+			String version,
+			long organizationId,
+			JSONObject metaDataJSON,
+			String layout) throws NoSuchMetaDataFieldException {
+		dataCollection.setName(name);
+		dataCollection.setVersion(version);
+		
+		if( Validator.isNotNull(metaDataJSON) ) {
+			dataCollection.setHasMetaData(true);
+			MetaData metaData = super.metaDataPersistence.create(dataCollection.getUuid());
+			metaData.setMetaData(metaDataJSON);
+			super.metaDataPersistence.update(metaData);
+		}
+		else {
+			dataCollection.setHasMetaData(false);
+		}
+		
+		if(Validator.isBlank(layout) ) {
+			dataCollection.setHasLayout(false);
+		}
+		else {
+			DataAnalysisLayout dataAnalysisLayout = super.dataAnalysisLayoutPersistence.create(dataCollection.getUuid());
+			dataAnalysisLayout.setLayout(layout);
+			super.dataAnalysisLayoutPersistence.update(dataAnalysisLayout);
+		}
+		
+		return dataCollection;
 	}
 }

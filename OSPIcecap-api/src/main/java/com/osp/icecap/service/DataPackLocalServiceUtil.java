@@ -54,15 +54,14 @@ public class DataPackLocalServiceUtil {
 
 	public static com.osp.icecap.model.DataPack addDataPack(
 			long dataCollectionId, long dataSetId, long dataSectionId,
-			java.util.Map<java.util.Locale, String> titleMap,
-			java.util.Map<java.util.Locale, String> descriptionMap,
-			String version, long copiedFrom,
-			com.liferay.portal.kernel.service.ServiceContext sc)
+			String name, String version, long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().addDataPack(
-			dataCollectionId, dataSetId, dataSectionId, titleMap,
-			descriptionMap, version, copiedFrom, sc);
+			dataCollectionId, dataSetId, dataSectionId, name, version,
+			copiedFrom, metaDataJSON, layout, sc);
 	}
 
 	/**
@@ -266,6 +265,19 @@ public class DataPackLocalServiceUtil {
 		return getService().getDataPacks(start, end);
 	}
 
+	public static java.util.List<com.osp.icecap.model.DataPack>
+		getDataPacksByDataSectionId(long dataSectionId) {
+
+		return getService().getDataPacksByDataSectionId(dataSectionId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataPack>
+		getDataPacksByDataSectionId(long dataSectionId, int start, int end) {
+
+		return getService().getDataPacksByDataSectionId(
+			dataSectionId, start, end);
+	}
+
 	/**
 	 * Returns all the data packs matching the UUID and company.
 	 *
@@ -308,6 +320,10 @@ public class DataPackLocalServiceUtil {
 		return getService().getDataPacksCount();
 	}
 
+	public static int getDataPacksCountByDataSectionId(long dataSectionId) {
+		return getService().getDataPacksCountByDataSectionId(dataSectionId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
 		getExportActionableDynamicQuery(
 			com.liferay.exportimport.kernel.lar.PortletDataContext
@@ -345,20 +361,6 @@ public class DataPackLocalServiceUtil {
 		return getService().removeDataPack(dataPackId);
 	}
 
-	public static void removeDataPacksByDataCollectionId(
-		long dataCollectionId) {
-
-		getService().removeDataPacksByDataCollectionId(dataCollectionId);
-	}
-
-	public static void removeDataPacksByDataSectionId(long dataSectionId) {
-		getService().removeDataPacksByDataSectionId(dataSectionId);
-	}
-
-	public static void removeDataPacksByDataSetId(long dataSetId) {
-		getService().removeDataPacksByDataSetId(dataSetId);
-	}
-
 	/**
 	 * Updates the data pack in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -372,13 +374,16 @@ public class DataPackLocalServiceUtil {
 	}
 
 	public static com.osp.icecap.model.DataPack updateDataPack(
-			long dataPackId, java.util.Map<java.util.Locale, String> titleMap,
-			java.util.Map<java.util.Locale, String> descriptionMap,
-			String version, com.liferay.portal.kernel.service.ServiceContext sc)
-		throws com.osp.icecap.exception.NoSuchDataPackException {
+			long dataPackId, long dataCollectionId, long dataSetId,
+			long dataSectionId, String name, String version, long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.osp.icecap.exception.NoSuchDataPackException,
+			   com.osp.icecap.exception.NoSuchMetaDataFieldException {
 
 		return getService().updateDataPack(
-			dataPackId, titleMap, descriptionMap, version, sc);
+			dataPackId, dataCollectionId, dataSetId, dataSectionId, name,
+			version, copiedFrom, metaDataJSON, layout, sc);
 	}
 
 	public static DataPackLocalService getService() {

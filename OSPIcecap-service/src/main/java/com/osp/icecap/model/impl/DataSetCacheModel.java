@@ -64,7 +64,7 @@ public class DataSetCacheModel implements CacheModel<DataSet>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(35);
+		StringBundler sb = new StringBundler(39);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -92,14 +92,18 @@ public class DataSetCacheModel implements CacheModel<DataSet>, Externalizable {
 		sb.append(statusDate);
 		sb.append(", dataCollectionId=");
 		sb.append(dataCollectionId);
-		sb.append(", title=");
-		sb.append(title);
+		sb.append(", dataTypeId=");
+		sb.append(dataTypeId);
+		sb.append(", name=");
+		sb.append(name);
 		sb.append(", version=");
 		sb.append(version);
-		sb.append(", description=");
-		sb.append(description);
 		sb.append(", copiedFrom=");
 		sb.append(copiedFrom);
+		sb.append(", hasMetaData=");
+		sb.append(hasMetaData);
+		sb.append(", hasLayout=");
+		sb.append(hasLayout);
 		sb.append("}");
 
 		return sb.toString();
@@ -160,12 +164,13 @@ public class DataSetCacheModel implements CacheModel<DataSet>, Externalizable {
 		}
 
 		dataSetImpl.setDataCollectionId(dataCollectionId);
+		dataSetImpl.setDataTypeId(dataTypeId);
 
-		if (title == null) {
-			dataSetImpl.setTitle("");
+		if (name == null) {
+			dataSetImpl.setName("");
 		}
 		else {
-			dataSetImpl.setTitle(title);
+			dataSetImpl.setName(name);
 		}
 
 		if (version == null) {
@@ -175,14 +180,9 @@ public class DataSetCacheModel implements CacheModel<DataSet>, Externalizable {
 			dataSetImpl.setVersion(version);
 		}
 
-		if (description == null) {
-			dataSetImpl.setDescription("");
-		}
-		else {
-			dataSetImpl.setDescription(description);
-		}
-
 		dataSetImpl.setCopiedFrom(copiedFrom);
+		dataSetImpl.setHasMetaData(hasMetaData);
+		dataSetImpl.setHasLayout(hasLayout);
 
 		dataSetImpl.resetOriginalValues();
 
@@ -211,11 +211,16 @@ public class DataSetCacheModel implements CacheModel<DataSet>, Externalizable {
 		statusDate = objectInput.readLong();
 
 		dataCollectionId = objectInput.readLong();
-		title = objectInput.readUTF();
+
+		dataTypeId = objectInput.readLong();
+		name = objectInput.readUTF();
 		version = objectInput.readUTF();
-		description = objectInput.readUTF();
 
 		copiedFrom = objectInput.readLong();
+
+		hasMetaData = objectInput.readBoolean();
+
+		hasLayout = objectInput.readBoolean();
 	}
 
 	@Override
@@ -260,11 +265,13 @@ public class DataSetCacheModel implements CacheModel<DataSet>, Externalizable {
 
 		objectOutput.writeLong(dataCollectionId);
 
-		if (title == null) {
+		objectOutput.writeLong(dataTypeId);
+
+		if (name == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(title);
+			objectOutput.writeUTF(name);
 		}
 
 		if (version == null) {
@@ -274,14 +281,11 @@ public class DataSetCacheModel implements CacheModel<DataSet>, Externalizable {
 			objectOutput.writeUTF(version);
 		}
 
-		if (description == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(description);
-		}
-
 		objectOutput.writeLong(copiedFrom);
+
+		objectOutput.writeBoolean(hasMetaData);
+
+		objectOutput.writeBoolean(hasLayout);
 	}
 
 	public String uuid;
@@ -297,9 +301,11 @@ public class DataSetCacheModel implements CacheModel<DataSet>, Externalizable {
 	public String statusByUserName;
 	public long statusDate;
 	public long dataCollectionId;
-	public String title;
+	public long dataTypeId;
+	public String name;
 	public String version;
-	public String description;
 	public long copiedFrom;
+	public boolean hasMetaData;
+	public boolean hasLayout;
 
 }

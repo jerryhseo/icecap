@@ -1,7 +1,10 @@
 create table ICECAP_DataAnalysisLayout (
 	dataUuid VARCHAR(75) not null primary key,
-	layout VARCHAR(75) null,
-	applyLevel VARCHAR(75) null
+	dataCollectionId LONG,
+	dataSetId LONG,
+	dataSectionId LONG,
+	dataPackId LONG,
+	layout VARCHAR(75) null
 );
 
 create table ICECAP_DataCollection (
@@ -20,9 +23,9 @@ create table ICECAP_DataCollection (
 	name VARCHAR(75) null,
 	version VARCHAR(75) null,
 	copiedFrom LONG,
-	title STRING null,
-	description STRING null,
-	organizationId LONG
+	organizationId LONG,
+	hasMetaData BOOLEAN,
+	hasLayout BOOLEAN
 );
 
 create table ICECAP_DataCollectionLayout (
@@ -43,13 +46,44 @@ create table ICECAP_DataEntry (
 	statusByUserId LONG,
 	statusByUserName VARCHAR(75) null,
 	statusDate DATE null,
+	dataTypeId LONG,
 	dataPackId LONG,
 	dataSectionId LONG,
 	dataSetId LONG,
 	dataCollectionId LONG,
 	accessURL VARCHAR(75) null,
-	pathType VARCHAR(75) null,
-	copiedFrom LONG
+	sequenceId VARCHAR(75) null,
+	accessType VARCHAR(75) null,
+	copiedFrom LONG,
+	hasMetaData BOOLEAN
+);
+
+create table ICECAP_DataEntryDescription (
+	dataEntryId LONG not null primary key,
+	companyId LONG,
+	groupId LONG,
+	userId LONG,
+	userName VARCHAR(75) null,
+	createDate DATE null,
+	modifiedDate DATE null,
+	status INTEGER,
+	statusByUserId LONG,
+	statusByUserName VARCHAR(75) null,
+	statusDate DATE null,
+	creator VARCHAR(75) null,
+	created VARCHAR(75) null,
+	title STRING null,
+	description STRING null,
+	summary STRING null,
+	doi VARCHAR(75) null,
+	dateAccepted VARCHAR(75) null,
+	dateCopyrighted VARCHAR(75) null,
+	dateSubmitted VARCHAR(75) null,
+	format VARCHAR(75) null,
+	version VARCHAR(75) null,
+	issued VARCHAR(75) null,
+	license VARCHAR(75) null,
+	datePattern VARCHAR(75) null
 );
 
 create table ICECAP_DataPack (
@@ -68,10 +102,17 @@ create table ICECAP_DataPack (
 	dataCollectionId LONG,
 	dataSetId LONG,
 	dataSectionId LONG,
-	title STRING null,
+	name VARCHAR(75) null,
 	version VARCHAR(75) null,
-	description STRING null,
-	copiedFrom LONG
+	component VARCHAR(75) null,
+	copiedFrom LONG,
+	hasMetaData BOOLEAN,
+	hasLayout BOOLEAN
+);
+
+create table ICECAP_DataPackLayout (
+	dataPackId LONG not null primary key,
+	layout VARCHAR(75) null
 );
 
 create table ICECAP_DataSection (
@@ -89,10 +130,17 @@ create table ICECAP_DataSection (
 	statusDate DATE null,
 	dataCollectionId LONG,
 	dataSetId LONG,
-	title STRING null,
+	dataTypeId LONG,
+	name VARCHAR(75) null,
 	version VARCHAR(75) null,
-	description STRING null,
-	copiedFrom LONG
+	copiedFrom LONG,
+	hasMetaData BOOLEAN,
+	hasLayout BOOLEAN
+);
+
+create table ICECAP_DataSectionLayout (
+	dataSectionId LONG not null primary key,
+	layout VARCHAR(75) null
 );
 
 create table ICECAP_DataSet (
@@ -109,10 +157,17 @@ create table ICECAP_DataSet (
 	statusByUserName VARCHAR(75) null,
 	statusDate DATE null,
 	dataCollectionId LONG,
-	title STRING null,
+	dataTypeId LONG,
+	name VARCHAR(75) null,
 	version VARCHAR(75) null,
-	description STRING null,
-	copiedFrom LONG
+	copiedFrom LONG,
+	hasMetaData BOOLEAN,
+	hasLayout BOOLEAN
+);
+
+create table ICECAP_DataSetLayout (
+	dataSetId LONG not null primary key,
+	layout VARCHAR(75) null
 );
 
 create table ICECAP_DataType (
@@ -131,9 +186,9 @@ create table ICECAP_DataType (
 	description STRING null
 );
 
-create table ICECAP_DataTypeLink (
-	dataUuid VARCHAR(75) not null primary key,
-	dataTypeId LONG
+create table ICECAP_DataTypeLayout (
+	dataTypeId LONG not null primary key,
+	layout VARCHAR(75) null
 );
 
 create table ICECAP_DataTypeStructure (
@@ -148,4 +203,26 @@ create table ICECAP_DataTypeVisualizerLink (
 	visualizerVersion VARCHAR(75) null,
 	defaultVisualizer BOOLEAN,
 	editable BOOLEAN
+);
+
+create table ICECAP_MetaData (
+	dataUuid VARCHAR(75) not null primary key,
+	creator VARCHAR(75) null,
+	created VARCHAR(75) null,
+	title STRING null,
+	description STRING null,
+	summary STRING null,
+	doi VARCHAR(75) null,
+	dateAccepted VARCHAR(75) null,
+	dateCopyrighted VARCHAR(75) null,
+	dateSubmitted VARCHAR(75) null,
+	format VARCHAR(75) null,
+	version VARCHAR(75) null,
+	issued VARCHAR(75) null,
+	license VARCHAR(75) null,
+	datePattern VARCHAR(75) null,
+	dataCollectionId LONG,
+	dataSetId LONG,
+	dataSectionId LONG,
+	dataPackId LONG
 );

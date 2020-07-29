@@ -47,10 +47,12 @@ public class DataSetSoap implements Serializable {
 		soapModel.setStatusByUserName(model.getStatusByUserName());
 		soapModel.setStatusDate(model.getStatusDate());
 		soapModel.setDataCollectionId(model.getDataCollectionId());
-		soapModel.setTitle(model.getTitle());
+		soapModel.setDataTypeId(model.getDataTypeId());
+		soapModel.setName(model.getName());
 		soapModel.setVersion(model.getVersion());
-		soapModel.setDescription(model.getDescription());
 		soapModel.setCopiedFrom(model.getCopiedFrom());
+		soapModel.setHasMetaData(model.isHasMetaData());
+		soapModel.setHasLayout(model.isHasLayout());
 
 		return soapModel;
 	}
@@ -208,12 +210,20 @@ public class DataSetSoap implements Serializable {
 		_dataCollectionId = dataCollectionId;
 	}
 
-	public String getTitle() {
-		return _title;
+	public long getDataTypeId() {
+		return _dataTypeId;
 	}
 
-	public void setTitle(String title) {
-		_title = title;
+	public void setDataTypeId(long dataTypeId) {
+		_dataTypeId = dataTypeId;
+	}
+
+	public String getName() {
+		return _name;
+	}
+
+	public void setName(String name) {
+		_name = name;
 	}
 
 	public String getVersion() {
@@ -224,20 +234,36 @@ public class DataSetSoap implements Serializable {
 		_version = version;
 	}
 
-	public String getDescription() {
-		return _description;
-	}
-
-	public void setDescription(String description) {
-		_description = description;
-	}
-
 	public long getCopiedFrom() {
 		return _copiedFrom;
 	}
 
 	public void setCopiedFrom(long copiedFrom) {
 		_copiedFrom = copiedFrom;
+	}
+
+	public boolean getHasMetaData() {
+		return _hasMetaData;
+	}
+
+	public boolean isHasMetaData() {
+		return _hasMetaData;
+	}
+
+	public void setHasMetaData(boolean hasMetaData) {
+		_hasMetaData = hasMetaData;
+	}
+
+	public boolean getHasLayout() {
+		return _hasLayout;
+	}
+
+	public boolean isHasLayout() {
+		return _hasLayout;
+	}
+
+	public void setHasLayout(boolean hasLayout) {
+		_hasLayout = hasLayout;
 	}
 
 	private String _uuid;
@@ -253,9 +279,11 @@ public class DataSetSoap implements Serializable {
 	private String _statusByUserName;
 	private Date _statusDate;
 	private long _dataCollectionId;
-	private String _title;
+	private long _dataTypeId;
+	private String _name;
 	private String _version;
-	private String _description;
 	private long _copiedFrom;
+	private boolean _hasMetaData;
+	private boolean _hasLayout;
 
 }

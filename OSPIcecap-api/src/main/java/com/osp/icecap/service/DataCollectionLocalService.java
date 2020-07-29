@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -33,13 +34,13 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.osp.icecap.exception.NoSuchDataCollectionException;
+import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataCollection;
 
 import java.io.Serializable;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -77,9 +78,8 @@ public interface DataCollectionLocalService
 	public DataCollection addDataCollection(DataCollection dataCollection);
 
 	public DataCollection addDataCollection(
-			String name, String version, Map<Locale, String> titleMap,
-			Map<Locale, String> descriptionMap, long organizationId,
-			ServiceContext sc)
+			String name, String version, long organizationId,
+			JSONObject metaDataJSON, String layout, ServiceContext sc)
 		throws PortalException;
 
 	/**
@@ -212,6 +212,11 @@ public interface DataCollectionLocalService
 	public DataCollection getDataCollection(long dataCollectionId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public DataCollection getDataCollectionByNameVersion(
+			String dataCollectionName, String dataCollectionVersion)
+		throws NoSuchDataCollectionException;
+
 	/**
 	 * Returns the data collection matching the UUID and group.
 	 *
@@ -224,6 +229,18 @@ public interface DataCollectionLocalService
 	public DataCollection getDataCollectionByUuidAndGroupId(
 			String uuid, long groupId)
 		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataCollectionCountAll();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataCollectionCountByGroupId(long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataCollectionCountByName(String dataCollectionName);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataCollectionCountByUserId(long userId);
 
 	/**
 	 * Returns a range of all the data collections.
@@ -238,6 +255,34 @@ public interface DataCollectionLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DataCollection> getDataCollections(int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataCollection> getDataCollectionsAll();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataCollection> getDataCollectionsAll(int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataCollection> getDataCollectionsByGroupId(long groupId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataCollection> getDataCollectionsByGroupId(
+		long groupId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataCollection> getDataCollectionsByName(
+		String dataCollectionName);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataCollection> getDataCollectionsByName(
+		String dataCollectionName, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataCollection> getDataCollectionsByUserId(long userId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataCollection> getDataCollectionsByUserId(
+		long userId, int start, int end);
 
 	/**
 	 * Returns all the data collections matching the UUID and company.
@@ -274,6 +319,17 @@ public interface DataCollectionLocalService
 	public int getDataCollectionsCount();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataCollectionVariantCount(long dataCollectionId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataCollection> getDataCollectionVariants(
+		long dataCollectionId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataCollection> getDataCollectionVariants(
+		long dataCollectionId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
 		PortletDataContext portletDataContext);
 
@@ -292,10 +348,15 @@ public interface DataCollectionLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	public DataCollection removeDataCollection(long collectionId)
+	/**
+	 * Removes all DataCollection related stuff.
+	 * DataAnalysysLayout
+	 * DataSet
+	 * DataPack
+	 * DataEntry
+	 */
+	public DataCollection removeDataCollection(long dataCollectionId)
 		throws PortalException;
-
-	public void removeDataCollections(String collectionName);
 
 	/**
 	 * Updates the data collection in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
@@ -305,5 +366,11 @@ public interface DataCollectionLocalService
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public DataCollection updateDataCollection(DataCollection dataCollection);
+
+	public DataCollection updateDataCollection(
+			long dataCollectionId, String name, String version,
+			long organizationId, JSONObject metaDataJSON, String layout,
+			ServiceContext sc)
+		throws NoSuchDataCollectionException, NoSuchMetaDataFieldException;
 
 }

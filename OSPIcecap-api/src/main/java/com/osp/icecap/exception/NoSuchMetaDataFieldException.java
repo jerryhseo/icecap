@@ -21,20 +21,20 @@ import com.liferay.portal.kernel.exception.NoSuchModelException;
  * @author Jerry H. Seo
  */
 @ProviderType
-public class NoSuchDataCollectionLayoutException extends NoSuchModelException {
+public class NoSuchMetaDataFieldException extends NoSuchModelException {
 
-	public NoSuchDataCollectionLayoutException() {
+	public NoSuchMetaDataFieldException() {
 	}
 
-	public NoSuchDataCollectionLayoutException(String msg) {
+	public NoSuchMetaDataFieldException(String msg) {
 		super(msg);
 	}
 
-	public NoSuchDataCollectionLayoutException(String msg, Throwable cause) {
+	public NoSuchMetaDataFieldException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 
-	public NoSuchDataCollectionLayoutException(Throwable cause) {
+	public NoSuchMetaDataFieldException(Throwable cause) {
 		super(cause);
 	}
 

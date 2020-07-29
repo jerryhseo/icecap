@@ -98,12 +98,12 @@ public class DataCollectionCacheModel
 		sb.append(version);
 		sb.append(", copiedFrom=");
 		sb.append(copiedFrom);
-		sb.append(", title=");
-		sb.append(title);
-		sb.append(", description=");
-		sb.append(description);
 		sb.append(", organizationId=");
 		sb.append(organizationId);
+		sb.append(", hasMetaData=");
+		sb.append(hasMetaData);
+		sb.append(", hasLayout=");
+		sb.append(hasLayout);
 		sb.append("}");
 
 		return sb.toString();
@@ -178,22 +178,9 @@ public class DataCollectionCacheModel
 		}
 
 		dataCollectionImpl.setCopiedFrom(copiedFrom);
-
-		if (title == null) {
-			dataCollectionImpl.setTitle("");
-		}
-		else {
-			dataCollectionImpl.setTitle(title);
-		}
-
-		if (description == null) {
-			dataCollectionImpl.setDescription("");
-		}
-		else {
-			dataCollectionImpl.setDescription(description);
-		}
-
 		dataCollectionImpl.setOrganizationId(organizationId);
+		dataCollectionImpl.setHasMetaData(hasMetaData);
+		dataCollectionImpl.setHasLayout(hasLayout);
 
 		dataCollectionImpl.resetOriginalValues();
 
@@ -224,10 +211,12 @@ public class DataCollectionCacheModel
 		version = objectInput.readUTF();
 
 		copiedFrom = objectInput.readLong();
-		title = objectInput.readUTF();
-		description = objectInput.readUTF();
 
 		organizationId = objectInput.readLong();
+
+		hasMetaData = objectInput.readBoolean();
+
+		hasLayout = objectInput.readBoolean();
 	}
 
 	@Override
@@ -286,21 +275,11 @@ public class DataCollectionCacheModel
 
 		objectOutput.writeLong(copiedFrom);
 
-		if (title == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(title);
-		}
-
-		if (description == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(description);
-		}
-
 		objectOutput.writeLong(organizationId);
+
+		objectOutput.writeBoolean(hasMetaData);
+
+		objectOutput.writeBoolean(hasLayout);
 	}
 
 	public String uuid;
@@ -318,8 +297,8 @@ public class DataCollectionCacheModel
 	public String name;
 	public String version;
 	public long copiedFrom;
-	public String title;
-	public String description;
 	public long organizationId;
+	public boolean hasMetaData;
+	public boolean hasLayout;
 
 }

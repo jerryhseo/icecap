@@ -70,9 +70,6 @@ public interface DataAnalysisLayoutLocalService
 	public DataAnalysisLayout addDataAnalysisLayout(
 		DataAnalysisLayout dataAnalysisLayout);
 
-	public DataAnalysisLayout addDataAnalysisLayout(
-		String dataUuid, String layout);
-
 	/**
 	 * Creates a new data analysis layout with the primary key. Does not add the data analysis layout to the database.
 	 *
@@ -224,9 +221,6 @@ public interface DataAnalysisLayoutLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	public DataAnalysisLayout removeDataAnalysisLayout(String dataUuid)
-		throws PortalException;
-
 	/**
 	 * Updates the data analysis layout in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -236,8 +230,5 @@ public interface DataAnalysisLayoutLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataAnalysisLayout updateDataAnalysisLayout(
 		DataAnalysisLayout dataAnalysisLayout);
-
-	public DataAnalysisLayout updateDataAnalysisLayout(
-		String dataUuid, String layout);
 
 }

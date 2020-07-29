@@ -287,6 +287,20 @@ public interface DataEntryModel
 	public void setStatusDate(Date statusDate);
 
 	/**
+	 * Returns the data type ID of this data entry.
+	 *
+	 * @return the data type ID of this data entry
+	 */
+	public long getDataTypeId();
+
+	/**
+	 * Sets the data type ID of this data entry.
+	 *
+	 * @param dataTypeId the data type ID of this data entry
+	 */
+	public void setDataTypeId(long dataTypeId);
+
+	/**
 	 * Returns the data pack ID of this data entry.
 	 *
 	 * @return the data pack ID of this data entry
@@ -358,19 +372,34 @@ public interface DataEntryModel
 	public void setAccessURL(String accessURL);
 
 	/**
-	 * Returns the path type of this data entry.
+	 * Returns the sequence ID of this data entry.
 	 *
-	 * @return the path type of this data entry
+	 * @return the sequence ID of this data entry
 	 */
 	@AutoEscape
-	public String getPathType();
+	public String getSequenceId();
 
 	/**
-	 * Sets the path type of this data entry.
+	 * Sets the sequence ID of this data entry.
 	 *
-	 * @param pathType the path type of this data entry
+	 * @param sequenceId the sequence ID of this data entry
 	 */
-	public void setPathType(String pathType);
+	public void setSequenceId(String sequenceId);
+
+	/**
+	 * Returns the access type of this data entry.
+	 *
+	 * @return the access type of this data entry
+	 */
+	@AutoEscape
+	public String getAccessType();
+
+	/**
+	 * Sets the access type of this data entry.
+	 *
+	 * @param accessType the access type of this data entry
+	 */
+	public void setAccessType(String accessType);
 
 	/**
 	 * Returns the copied from of this data entry.
@@ -385,6 +414,27 @@ public interface DataEntryModel
 	 * @param copiedFrom the copied from of this data entry
 	 */
 	public void setCopiedFrom(long copiedFrom);
+
+	/**
+	 * Returns the has meta data of this data entry.
+	 *
+	 * @return the has meta data of this data entry
+	 */
+	public boolean getHasMetaData();
+
+	/**
+	 * Returns <code>true</code> if this data entry is has meta data.
+	 *
+	 * @return <code>true</code> if this data entry is has meta data; <code>false</code> otherwise
+	 */
+	public boolean isHasMetaData();
+
+	/**
+	 * Sets whether this data entry is has meta data.
+	 *
+	 * @param hasMetaData the has meta data of this data entry
+	 */
+	public void setHasMetaData(boolean hasMetaData);
 
 	/**
 	 * Returns <code>true</code> if this data entry is approved.

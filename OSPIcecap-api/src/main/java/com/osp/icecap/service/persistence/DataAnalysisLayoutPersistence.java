@@ -44,38 +44,38 @@ public interface DataAnalysisLayoutPersistence
 	 */
 
 	/**
-	 * Returns all the data analysis layouts where applyLevel = &#63;.
+	 * Returns all the data analysis layouts where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @return the matching data analysis layouts
 	 */
-	public java.util.List<DataAnalysisLayout> findByApplyLevel(
-		String applyLevel);
+	public java.util.List<DataAnalysisLayout> findByDataCollectionId(
+		long dataCollectionId);
 
 	/**
-	 * Returns a range of all the data analysis layouts where applyLevel = &#63;.
+	 * Returns a range of all the data analysis layouts where dataCollectionId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @return the range of matching data analysis layouts
 	 */
-	public java.util.List<DataAnalysisLayout> findByApplyLevel(
-		String applyLevel, int start, int end);
+	public java.util.List<DataAnalysisLayout> findByDataCollectionId(
+		long dataCollectionId, int start, int end);
 
 	/**
-	 * Returns an ordered range of all the data analysis layouts where applyLevel = &#63;.
+	 * Returns an ordered range of all the data analysis layouts where dataCollectionId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByApplyLevel(String, int, int, OrderByComparator)}
-	 * @param applyLevel the apply level
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
+	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -83,160 +83,519 @@ public interface DataAnalysisLayoutPersistence
 	 * @return the ordered range of matching data analysis layouts
 	 */
 	@Deprecated
-	public java.util.List<DataAnalysisLayout> findByApplyLevel(
-		String applyLevel, int start, int end,
+	public java.util.List<DataAnalysisLayout> findByDataCollectionId(
+		long dataCollectionId, int start, int end,
 		OrderByComparator<DataAnalysisLayout> orderByComparator,
 		boolean useFinderCache);
 
 	/**
-	 * Returns an ordered range of all the data analysis layouts where applyLevel = &#63;.
+	 * Returns an ordered range of all the data analysis layouts where dataCollectionId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching data analysis layouts
 	 */
-	public java.util.List<DataAnalysisLayout> findByApplyLevel(
-		String applyLevel, int start, int end,
+	public java.util.List<DataAnalysisLayout> findByDataCollectionId(
+		long dataCollectionId, int start, int end,
 		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
-	 * Returns the first data analysis layout in the ordered set where applyLevel = &#63;.
+	 * Returns the first data analysis layout in the ordered set where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching data analysis layout
 	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
 	 */
-	public DataAnalysisLayout findByApplyLevel_First(
-			String applyLevel,
+	public DataAnalysisLayout findByDataCollectionId_First(
+			long dataCollectionId,
 			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
-	 * Returns the first data analysis layout in the ordered set where applyLevel = &#63;.
+	 * Returns the first data analysis layout in the ordered set where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
 	 */
-	public DataAnalysisLayout fetchByApplyLevel_First(
-		String applyLevel,
+	public DataAnalysisLayout fetchByDataCollectionId_First(
+		long dataCollectionId,
 		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
-	 * Returns the last data analysis layout in the ordered set where applyLevel = &#63;.
+	 * Returns the last data analysis layout in the ordered set where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching data analysis layout
 	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
 	 */
-	public DataAnalysisLayout findByApplyLevel_Last(
-			String applyLevel,
+	public DataAnalysisLayout findByDataCollectionId_Last(
+			long dataCollectionId,
 			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
-	 * Returns the last data analysis layout in the ordered set where applyLevel = &#63;.
+	 * Returns the last data analysis layout in the ordered set where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
 	 */
-	public DataAnalysisLayout fetchByApplyLevel_Last(
-		String applyLevel,
+	public DataAnalysisLayout fetchByDataCollectionId_Last(
+		long dataCollectionId,
 		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
-	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where applyLevel = &#63;.
+	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataCollectionId = &#63;.
 	 *
 	 * @param dataUuid the primary key of the current data analysis layout
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next data analysis layout
 	 * @throws NoSuchDataAnalysisLayoutException if a data analysis layout with the primary key could not be found
 	 */
-	public DataAnalysisLayout[] findByApplyLevel_PrevAndNext(
-			String dataUuid, String applyLevel,
+	public DataAnalysisLayout[] findByDataCollectionId_PrevAndNext(
+			String dataUuid, long dataCollectionId,
 			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
-	 * Removes all the data analysis layouts where applyLevel = &#63; from the database.
+	 * Removes all the data analysis layouts where dataCollectionId = &#63; from the database.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 */
-	public void removeByApplyLevel(String applyLevel);
+	public void removeByDataCollectionId(long dataCollectionId);
 
 	/**
-	 * Returns the number of data analysis layouts where applyLevel = &#63;.
+	 * Returns the number of data analysis layouts where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @return the number of matching data analysis layouts
 	 */
-	public int countByApplyLevel(String applyLevel);
+	public int countByDataCollectionId(long dataCollectionId);
 
 	/**
-	 * Returns the data analysis layout where dataUuid = &#63; and applyLevel = &#63; or throws a <code>NoSuchDataAnalysisLayoutException</code> if it could not be found.
+	 * Returns all the data analysis layouts where dataSetId = &#63;.
 	 *
-	 * @param dataUuid the data uuid
-	 * @param applyLevel the apply level
-	 * @return the matching data analysis layout
-	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 * @param dataSetId the data set ID
+	 * @return the matching data analysis layouts
 	 */
-	public DataAnalysisLayout findByDataUuidApplyLevel(
-			String dataUuid, String applyLevel)
-		throws NoSuchDataAnalysisLayoutException;
+	public java.util.List<DataAnalysisLayout> findByDataSetId(long dataSetId);
 
 	/**
-	 * Returns the data analysis layout where dataUuid = &#63; and applyLevel = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns a range of all the data analysis layouts where dataSetId = &#63;.
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByDataUuidApplyLevel(String,String)}
-	 * @param dataUuid the data uuid
-	 * @param applyLevel the apply level
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSetId the data set ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @return the range of matching data analysis layouts
+	 */
+	public java.util.List<DataAnalysisLayout> findByDataSetId(
+		long dataSetId, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data analysis layouts where dataSetId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSetId(long, int, int, OrderByComparator)}
+	 * @param dataSetId the data set ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param useFinderCache whether to use the finder cache
-	 * @return the matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 * @return the ordered range of matching data analysis layouts
 	 */
 	@Deprecated
-	public DataAnalysisLayout fetchByDataUuidApplyLevel(
-		String dataUuid, String applyLevel, boolean useFinderCache);
+	public java.util.List<DataAnalysisLayout> findByDataSetId(
+		long dataSetId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean useFinderCache);
 
 	/**
-	 * Returns the data analysis layout where dataUuid = &#63; and applyLevel = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns an ordered range of all the data analysis layouts where dataSetId = &#63;.
 	 *
-	 * @param dataUuid the data uuid
-	 * @param applyLevel the apply level
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSetId the data set ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data analysis layouts
 	 */
-	public DataAnalysisLayout fetchByDataUuidApplyLevel(
-		String dataUuid, String applyLevel);
+	public java.util.List<DataAnalysisLayout> findByDataSetId(
+		long dataSetId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
-	 * Removes the data analysis layout where dataUuid = &#63; and applyLevel = &#63; from the database.
+	 * Returns the first data analysis layout in the ordered set where dataSetId = &#63;.
 	 *
-	 * @param dataUuid the data uuid
-	 * @param applyLevel the apply level
-	 * @return the data analysis layout that was removed
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
 	 */
-	public DataAnalysisLayout removeByDataUuidApplyLevel(
-			String dataUuid, String applyLevel)
+	public DataAnalysisLayout findByDataSetId_First(
+			long dataSetId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
-	 * Returns the number of data analysis layouts where dataUuid = &#63; and applyLevel = &#63;.
+	 * Returns the first data analysis layout in the ordered set where dataSetId = &#63;.
 	 *
-	 * @param dataUuid the data uuid
-	 * @param applyLevel the apply level
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	public DataAnalysisLayout fetchByDataSetId_First(
+		long dataSetId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 */
+	public DataAnalysisLayout findByDataSetId_Last(
+			long dataSetId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException;
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	public DataAnalysisLayout fetchByDataSetId_Last(
+		long dataSetId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
+
+	/**
+	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataSetId = &#63;.
+	 *
+	 * @param dataUuid the primary key of the current data analysis layout
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a data analysis layout with the primary key could not be found
+	 */
+	public DataAnalysisLayout[] findByDataSetId_PrevAndNext(
+			String dataUuid, long dataSetId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException;
+
+	/**
+	 * Removes all the data analysis layouts where dataSetId = &#63; from the database.
+	 *
+	 * @param dataSetId the data set ID
+	 */
+	public void removeByDataSetId(long dataSetId);
+
+	/**
+	 * Returns the number of data analysis layouts where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
 	 * @return the number of matching data analysis layouts
 	 */
-	public int countByDataUuidApplyLevel(String dataUuid, String applyLevel);
+	public int countByDataSetId(long dataSetId);
+
+	/**
+	 * Returns all the data analysis layouts where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @return the matching data analysis layouts
+	 */
+	public java.util.List<DataAnalysisLayout> findByDataSectionId(
+		long dataSectionId);
+
+	/**
+	 * Returns a range of all the data analysis layouts where dataSectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @return the range of matching data analysis layouts
+	 */
+	public java.util.List<DataAnalysisLayout> findByDataSectionId(
+		long dataSectionId, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data analysis layouts where dataSectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSectionId(long, int, int, OrderByComparator)}
+	 * @param dataSectionId the data section ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data analysis layouts
+	 */
+	@Deprecated
+	public java.util.List<DataAnalysisLayout> findByDataSectionId(
+		long dataSectionId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data analysis layouts where dataSectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data analysis layouts
+	 */
+	public java.util.List<DataAnalysisLayout> findByDataSectionId(
+		long dataSectionId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
+
+	/**
+	 * Returns the first data analysis layout in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 */
+	public DataAnalysisLayout findByDataSectionId_First(
+			long dataSectionId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException;
+
+	/**
+	 * Returns the first data analysis layout in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	public DataAnalysisLayout fetchByDataSectionId_First(
+		long dataSectionId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 */
+	public DataAnalysisLayout findByDataSectionId_Last(
+			long dataSectionId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException;
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	public DataAnalysisLayout fetchByDataSectionId_Last(
+		long dataSectionId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
+
+	/**
+	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataUuid the primary key of the current data analysis layout
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a data analysis layout with the primary key could not be found
+	 */
+	public DataAnalysisLayout[] findByDataSectionId_PrevAndNext(
+			String dataUuid, long dataSectionId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException;
+
+	/**
+	 * Removes all the data analysis layouts where dataSectionId = &#63; from the database.
+	 *
+	 * @param dataSectionId the data section ID
+	 */
+	public void removeByDataSectionId(long dataSectionId);
+
+	/**
+	 * Returns the number of data analysis layouts where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @return the number of matching data analysis layouts
+	 */
+	public int countByDataSectionId(long dataSectionId);
+
+	/**
+	 * Returns all the data analysis layouts where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @return the matching data analysis layouts
+	 */
+	public java.util.List<DataAnalysisLayout> findByDataPackId(long dataPackId);
+
+	/**
+	 * Returns a range of all the data analysis layouts where dataPackId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @return the range of matching data analysis layouts
+	 */
+	public java.util.List<DataAnalysisLayout> findByDataPackId(
+		long dataPackId, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data analysis layouts where dataPackId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataPackId(long, int, int, OrderByComparator)}
+	 * @param dataPackId the data pack ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data analysis layouts
+	 */
+	@Deprecated
+	public java.util.List<DataAnalysisLayout> findByDataPackId(
+		long dataPackId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean useFinderCache);
+
+	/**
+	 * Returns an ordered range of all the data analysis layouts where dataPackId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data analysis layouts
+	 */
+	public java.util.List<DataAnalysisLayout> findByDataPackId(
+		long dataPackId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
+
+	/**
+	 * Returns the first data analysis layout in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 */
+	public DataAnalysisLayout findByDataPackId_First(
+			long dataPackId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException;
+
+	/**
+	 * Returns the first data analysis layout in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	public DataAnalysisLayout fetchByDataPackId_First(
+		long dataPackId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 */
+	public DataAnalysisLayout findByDataPackId_Last(
+			long dataPackId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException;
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	public DataAnalysisLayout fetchByDataPackId_Last(
+		long dataPackId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
+
+	/**
+	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataUuid the primary key of the current data analysis layout
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a data analysis layout with the primary key could not be found
+	 */
+	public DataAnalysisLayout[] findByDataPackId_PrevAndNext(
+			String dataUuid, long dataPackId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException;
+
+	/**
+	 * Removes all the data analysis layouts where dataPackId = &#63; from the database.
+	 *
+	 * @param dataPackId the data pack ID
+	 */
+	public void removeByDataPackId(long dataPackId);
+
+	/**
+	 * Returns the number of data analysis layouts where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @return the number of matching data analysis layouts
+	 */
+	public int countByDataPackId(long dataPackId);
 
 	/**
 	 * Caches the data analysis layout in the entity cache if it is enabled.

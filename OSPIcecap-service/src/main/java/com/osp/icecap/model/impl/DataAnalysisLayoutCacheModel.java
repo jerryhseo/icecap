@@ -64,14 +64,20 @@ public class DataAnalysisLayoutCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(7);
+		StringBundler sb = new StringBundler(13);
 
 		sb.append("{dataUuid=");
 		sb.append(dataUuid);
+		sb.append(", dataCollectionId=");
+		sb.append(dataCollectionId);
+		sb.append(", dataSetId=");
+		sb.append(dataSetId);
+		sb.append(", dataSectionId=");
+		sb.append(dataSectionId);
+		sb.append(", dataPackId=");
+		sb.append(dataPackId);
 		sb.append(", layout=");
 		sb.append(layout);
-		sb.append(", applyLevel=");
-		sb.append(applyLevel);
 		sb.append("}");
 
 		return sb.toString();
@@ -89,18 +95,16 @@ public class DataAnalysisLayoutCacheModel
 			dataAnalysisLayoutImpl.setDataUuid(dataUuid);
 		}
 
+		dataAnalysisLayoutImpl.setDataCollectionId(dataCollectionId);
+		dataAnalysisLayoutImpl.setDataSetId(dataSetId);
+		dataAnalysisLayoutImpl.setDataSectionId(dataSectionId);
+		dataAnalysisLayoutImpl.setDataPackId(dataPackId);
+
 		if (layout == null) {
 			dataAnalysisLayoutImpl.setLayout("");
 		}
 		else {
 			dataAnalysisLayoutImpl.setLayout(layout);
-		}
-
-		if (applyLevel == null) {
-			dataAnalysisLayoutImpl.setApplyLevel("");
-		}
-		else {
-			dataAnalysisLayoutImpl.setApplyLevel(applyLevel);
 		}
 
 		dataAnalysisLayoutImpl.resetOriginalValues();
@@ -111,8 +115,15 @@ public class DataAnalysisLayoutCacheModel
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		dataUuid = objectInput.readUTF();
+
+		dataCollectionId = objectInput.readLong();
+
+		dataSetId = objectInput.readLong();
+
+		dataSectionId = objectInput.readLong();
+
+		dataPackId = objectInput.readLong();
 		layout = objectInput.readUTF();
-		applyLevel = objectInput.readUTF();
 	}
 
 	@Override
@@ -124,23 +135,27 @@ public class DataAnalysisLayoutCacheModel
 			objectOutput.writeUTF(dataUuid);
 		}
 
+		objectOutput.writeLong(dataCollectionId);
+
+		objectOutput.writeLong(dataSetId);
+
+		objectOutput.writeLong(dataSectionId);
+
+		objectOutput.writeLong(dataPackId);
+
 		if (layout == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
 			objectOutput.writeUTF(layout);
 		}
-
-		if (applyLevel == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(applyLevel);
-		}
 	}
 
 	public String dataUuid;
+	public long dataCollectionId;
+	public long dataSetId;
+	public long dataSectionId;
+	public long dataPackId;
 	public String layout;
-	public String applyLevel;
 
 }

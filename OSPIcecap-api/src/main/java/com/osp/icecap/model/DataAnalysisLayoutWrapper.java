@@ -45,8 +45,11 @@ public class DataAnalysisLayoutWrapper
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
 		attributes.put("dataUuid", getDataUuid());
+		attributes.put("dataCollectionId", getDataCollectionId());
+		attributes.put("dataSetId", getDataSetId());
+		attributes.put("dataSectionId", getDataSectionId());
+		attributes.put("dataPackId", getDataPackId());
 		attributes.put("layout", getLayout());
-		attributes.put("applyLevel", getApplyLevel());
 
 		return attributes;
 	}
@@ -59,27 +62,75 @@ public class DataAnalysisLayoutWrapper
 			setDataUuid(dataUuid);
 		}
 
+		Long dataCollectionId = (Long)attributes.get("dataCollectionId");
+
+		if (dataCollectionId != null) {
+			setDataCollectionId(dataCollectionId);
+		}
+
+		Long dataSetId = (Long)attributes.get("dataSetId");
+
+		if (dataSetId != null) {
+			setDataSetId(dataSetId);
+		}
+
+		Long dataSectionId = (Long)attributes.get("dataSectionId");
+
+		if (dataSectionId != null) {
+			setDataSectionId(dataSectionId);
+		}
+
+		Long dataPackId = (Long)attributes.get("dataPackId");
+
+		if (dataPackId != null) {
+			setDataPackId(dataPackId);
+		}
+
 		String layout = (String)attributes.get("layout");
 
 		if (layout != null) {
 			setLayout(layout);
 		}
-
-		String applyLevel = (String)attributes.get("applyLevel");
-
-		if (applyLevel != null) {
-			setApplyLevel(applyLevel);
-		}
 	}
 
 	/**
-	 * Returns the apply level of this data analysis layout.
+	 * Returns the data collection ID of this data analysis layout.
 	 *
-	 * @return the apply level of this data analysis layout
+	 * @return the data collection ID of this data analysis layout
 	 */
 	@Override
-	public String getApplyLevel() {
-		return model.getApplyLevel();
+	public long getDataCollectionId() {
+		return model.getDataCollectionId();
+	}
+
+	/**
+	 * Returns the data pack ID of this data analysis layout.
+	 *
+	 * @return the data pack ID of this data analysis layout
+	 */
+	@Override
+	public long getDataPackId() {
+		return model.getDataPackId();
+	}
+
+	/**
+	 * Returns the data section ID of this data analysis layout.
+	 *
+	 * @return the data section ID of this data analysis layout
+	 */
+	@Override
+	public long getDataSectionId() {
+		return model.getDataSectionId();
+	}
+
+	/**
+	 * Returns the data set ID of this data analysis layout.
+	 *
+	 * @return the data set ID of this data analysis layout
+	 */
+	@Override
+	public long getDataSetId() {
+		return model.getDataSetId();
 	}
 
 	/**
@@ -118,13 +169,43 @@ public class DataAnalysisLayoutWrapper
 	}
 
 	/**
-	 * Sets the apply level of this data analysis layout.
+	 * Sets the data collection ID of this data analysis layout.
 	 *
-	 * @param applyLevel the apply level of this data analysis layout
+	 * @param dataCollectionId the data collection ID of this data analysis layout
 	 */
 	@Override
-	public void setApplyLevel(String applyLevel) {
-		model.setApplyLevel(applyLevel);
+	public void setDataCollectionId(long dataCollectionId) {
+		model.setDataCollectionId(dataCollectionId);
+	}
+
+	/**
+	 * Sets the data pack ID of this data analysis layout.
+	 *
+	 * @param dataPackId the data pack ID of this data analysis layout
+	 */
+	@Override
+	public void setDataPackId(long dataPackId) {
+		model.setDataPackId(dataPackId);
+	}
+
+	/**
+	 * Sets the data section ID of this data analysis layout.
+	 *
+	 * @param dataSectionId the data section ID of this data analysis layout
+	 */
+	@Override
+	public void setDataSectionId(long dataSectionId) {
+		model.setDataSectionId(dataSectionId);
+	}
+
+	/**
+	 * Sets the data set ID of this data analysis layout.
+	 *
+	 * @param dataSetId the data set ID of this data analysis layout
+	 */
+	@Override
+	public void setDataSetId(long dataSetId) {
+		model.setDataSetId(dataSetId);
 	}
 
 	/**

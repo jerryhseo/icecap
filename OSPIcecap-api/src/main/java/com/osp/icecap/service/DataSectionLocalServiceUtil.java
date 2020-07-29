@@ -53,16 +53,15 @@ public class DataSectionLocalServiceUtil {
 	}
 
 	public static com.osp.icecap.model.DataSection addDataSection(
-			long dataCollectionId, long dataSetId,
-			java.util.Map<java.util.Locale, String> titleMap,
-			java.util.Map<java.util.Locale, String> descriptionMap,
-			String version, long copiedFrom,
-			com.liferay.portal.kernel.service.ServiceContext sc)
+			long dataCollectionId, long dataSetId, String name, String version,
+			long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().addDataSection(
-			dataCollectionId, dataSetId, titleMap, descriptionMap, version,
-			copiedFrom, sc);
+			dataCollectionId, dataSetId, name, version, copiedFrom,
+			metaDataJSON, layout, sc);
 	}
 
 	/**
@@ -312,6 +311,22 @@ public class DataSectionLocalServiceUtil {
 		return getService().getDataSectionsCount();
 	}
 
+	public static int getDataSectionVariantsCount(long dataSectionId) {
+		return getService().getDataSectionVariantsCount(dataSectionId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataSection>
+		getDataSectionVarients(long dataSectionId) {
+
+		return getService().getDataSectionVarients(dataSectionId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataSection>
+		getDataSectionVarients(long dataSectionId, int start, int end) {
+
+		return getService().getDataSectionVarients(dataSectionId, start, end);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
 		getExportActionableDynamicQuery(
 			com.liferay.exportimport.kernel.lar.PortletDataContext
@@ -364,15 +379,15 @@ public class DataSectionLocalServiceUtil {
 
 	public static com.osp.icecap.model.DataSection updateDataSection(
 			long dataSectionId, long dataCollectionId, long dataSetId,
-			java.util.Map<java.util.Locale, String> titleMap,
-			java.util.Map<java.util.Locale, String> descriptionMap,
-			String version, long copiedFrom,
-			com.liferay.portal.kernel.service.ServiceContext sc)
-		throws com.osp.icecap.exception.NoSuchDataSectionException {
+			String name, String version, long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.osp.icecap.exception.NoSuchDataSectionException,
+			   com.osp.icecap.exception.NoSuchMetaDataFieldException {
 
 		return getService().updateDataSection(
-			dataSectionId, dataCollectionId, dataSetId, titleMap,
-			descriptionMap, version, copiedFrom, sc);
+			dataSectionId, dataCollectionId, dataSetId, name, version,
+			copiedFrom, metaDataJSON, layout, sc);
 	}
 
 	public static DataSectionLocalService getService() {

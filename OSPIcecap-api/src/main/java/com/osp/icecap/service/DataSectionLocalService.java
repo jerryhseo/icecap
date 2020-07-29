@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -34,13 +35,12 @@ import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchDataSectionException;
+import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataSection;
 
 import java.io.Serializable;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -78,8 +78,8 @@ public interface DataSectionLocalService
 	public DataSection addDataSection(DataSection dataSection);
 
 	public DataSection addDataSection(
-			long dataCollectionId, long dataSetId, Map<Locale, String> titleMap,
-			Map<Locale, String> descriptionMap, String version, long copiedFrom,
+			long dataCollectionId, long dataSetId, String name, String version,
+			long copiedFrom, JSONObject metaDataJSON, String layout,
 			ServiceContext sc)
 		throws PortalException;
 
@@ -274,6 +274,16 @@ public interface DataSectionLocalService
 	public int getDataSectionsCount();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataSectionVariantsCount(long dataSectionId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataSection> getDataSectionVarients(long dataSectionId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataSection> getDataSectionVarients(
+		long dataSectionId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
 		PortletDataContext portletDataContext);
 
@@ -306,8 +316,8 @@ public interface DataSectionLocalService
 
 	public DataSection updateDataSection(
 			long dataSectionId, long dataCollectionId, long dataSetId,
-			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-			String version, long copiedFrom, ServiceContext sc)
-		throws NoSuchDataSectionException;
+			String name, String version, long copiedFrom,
+			JSONObject metaDataJSON, String layout, ServiceContext sc)
+		throws NoSuchDataSectionException, NoSuchMetaDataFieldException;
 
 }

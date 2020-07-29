@@ -42,10 +42,10 @@ import com.osp.icecap.service.persistence.DataEntryPersistence;
 import com.osp.icecap.service.persistence.DataPackPersistence;
 import com.osp.icecap.service.persistence.DataSectionPersistence;
 import com.osp.icecap.service.persistence.DataSetPersistence;
-import com.osp.icecap.service.persistence.DataTypeLinkPersistence;
 import com.osp.icecap.service.persistence.DataTypePersistence;
 import com.osp.icecap.service.persistence.DataTypeStructurePersistence;
 import com.osp.icecap.service.persistence.DataTypeVisualizerLinkPersistence;
+import com.osp.icecap.service.persistence.MetaDataPersistence;
 
 import java.io.Serializable;
 
@@ -382,14 +382,14 @@ public abstract class DataAnalysisLayoutLocalServiceBaseImpl
 	protected DataTypePersistence dataTypePersistence;
 
 	@Reference
-	protected DataTypeLinkPersistence dataTypeLinkPersistence;
-
-	@Reference
 	protected DataTypeStructurePersistence dataTypeStructurePersistence;
 
 	@Reference
 	protected DataTypeVisualizerLinkPersistence
 		dataTypeVisualizerLinkPersistence;
+
+	@Reference
+	protected MetaDataPersistence metaDataPersistence;
 
 	@Reference
 	protected com.liferay.counter.kernel.service.CounterLocalService

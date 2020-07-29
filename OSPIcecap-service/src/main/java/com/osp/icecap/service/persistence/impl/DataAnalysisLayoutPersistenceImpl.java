@@ -30,7 +30,6 @@ import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
-import com.liferay.portal.kernel.util.StringUtil;
 
 import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
 import com.osp.icecap.model.DataAnalysisLayout;
@@ -46,7 +45,6 @@ import java.lang.reflect.InvocationHandler;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.sql.DataSource;
 
@@ -89,50 +87,52 @@ public class DataAnalysisLayoutPersistenceImpl
 	private FinderPath _finderPathWithPaginationFindAll;
 	private FinderPath _finderPathWithoutPaginationFindAll;
 	private FinderPath _finderPathCountAll;
-	private FinderPath _finderPathWithPaginationFindByApplyLevel;
-	private FinderPath _finderPathWithoutPaginationFindByApplyLevel;
-	private FinderPath _finderPathCountByApplyLevel;
+	private FinderPath _finderPathWithPaginationFindByDataCollectionId;
+	private FinderPath _finderPathWithoutPaginationFindByDataCollectionId;
+	private FinderPath _finderPathCountByDataCollectionId;
 
 	/**
-	 * Returns all the data analysis layouts where applyLevel = &#63;.
+	 * Returns all the data analysis layouts where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @return the matching data analysis layouts
 	 */
 	@Override
-	public List<DataAnalysisLayout> findByApplyLevel(String applyLevel) {
-		return findByApplyLevel(
-			applyLevel, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	public List<DataAnalysisLayout> findByDataCollectionId(
+		long dataCollectionId) {
+
+		return findByDataCollectionId(
+			dataCollectionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
-	 * Returns a range of all the data analysis layouts where applyLevel = &#63;.
+	 * Returns a range of all the data analysis layouts where dataCollectionId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @return the range of matching data analysis layouts
 	 */
 	@Override
-	public List<DataAnalysisLayout> findByApplyLevel(
-		String applyLevel, int start, int end) {
+	public List<DataAnalysisLayout> findByDataCollectionId(
+		long dataCollectionId, int start, int end) {
 
-		return findByApplyLevel(applyLevel, start, end, null);
+		return findByDataCollectionId(dataCollectionId, start, end, null);
 	}
 
 	/**
-	 * Returns an ordered range of all the data analysis layouts where applyLevel = &#63;.
+	 * Returns an ordered range of all the data analysis layouts where dataCollectionId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByApplyLevel(String, int, int, OrderByComparator)}
-	 * @param applyLevel the apply level
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
+	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -141,33 +141,32 @@ public class DataAnalysisLayoutPersistenceImpl
 	 */
 	@Deprecated
 	@Override
-	public List<DataAnalysisLayout> findByApplyLevel(
-		String applyLevel, int start, int end,
+	public List<DataAnalysisLayout> findByDataCollectionId(
+		long dataCollectionId, int start, int end,
 		OrderByComparator<DataAnalysisLayout> orderByComparator,
 		boolean useFinderCache) {
 
-		return findByApplyLevel(applyLevel, start, end, orderByComparator);
+		return findByDataCollectionId(
+			dataCollectionId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns an ordered range of all the data analysis layouts where applyLevel = &#63;.
+	 * Returns an ordered range of all the data analysis layouts where dataCollectionId = &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching data analysis layouts
 	 */
 	@Override
-	public List<DataAnalysisLayout> findByApplyLevel(
-		String applyLevel, int start, int end,
+	public List<DataAnalysisLayout> findByDataCollectionId(
+		long dataCollectionId, int start, int end,
 		OrderByComparator<DataAnalysisLayout> orderByComparator) {
-
-		applyLevel = Objects.toString(applyLevel, "");
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -177,13 +176,13 @@ public class DataAnalysisLayoutPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByApplyLevel;
-			finderArgs = new Object[] {applyLevel};
+			finderPath = _finderPathWithoutPaginationFindByDataCollectionId;
+			finderArgs = new Object[] {dataCollectionId};
 		}
 		else {
-			finderPath = _finderPathWithPaginationFindByApplyLevel;
+			finderPath = _finderPathWithPaginationFindByDataCollectionId;
 			finderArgs = new Object[] {
-				applyLevel, start, end, orderByComparator
+				dataCollectionId, start, end, orderByComparator
 			};
 		}
 
@@ -193,7 +192,9 @@ public class DataAnalysisLayoutPersistenceImpl
 
 		if ((list != null) && !list.isEmpty()) {
 			for (DataAnalysisLayout dataAnalysisLayout : list) {
-				if (!applyLevel.equals(dataAnalysisLayout.getApplyLevel())) {
+				if ((dataCollectionId !=
+						dataAnalysisLayout.getDataCollectionId())) {
+
 					list = null;
 
 					break;
@@ -214,16 +215,7 @@ public class DataAnalysisLayoutPersistenceImpl
 
 			query.append(_SQL_SELECT_DATAANALYSISLAYOUT_WHERE);
 
-			boolean bindApplyLevel = false;
-
-			if (applyLevel.isEmpty()) {
-				query.append(_FINDER_COLUMN_APPLYLEVEL_APPLYLEVEL_3);
-			}
-			else {
-				bindApplyLevel = true;
-
-				query.append(_FINDER_COLUMN_APPLYLEVEL_APPLYLEVEL_2);
-			}
+			query.append(_FINDER_COLUMN_DATACOLLECTIONID_DATACOLLECTIONID_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(
@@ -244,9 +236,7 @@ public class DataAnalysisLayoutPersistenceImpl
 
 				QueryPos qPos = QueryPos.getInstance(q);
 
-				if (bindApplyLevel) {
-					qPos.add(applyLevel);
-				}
+				qPos.add(dataCollectionId);
 
 				if (!pagination) {
 					list = (List<DataAnalysisLayout>)QueryUtil.list(
@@ -279,21 +269,21 @@ public class DataAnalysisLayoutPersistenceImpl
 	}
 
 	/**
-	 * Returns the first data analysis layout in the ordered set where applyLevel = &#63;.
+	 * Returns the first data analysis layout in the ordered set where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching data analysis layout
 	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
 	 */
 	@Override
-	public DataAnalysisLayout findByApplyLevel_First(
-			String applyLevel,
+	public DataAnalysisLayout findByDataCollectionId_First(
+			long dataCollectionId,
 			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException {
 
-		DataAnalysisLayout dataAnalysisLayout = fetchByApplyLevel_First(
-			applyLevel, orderByComparator);
+		DataAnalysisLayout dataAnalysisLayout = fetchByDataCollectionId_First(
+			dataCollectionId, orderByComparator);
 
 		if (dataAnalysisLayout != null) {
 			return dataAnalysisLayout;
@@ -303,8 +293,8 @@ public class DataAnalysisLayoutPersistenceImpl
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("applyLevel=");
-		msg.append(applyLevel);
+		msg.append("dataCollectionId=");
+		msg.append(dataCollectionId);
 
 		msg.append("}");
 
@@ -312,19 +302,19 @@ public class DataAnalysisLayoutPersistenceImpl
 	}
 
 	/**
-	 * Returns the first data analysis layout in the ordered set where applyLevel = &#63;.
+	 * Returns the first data analysis layout in the ordered set where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
 	 */
 	@Override
-	public DataAnalysisLayout fetchByApplyLevel_First(
-		String applyLevel,
+	public DataAnalysisLayout fetchByDataCollectionId_First(
+		long dataCollectionId,
 		OrderByComparator<DataAnalysisLayout> orderByComparator) {
 
-		List<DataAnalysisLayout> list = findByApplyLevel(
-			applyLevel, 0, 1, orderByComparator);
+		List<DataAnalysisLayout> list = findByDataCollectionId(
+			dataCollectionId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -334,21 +324,21 @@ public class DataAnalysisLayoutPersistenceImpl
 	}
 
 	/**
-	 * Returns the last data analysis layout in the ordered set where applyLevel = &#63;.
+	 * Returns the last data analysis layout in the ordered set where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching data analysis layout
 	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
 	 */
 	@Override
-	public DataAnalysisLayout findByApplyLevel_Last(
-			String applyLevel,
+	public DataAnalysisLayout findByDataCollectionId_Last(
+			long dataCollectionId,
 			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException {
 
-		DataAnalysisLayout dataAnalysisLayout = fetchByApplyLevel_Last(
-			applyLevel, orderByComparator);
+		DataAnalysisLayout dataAnalysisLayout = fetchByDataCollectionId_Last(
+			dataCollectionId, orderByComparator);
 
 		if (dataAnalysisLayout != null) {
 			return dataAnalysisLayout;
@@ -358,8 +348,8 @@ public class DataAnalysisLayoutPersistenceImpl
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
-		msg.append("applyLevel=");
-		msg.append(applyLevel);
+		msg.append("dataCollectionId=");
+		msg.append(dataCollectionId);
 
 		msg.append("}");
 
@@ -367,25 +357,25 @@ public class DataAnalysisLayoutPersistenceImpl
 	}
 
 	/**
-	 * Returns the last data analysis layout in the ordered set where applyLevel = &#63;.
+	 * Returns the last data analysis layout in the ordered set where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
 	 */
 	@Override
-	public DataAnalysisLayout fetchByApplyLevel_Last(
-		String applyLevel,
+	public DataAnalysisLayout fetchByDataCollectionId_Last(
+		long dataCollectionId,
 		OrderByComparator<DataAnalysisLayout> orderByComparator) {
 
-		int count = countByApplyLevel(applyLevel);
+		int count = countByDataCollectionId(dataCollectionId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<DataAnalysisLayout> list = findByApplyLevel(
-			applyLevel, count - 1, count, orderByComparator);
+		List<DataAnalysisLayout> list = findByDataCollectionId(
+			dataCollectionId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -395,21 +385,19 @@ public class DataAnalysisLayoutPersistenceImpl
 	}
 
 	/**
-	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where applyLevel = &#63;.
+	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataCollectionId = &#63;.
 	 *
 	 * @param dataUuid the primary key of the current data analysis layout
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next data analysis layout
 	 * @throws NoSuchDataAnalysisLayoutException if a data analysis layout with the primary key could not be found
 	 */
 	@Override
-	public DataAnalysisLayout[] findByApplyLevel_PrevAndNext(
-			String dataUuid, String applyLevel,
+	public DataAnalysisLayout[] findByDataCollectionId_PrevAndNext(
+			String dataUuid, long dataCollectionId,
 			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException {
-
-		applyLevel = Objects.toString(applyLevel, "");
 
 		DataAnalysisLayout dataAnalysisLayout = findByPrimaryKey(dataUuid);
 
@@ -420,15 +408,15 @@ public class DataAnalysisLayoutPersistenceImpl
 
 			DataAnalysisLayout[] array = new DataAnalysisLayoutImpl[3];
 
-			array[0] = getByApplyLevel_PrevAndNext(
-				session, dataAnalysisLayout, applyLevel, orderByComparator,
-				true);
+			array[0] = getByDataCollectionId_PrevAndNext(
+				session, dataAnalysisLayout, dataCollectionId,
+				orderByComparator, true);
 
 			array[1] = dataAnalysisLayout;
 
-			array[2] = getByApplyLevel_PrevAndNext(
-				session, dataAnalysisLayout, applyLevel, orderByComparator,
-				false);
+			array[2] = getByDataCollectionId_PrevAndNext(
+				session, dataAnalysisLayout, dataCollectionId,
+				orderByComparator, false);
 
 			return array;
 		}
@@ -440,9 +428,9 @@ public class DataAnalysisLayoutPersistenceImpl
 		}
 	}
 
-	protected DataAnalysisLayout getByApplyLevel_PrevAndNext(
+	protected DataAnalysisLayout getByDataCollectionId_PrevAndNext(
 		Session session, DataAnalysisLayout dataAnalysisLayout,
-		String applyLevel,
+		long dataCollectionId,
 		OrderByComparator<DataAnalysisLayout> orderByComparator,
 		boolean previous) {
 
@@ -459,16 +447,7 @@ public class DataAnalysisLayoutPersistenceImpl
 
 		query.append(_SQL_SELECT_DATAANALYSISLAYOUT_WHERE);
 
-		boolean bindApplyLevel = false;
-
-		if (applyLevel.isEmpty()) {
-			query.append(_FINDER_COLUMN_APPLYLEVEL_APPLYLEVEL_3);
-		}
-		else {
-			bindApplyLevel = true;
-
-			query.append(_FINDER_COLUMN_APPLYLEVEL_APPLYLEVEL_2);
-		}
+		query.append(_FINDER_COLUMN_DATACOLLECTIONID_DATACOLLECTIONID_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields =
@@ -539,9 +518,7 @@ public class DataAnalysisLayoutPersistenceImpl
 
 		QueryPos qPos = QueryPos.getInstance(q);
 
-		if (bindApplyLevel) {
-			qPos.add(applyLevel);
-		}
+		qPos.add(dataCollectionId);
 
 		if (orderByComparator != null) {
 			for (Object orderByConditionValue :
@@ -563,33 +540,32 @@ public class DataAnalysisLayoutPersistenceImpl
 	}
 
 	/**
-	 * Removes all the data analysis layouts where applyLevel = &#63; from the database.
+	 * Removes all the data analysis layouts where dataCollectionId = &#63; from the database.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 */
 	@Override
-	public void removeByApplyLevel(String applyLevel) {
+	public void removeByDataCollectionId(long dataCollectionId) {
 		for (DataAnalysisLayout dataAnalysisLayout :
-				findByApplyLevel(
-					applyLevel, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+				findByDataCollectionId(
+					dataCollectionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
 
 			remove(dataAnalysisLayout);
 		}
 	}
 
 	/**
-	 * Returns the number of data analysis layouts where applyLevel = &#63;.
+	 * Returns the number of data analysis layouts where dataCollectionId = &#63;.
 	 *
-	 * @param applyLevel the apply level
+	 * @param dataCollectionId the data collection ID
 	 * @return the number of matching data analysis layouts
 	 */
 	@Override
-	public int countByApplyLevel(String applyLevel) {
-		applyLevel = Objects.toString(applyLevel, "");
+	public int countByDataCollectionId(long dataCollectionId) {
+		FinderPath finderPath = _finderPathCountByDataCollectionId;
 
-		FinderPath finderPath = _finderPathCountByApplyLevel;
-
-		Object[] finderArgs = new Object[] {applyLevel};
+		Object[] finderArgs = new Object[] {dataCollectionId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -598,16 +574,7 @@ public class DataAnalysisLayoutPersistenceImpl
 
 			query.append(_SQL_COUNT_DATAANALYSISLAYOUT_WHERE);
 
-			boolean bindApplyLevel = false;
-
-			if (applyLevel.isEmpty()) {
-				query.append(_FINDER_COLUMN_APPLYLEVEL_APPLYLEVEL_3);
-			}
-			else {
-				bindApplyLevel = true;
-
-				query.append(_FINDER_COLUMN_APPLYLEVEL_APPLYLEVEL_2);
-			}
+			query.append(_FINDER_COLUMN_DATACOLLECTIONID_DATACOLLECTIONID_2);
 
 			String sql = query.toString();
 
@@ -620,9 +587,7 @@ public class DataAnalysisLayoutPersistenceImpl
 
 				QueryPos qPos = QueryPos.getInstance(q);
 
-				if (bindApplyLevel) {
-					qPos.add(applyLevel);
-				}
+				qPos.add(dataCollectionId);
 
 				count = (Long)q.uniqueResult();
 
@@ -641,127 +606,141 @@ public class DataAnalysisLayoutPersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_APPLYLEVEL_APPLYLEVEL_2 =
-		"dataAnalysisLayout.applyLevel = ?";
+	private static final String
+		_FINDER_COLUMN_DATACOLLECTIONID_DATACOLLECTIONID_2 =
+			"dataAnalysisLayout.dataCollectionId = ?";
 
-	private static final String _FINDER_COLUMN_APPLYLEVEL_APPLYLEVEL_3 =
-		"(dataAnalysisLayout.applyLevel IS NULL OR dataAnalysisLayout.applyLevel = '')";
-
-	private FinderPath _finderPathFetchByDataUuidApplyLevel;
-	private FinderPath _finderPathCountByDataUuidApplyLevel;
+	private FinderPath _finderPathWithPaginationFindByDataSetId;
+	private FinderPath _finderPathWithoutPaginationFindByDataSetId;
+	private FinderPath _finderPathCountByDataSetId;
 
 	/**
-	 * Returns the data analysis layout where dataUuid = &#63; and applyLevel = &#63; or throws a <code>NoSuchDataAnalysisLayoutException</code> if it could not be found.
+	 * Returns all the data analysis layouts where dataSetId = &#63;.
 	 *
-	 * @param dataUuid the data uuid
-	 * @param applyLevel the apply level
-	 * @return the matching data analysis layout
-	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 * @param dataSetId the data set ID
+	 * @return the matching data analysis layouts
 	 */
 	@Override
-	public DataAnalysisLayout findByDataUuidApplyLevel(
-			String dataUuid, String applyLevel)
-		throws NoSuchDataAnalysisLayoutException {
-
-		DataAnalysisLayout dataAnalysisLayout = fetchByDataUuidApplyLevel(
-			dataUuid, applyLevel);
-
-		if (dataAnalysisLayout == null) {
-			StringBundler msg = new StringBundler(6);
-
-			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-			msg.append("dataUuid=");
-			msg.append(dataUuid);
-
-			msg.append(", applyLevel=");
-			msg.append(applyLevel);
-
-			msg.append("}");
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(msg.toString());
-			}
-
-			throw new NoSuchDataAnalysisLayoutException(msg.toString());
-		}
-
-		return dataAnalysisLayout;
+	public List<DataAnalysisLayout> findByDataSetId(long dataSetId) {
+		return findByDataSetId(
+			dataSetId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
-	 * Returns the data analysis layout where dataUuid = &#63; and applyLevel = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns a range of all the data analysis layouts where dataSetId = &#63;.
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByDataUuidApplyLevel(String,String)}
-	 * @param dataUuid the data uuid
-	 * @param applyLevel the apply level
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSetId the data set ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @return the range of matching data analysis layouts
+	 */
+	@Override
+	public List<DataAnalysisLayout> findByDataSetId(
+		long dataSetId, int start, int end) {
+
+		return findByDataSetId(dataSetId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data analysis layouts where dataSetId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSetId(long, int, int, OrderByComparator)}
+	 * @param dataSetId the data set ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param useFinderCache whether to use the finder cache
-	 * @return the matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 * @return the ordered range of matching data analysis layouts
 	 */
 	@Deprecated
 	@Override
-	public DataAnalysisLayout fetchByDataUuidApplyLevel(
-		String dataUuid, String applyLevel, boolean useFinderCache) {
+	public List<DataAnalysisLayout> findByDataSetId(
+		long dataSetId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean useFinderCache) {
 
-		return fetchByDataUuidApplyLevel(dataUuid, applyLevel);
+		return findByDataSetId(dataSetId, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns the data analysis layout where dataUuid = &#63; and applyLevel = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns an ordered range of all the data analysis layouts where dataSetId = &#63;.
 	 *
-	 * @param dataUuid the data uuid
-	 * @param applyLevel the apply level
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSetId the data set ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data analysis layouts
 	 */
 	@Override
-	public DataAnalysisLayout fetchByDataUuidApplyLevel(
-		String dataUuid, String applyLevel) {
+	public List<DataAnalysisLayout> findByDataSetId(
+		long dataSetId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
 
-		dataUuid = Objects.toString(dataUuid, "");
-		applyLevel = Objects.toString(applyLevel, "");
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
 
-		Object[] finderArgs = new Object[] {dataUuid, applyLevel};
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
 
-		Object result = finderCache.getResult(
-			_finderPathFetchByDataUuidApplyLevel, finderArgs, this);
+			pagination = false;
+			finderPath = _finderPathWithoutPaginationFindByDataSetId;
+			finderArgs = new Object[] {dataSetId};
+		}
+		else {
+			finderPath = _finderPathWithPaginationFindByDataSetId;
+			finderArgs = new Object[] {
+				dataSetId, start, end, orderByComparator
+			};
+		}
 
-		if (result instanceof DataAnalysisLayout) {
-			DataAnalysisLayout dataAnalysisLayout = (DataAnalysisLayout)result;
+		List<DataAnalysisLayout> list =
+			(List<DataAnalysisLayout>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-			if (!Objects.equals(dataUuid, dataAnalysisLayout.getDataUuid()) ||
-				!Objects.equals(
-					applyLevel, dataAnalysisLayout.getApplyLevel())) {
+		if ((list != null) && !list.isEmpty()) {
+			for (DataAnalysisLayout dataAnalysisLayout : list) {
+				if ((dataSetId != dataAnalysisLayout.getDataSetId())) {
+					list = null;
 
-				result = null;
+					break;
+				}
 			}
 		}
 
-		if (result == null) {
-			StringBundler query = new StringBundler(4);
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
 
 			query.append(_SQL_SELECT_DATAANALYSISLAYOUT_WHERE);
 
-			boolean bindDataUuid = false;
+			query.append(_FINDER_COLUMN_DATASETID_DATASETID_2);
 
-			if (dataUuid.isEmpty()) {
-				query.append(_FINDER_COLUMN_DATAUUIDAPPLYLEVEL_DATAUUID_3);
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else {
-				bindDataUuid = true;
-
-				query.append(_FINDER_COLUMN_DATAUUIDAPPLYLEVEL_DATAUUID_2);
-			}
-
-			boolean bindApplyLevel = false;
-
-			if (applyLevel.isEmpty()) {
-				query.append(_FINDER_COLUMN_DATAUUIDAPPLYLEVEL_APPLYLEVEL_3);
-			}
-			else {
-				bindApplyLevel = true;
-
-				query.append(_FINDER_COLUMN_DATAUUIDAPPLYLEVEL_APPLYLEVEL_2);
+			else if (pagination) {
+				query.append(DataAnalysisLayoutModelImpl.ORDER_BY_JPQL);
 			}
 
 			String sql = query.toString();
@@ -775,42 +754,27 @@ public class DataAnalysisLayoutPersistenceImpl
 
 				QueryPos qPos = QueryPos.getInstance(q);
 
-				if (bindDataUuid) {
-					qPos.add(dataUuid);
-				}
+				qPos.add(dataSetId);
 
-				if (bindApplyLevel) {
-					qPos.add(applyLevel);
-				}
+				if (!pagination) {
+					list = (List<DataAnalysisLayout>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
-				List<DataAnalysisLayout> list = q.list();
+					Collections.sort(list);
 
-				if (list.isEmpty()) {
-					finderCache.putResult(
-						_finderPathFetchByDataUuidApplyLevel, finderArgs, list);
+					list = Collections.unmodifiableList(list);
 				}
 				else {
-					if (list.size() > 1) {
-						Collections.sort(list, Collections.reverseOrder());
-
-						if (_log.isWarnEnabled()) {
-							_log.warn(
-								"DataAnalysisLayoutPersistenceImpl.fetchByDataUuidApplyLevel(String, String, boolean) with parameters (" +
-									StringUtil.merge(finderArgs) +
-										") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
-						}
-					}
-
-					DataAnalysisLayout dataAnalysisLayout = list.get(0);
-
-					result = dataAnalysisLayout;
-
-					cacheResult(dataAnalysisLayout);
+					list = (List<DataAnalysisLayout>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
 			}
 			catch (Exception e) {
-				finderCache.removeResult(
-					_finderPathFetchByDataUuidApplyLevel, finderArgs);
+				finderCache.removeResult(finderPath, finderArgs);
 
 				throw processException(e);
 			}
@@ -819,76 +783,314 @@ public class DataAnalysisLayoutPersistenceImpl
 			}
 		}
 
-		if (result instanceof List<?>) {
-			return null;
-		}
-		else {
-			return (DataAnalysisLayout)result;
-		}
+		return list;
 	}
 
 	/**
-	 * Removes the data analysis layout where dataUuid = &#63; and applyLevel = &#63; from the database.
+	 * Returns the first data analysis layout in the ordered set where dataSetId = &#63;.
 	 *
-	 * @param dataUuid the data uuid
-	 * @param applyLevel the apply level
-	 * @return the data analysis layout that was removed
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
 	 */
 	@Override
-	public DataAnalysisLayout removeByDataUuidApplyLevel(
-			String dataUuid, String applyLevel)
+	public DataAnalysisLayout findByDataSetId_First(
+			long dataSetId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException {
 
-		DataAnalysisLayout dataAnalysisLayout = findByDataUuidApplyLevel(
-			dataUuid, applyLevel);
+		DataAnalysisLayout dataAnalysisLayout = fetchByDataSetId_First(
+			dataSetId, orderByComparator);
 
-		return remove(dataAnalysisLayout);
+		if (dataAnalysisLayout != null) {
+			return dataAnalysisLayout;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("dataSetId=");
+		msg.append(dataSetId);
+
+		msg.append("}");
+
+		throw new NoSuchDataAnalysisLayoutException(msg.toString());
 	}
 
 	/**
-	 * Returns the number of data analysis layouts where dataUuid = &#63; and applyLevel = &#63;.
+	 * Returns the first data analysis layout in the ordered set where dataSetId = &#63;.
 	 *
-	 * @param dataUuid the data uuid
-	 * @param applyLevel the apply level
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	@Override
+	public DataAnalysisLayout fetchByDataSetId_First(
+		long dataSetId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+
+		List<DataAnalysisLayout> list = findByDataSetId(
+			dataSetId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 */
+	@Override
+	public DataAnalysisLayout findByDataSetId_Last(
+			long dataSetId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException {
+
+		DataAnalysisLayout dataAnalysisLayout = fetchByDataSetId_Last(
+			dataSetId, orderByComparator);
+
+		if (dataAnalysisLayout != null) {
+			return dataAnalysisLayout;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("dataSetId=");
+		msg.append(dataSetId);
+
+		msg.append("}");
+
+		throw new NoSuchDataAnalysisLayoutException(msg.toString());
+	}
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	@Override
+	public DataAnalysisLayout fetchByDataSetId_Last(
+		long dataSetId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+
+		int count = countByDataSetId(dataSetId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<DataAnalysisLayout> list = findByDataSetId(
+			dataSetId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataSetId = &#63;.
+	 *
+	 * @param dataUuid the primary key of the current data analysis layout
+	 * @param dataSetId the data set ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a data analysis layout with the primary key could not be found
+	 */
+	@Override
+	public DataAnalysisLayout[] findByDataSetId_PrevAndNext(
+			String dataUuid, long dataSetId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException {
+
+		DataAnalysisLayout dataAnalysisLayout = findByPrimaryKey(dataUuid);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataAnalysisLayout[] array = new DataAnalysisLayoutImpl[3];
+
+			array[0] = getByDataSetId_PrevAndNext(
+				session, dataAnalysisLayout, dataSetId, orderByComparator,
+				true);
+
+			array[1] = dataAnalysisLayout;
+
+			array[2] = getByDataSetId_PrevAndNext(
+				session, dataAnalysisLayout, dataSetId, orderByComparator,
+				false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataAnalysisLayout getByDataSetId_PrevAndNext(
+		Session session, DataAnalysisLayout dataAnalysisLayout, long dataSetId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_DATAANALYSISLAYOUT_WHERE);
+
+		query.append(_FINDER_COLUMN_DATASETID_DATASETID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DataAnalysisLayoutModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(dataSetId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						dataAnalysisLayout)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataAnalysisLayout> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the data analysis layouts where dataSetId = &#63; from the database.
+	 *
+	 * @param dataSetId the data set ID
+	 */
+	@Override
+	public void removeByDataSetId(long dataSetId) {
+		for (DataAnalysisLayout dataAnalysisLayout :
+				findByDataSetId(
+					dataSetId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
+			remove(dataAnalysisLayout);
+		}
+	}
+
+	/**
+	 * Returns the number of data analysis layouts where dataSetId = &#63;.
+	 *
+	 * @param dataSetId the data set ID
 	 * @return the number of matching data analysis layouts
 	 */
 	@Override
-	public int countByDataUuidApplyLevel(String dataUuid, String applyLevel) {
-		dataUuid = Objects.toString(dataUuid, "");
-		applyLevel = Objects.toString(applyLevel, "");
+	public int countByDataSetId(long dataSetId) {
+		FinderPath finderPath = _finderPathCountByDataSetId;
 
-		FinderPath finderPath = _finderPathCountByDataUuidApplyLevel;
-
-		Object[] finderArgs = new Object[] {dataUuid, applyLevel};
+		Object[] finderArgs = new Object[] {dataSetId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(3);
+			StringBundler query = new StringBundler(2);
 
 			query.append(_SQL_COUNT_DATAANALYSISLAYOUT_WHERE);
 
-			boolean bindDataUuid = false;
-
-			if (dataUuid.isEmpty()) {
-				query.append(_FINDER_COLUMN_DATAUUIDAPPLYLEVEL_DATAUUID_3);
-			}
-			else {
-				bindDataUuid = true;
-
-				query.append(_FINDER_COLUMN_DATAUUIDAPPLYLEVEL_DATAUUID_2);
-			}
-
-			boolean bindApplyLevel = false;
-
-			if (applyLevel.isEmpty()) {
-				query.append(_FINDER_COLUMN_DATAUUIDAPPLYLEVEL_APPLYLEVEL_3);
-			}
-			else {
-				bindApplyLevel = true;
-
-				query.append(_FINDER_COLUMN_DATAUUIDAPPLYLEVEL_APPLYLEVEL_2);
-			}
+			query.append(_FINDER_COLUMN_DATASETID_DATASETID_2);
 
 			String sql = query.toString();
 
@@ -901,13 +1103,7 @@ public class DataAnalysisLayoutPersistenceImpl
 
 				QueryPos qPos = QueryPos.getInstance(q);
 
-				if (bindDataUuid) {
-					qPos.add(dataUuid);
-				}
-
-				if (bindApplyLevel) {
-					qPos.add(applyLevel);
-				}
+				qPos.add(dataSetId);
 
 				count = (Long)q.uniqueResult();
 
@@ -926,17 +1122,1041 @@ public class DataAnalysisLayoutPersistenceImpl
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_DATAUUIDAPPLYLEVEL_DATAUUID_2 =
-		"dataAnalysisLayout.dataUuid = ? AND ";
+	private static final String _FINDER_COLUMN_DATASETID_DATASETID_2 =
+		"dataAnalysisLayout.dataSetId = ?";
 
-	private static final String _FINDER_COLUMN_DATAUUIDAPPLYLEVEL_DATAUUID_3 =
-		"(dataAnalysisLayout.dataUuid IS NULL OR dataAnalysisLayout.dataUuid = '') AND ";
+	private FinderPath _finderPathWithPaginationFindByDataSectionId;
+	private FinderPath _finderPathWithoutPaginationFindByDataSectionId;
+	private FinderPath _finderPathCountByDataSectionId;
 
-	private static final String _FINDER_COLUMN_DATAUUIDAPPLYLEVEL_APPLYLEVEL_2 =
-		"dataAnalysisLayout.applyLevel = ?";
+	/**
+	 * Returns all the data analysis layouts where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @return the matching data analysis layouts
+	 */
+	@Override
+	public List<DataAnalysisLayout> findByDataSectionId(long dataSectionId) {
+		return findByDataSectionId(
+			dataSectionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
 
-	private static final String _FINDER_COLUMN_DATAUUIDAPPLYLEVEL_APPLYLEVEL_3 =
-		"(dataAnalysisLayout.applyLevel IS NULL OR dataAnalysisLayout.applyLevel = '')";
+	/**
+	 * Returns a range of all the data analysis layouts where dataSectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @return the range of matching data analysis layouts
+	 */
+	@Override
+	public List<DataAnalysisLayout> findByDataSectionId(
+		long dataSectionId, int start, int end) {
+
+		return findByDataSectionId(dataSectionId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data analysis layouts where dataSectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSectionId(long, int, int, OrderByComparator)}
+	 * @param dataSectionId the data section ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data analysis layouts
+	 */
+	@Deprecated
+	@Override
+	public List<DataAnalysisLayout> findByDataSectionId(
+		long dataSectionId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean useFinderCache) {
+
+		return findByDataSectionId(
+			dataSectionId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns an ordered range of all the data analysis layouts where dataSectionId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data analysis layouts
+	 */
+	@Override
+	public List<DataAnalysisLayout> findByDataSectionId(
+		long dataSectionId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			pagination = false;
+			finderPath = _finderPathWithoutPaginationFindByDataSectionId;
+			finderArgs = new Object[] {dataSectionId};
+		}
+		else {
+			finderPath = _finderPathWithPaginationFindByDataSectionId;
+			finderArgs = new Object[] {
+				dataSectionId, start, end, orderByComparator
+			};
+		}
+
+		List<DataAnalysisLayout> list =
+			(List<DataAnalysisLayout>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+		if ((list != null) && !list.isEmpty()) {
+			for (DataAnalysisLayout dataAnalysisLayout : list) {
+				if ((dataSectionId != dataAnalysisLayout.getDataSectionId())) {
+					list = null;
+
+					break;
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
+
+			query.append(_SQL_SELECT_DATAANALYSISLAYOUT_WHERE);
+
+			query.append(_FINDER_COLUMN_DATASECTIONID_DATASECTIONID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else if (pagination) {
+				query.append(DataAnalysisLayoutModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(dataSectionId);
+
+				if (!pagination) {
+					list = (List<DataAnalysisLayout>)QueryUtil.list(
+						q, getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<DataAnalysisLayout>)QueryUtil.list(
+						q, getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first data analysis layout in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 */
+	@Override
+	public DataAnalysisLayout findByDataSectionId_First(
+			long dataSectionId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException {
+
+		DataAnalysisLayout dataAnalysisLayout = fetchByDataSectionId_First(
+			dataSectionId, orderByComparator);
+
+		if (dataAnalysisLayout != null) {
+			return dataAnalysisLayout;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("dataSectionId=");
+		msg.append(dataSectionId);
+
+		msg.append("}");
+
+		throw new NoSuchDataAnalysisLayoutException(msg.toString());
+	}
+
+	/**
+	 * Returns the first data analysis layout in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	@Override
+	public DataAnalysisLayout fetchByDataSectionId_First(
+		long dataSectionId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+
+		List<DataAnalysisLayout> list = findByDataSectionId(
+			dataSectionId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 */
+	@Override
+	public DataAnalysisLayout findByDataSectionId_Last(
+			long dataSectionId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException {
+
+		DataAnalysisLayout dataAnalysisLayout = fetchByDataSectionId_Last(
+			dataSectionId, orderByComparator);
+
+		if (dataAnalysisLayout != null) {
+			return dataAnalysisLayout;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("dataSectionId=");
+		msg.append(dataSectionId);
+
+		msg.append("}");
+
+		throw new NoSuchDataAnalysisLayoutException(msg.toString());
+	}
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	@Override
+	public DataAnalysisLayout fetchByDataSectionId_Last(
+		long dataSectionId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+
+		int count = countByDataSectionId(dataSectionId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<DataAnalysisLayout> list = findByDataSectionId(
+			dataSectionId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataSectionId = &#63;.
+	 *
+	 * @param dataUuid the primary key of the current data analysis layout
+	 * @param dataSectionId the data section ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a data analysis layout with the primary key could not be found
+	 */
+	@Override
+	public DataAnalysisLayout[] findByDataSectionId_PrevAndNext(
+			String dataUuid, long dataSectionId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException {
+
+		DataAnalysisLayout dataAnalysisLayout = findByPrimaryKey(dataUuid);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataAnalysisLayout[] array = new DataAnalysisLayoutImpl[3];
+
+			array[0] = getByDataSectionId_PrevAndNext(
+				session, dataAnalysisLayout, dataSectionId, orderByComparator,
+				true);
+
+			array[1] = dataAnalysisLayout;
+
+			array[2] = getByDataSectionId_PrevAndNext(
+				session, dataAnalysisLayout, dataSectionId, orderByComparator,
+				false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataAnalysisLayout getByDataSectionId_PrevAndNext(
+		Session session, DataAnalysisLayout dataAnalysisLayout,
+		long dataSectionId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_DATAANALYSISLAYOUT_WHERE);
+
+		query.append(_FINDER_COLUMN_DATASECTIONID_DATASECTIONID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DataAnalysisLayoutModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(dataSectionId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						dataAnalysisLayout)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataAnalysisLayout> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the data analysis layouts where dataSectionId = &#63; from the database.
+	 *
+	 * @param dataSectionId the data section ID
+	 */
+	@Override
+	public void removeByDataSectionId(long dataSectionId) {
+		for (DataAnalysisLayout dataAnalysisLayout :
+				findByDataSectionId(
+					dataSectionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
+			remove(dataAnalysisLayout);
+		}
+	}
+
+	/**
+	 * Returns the number of data analysis layouts where dataSectionId = &#63;.
+	 *
+	 * @param dataSectionId the data section ID
+	 * @return the number of matching data analysis layouts
+	 */
+	@Override
+	public int countByDataSectionId(long dataSectionId) {
+		FinderPath finderPath = _finderPathCountByDataSectionId;
+
+		Object[] finderArgs = new Object[] {dataSectionId};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_DATAANALYSISLAYOUT_WHERE);
+
+			query.append(_FINDER_COLUMN_DATASECTIONID_DATASECTIONID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(dataSectionId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_DATASECTIONID_DATASECTIONID_2 =
+		"dataAnalysisLayout.dataSectionId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByDataPackId;
+	private FinderPath _finderPathWithoutPaginationFindByDataPackId;
+	private FinderPath _finderPathCountByDataPackId;
+
+	/**
+	 * Returns all the data analysis layouts where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @return the matching data analysis layouts
+	 */
+	@Override
+	public List<DataAnalysisLayout> findByDataPackId(long dataPackId) {
+		return findByDataPackId(
+			dataPackId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data analysis layouts where dataPackId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @return the range of matching data analysis layouts
+	 */
+	@Override
+	public List<DataAnalysisLayout> findByDataPackId(
+		long dataPackId, int start, int end) {
+
+		return findByDataPackId(dataPackId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data analysis layouts where dataPackId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataPackId(long, int, int, OrderByComparator)}
+	 * @param dataPackId the data pack ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching data analysis layouts
+	 */
+	@Deprecated
+	@Override
+	public List<DataAnalysisLayout> findByDataPackId(
+		long dataPackId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean useFinderCache) {
+
+		return findByDataPackId(dataPackId, start, end, orderByComparator);
+	}
+
+	/**
+	 * Returns an ordered range of all the data analysis layouts where dataPackId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param start the lower bound of the range of data analysis layouts
+	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data analysis layouts
+	 */
+	@Override
+	public List<DataAnalysisLayout> findByDataPackId(
+		long dataPackId, int start, int end,
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			pagination = false;
+			finderPath = _finderPathWithoutPaginationFindByDataPackId;
+			finderArgs = new Object[] {dataPackId};
+		}
+		else {
+			finderPath = _finderPathWithPaginationFindByDataPackId;
+			finderArgs = new Object[] {
+				dataPackId, start, end, orderByComparator
+			};
+		}
+
+		List<DataAnalysisLayout> list =
+			(List<DataAnalysisLayout>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+		if ((list != null) && !list.isEmpty()) {
+			for (DataAnalysisLayout dataAnalysisLayout : list) {
+				if ((dataPackId != dataAnalysisLayout.getDataPackId())) {
+					list = null;
+
+					break;
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
+
+			query.append(_SQL_SELECT_DATAANALYSISLAYOUT_WHERE);
+
+			query.append(_FINDER_COLUMN_DATAPACKID_DATAPACKID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else if (pagination) {
+				query.append(DataAnalysisLayoutModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(dataPackId);
+
+				if (!pagination) {
+					list = (List<DataAnalysisLayout>)QueryUtil.list(
+						q, getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<DataAnalysisLayout>)QueryUtil.list(
+						q, getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first data analysis layout in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 */
+	@Override
+	public DataAnalysisLayout findByDataPackId_First(
+			long dataPackId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException {
+
+		DataAnalysisLayout dataAnalysisLayout = fetchByDataPackId_First(
+			dataPackId, orderByComparator);
+
+		if (dataAnalysisLayout != null) {
+			return dataAnalysisLayout;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("dataPackId=");
+		msg.append(dataPackId);
+
+		msg.append("}");
+
+		throw new NoSuchDataAnalysisLayoutException(msg.toString());
+	}
+
+	/**
+	 * Returns the first data analysis layout in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	@Override
+	public DataAnalysisLayout fetchByDataPackId_First(
+		long dataPackId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+
+		List<DataAnalysisLayout> list = findByDataPackId(
+			dataPackId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a matching data analysis layout could not be found
+	 */
+	@Override
+	public DataAnalysisLayout findByDataPackId_Last(
+			long dataPackId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException {
+
+		DataAnalysisLayout dataAnalysisLayout = fetchByDataPackId_Last(
+			dataPackId, orderByComparator);
+
+		if (dataAnalysisLayout != null) {
+			return dataAnalysisLayout;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("dataPackId=");
+		msg.append(dataPackId);
+
+		msg.append("}");
+
+		throw new NoSuchDataAnalysisLayoutException(msg.toString());
+	}
+
+	/**
+	 * Returns the last data analysis layout in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data analysis layout, or <code>null</code> if a matching data analysis layout could not be found
+	 */
+	@Override
+	public DataAnalysisLayout fetchByDataPackId_Last(
+		long dataPackId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator) {
+
+		int count = countByDataPackId(dataPackId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<DataAnalysisLayout> list = findByDataPackId(
+			dataPackId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataPackId = &#63;.
+	 *
+	 * @param dataUuid the primary key of the current data analysis layout
+	 * @param dataPackId the data pack ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data analysis layout
+	 * @throws NoSuchDataAnalysisLayoutException if a data analysis layout with the primary key could not be found
+	 */
+	@Override
+	public DataAnalysisLayout[] findByDataPackId_PrevAndNext(
+			String dataUuid, long dataPackId,
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
+		throws NoSuchDataAnalysisLayoutException {
+
+		DataAnalysisLayout dataAnalysisLayout = findByPrimaryKey(dataUuid);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataAnalysisLayout[] array = new DataAnalysisLayoutImpl[3];
+
+			array[0] = getByDataPackId_PrevAndNext(
+				session, dataAnalysisLayout, dataPackId, orderByComparator,
+				true);
+
+			array[1] = dataAnalysisLayout;
+
+			array[2] = getByDataPackId_PrevAndNext(
+				session, dataAnalysisLayout, dataPackId, orderByComparator,
+				false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataAnalysisLayout getByDataPackId_PrevAndNext(
+		Session session, DataAnalysisLayout dataAnalysisLayout, long dataPackId,
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_DATAANALYSISLAYOUT_WHERE);
+
+		query.append(_FINDER_COLUMN_DATAPACKID_DATAPACKID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DataAnalysisLayoutModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(dataPackId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						dataAnalysisLayout)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataAnalysisLayout> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the data analysis layouts where dataPackId = &#63; from the database.
+	 *
+	 * @param dataPackId the data pack ID
+	 */
+	@Override
+	public void removeByDataPackId(long dataPackId) {
+		for (DataAnalysisLayout dataAnalysisLayout :
+				findByDataPackId(
+					dataPackId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
+			remove(dataAnalysisLayout);
+		}
+	}
+
+	/**
+	 * Returns the number of data analysis layouts where dataPackId = &#63;.
+	 *
+	 * @param dataPackId the data pack ID
+	 * @return the number of matching data analysis layouts
+	 */
+	@Override
+	public int countByDataPackId(long dataPackId) {
+		FinderPath finderPath = _finderPathCountByDataPackId;
+
+		Object[] finderArgs = new Object[] {dataPackId};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_DATAANALYSISLAYOUT_WHERE);
+
+			query.append(_FINDER_COLUMN_DATAPACKID_DATAPACKID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(dataPackId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_DATAPACKID_DATAPACKID_2 =
+		"dataAnalysisLayout.dataPackId = ?";
 
 	public DataAnalysisLayoutPersistenceImpl() {
 		setModelClass(DataAnalysisLayout.class);
@@ -955,14 +2175,6 @@ public class DataAnalysisLayoutPersistenceImpl
 		entityCache.putResult(
 			entityCacheEnabled, DataAnalysisLayoutImpl.class,
 			dataAnalysisLayout.getPrimaryKey(), dataAnalysisLayout);
-
-		finderCache.putResult(
-			_finderPathFetchByDataUuidApplyLevel,
-			new Object[] {
-				dataAnalysisLayout.getDataUuid(),
-				dataAnalysisLayout.getApplyLevel()
-			},
-			dataAnalysisLayout);
 
 		dataAnalysisLayout.resetOriginalValues();
 	}
@@ -1018,9 +2230,6 @@ public class DataAnalysisLayoutPersistenceImpl
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
-
-		clearUniqueFindersCache(
-			(DataAnalysisLayoutModelImpl)dataAnalysisLayout, true);
 	}
 
 	@Override
@@ -1032,55 +2241,6 @@ public class DataAnalysisLayoutPersistenceImpl
 			entityCache.removeResult(
 				entityCacheEnabled, DataAnalysisLayoutImpl.class,
 				dataAnalysisLayout.getPrimaryKey());
-
-			clearUniqueFindersCache(
-				(DataAnalysisLayoutModelImpl)dataAnalysisLayout, true);
-		}
-	}
-
-	protected void cacheUniqueFindersCache(
-		DataAnalysisLayoutModelImpl dataAnalysisLayoutModelImpl) {
-
-		Object[] args = new Object[] {
-			dataAnalysisLayoutModelImpl.getDataUuid(),
-			dataAnalysisLayoutModelImpl.getApplyLevel()
-		};
-
-		finderCache.putResult(
-			_finderPathCountByDataUuidApplyLevel, args, Long.valueOf(1), false);
-		finderCache.putResult(
-			_finderPathFetchByDataUuidApplyLevel, args,
-			dataAnalysisLayoutModelImpl, false);
-	}
-
-	protected void clearUniqueFindersCache(
-		DataAnalysisLayoutModelImpl dataAnalysisLayoutModelImpl,
-		boolean clearCurrent) {
-
-		if (clearCurrent) {
-			Object[] args = new Object[] {
-				dataAnalysisLayoutModelImpl.getDataUuid(),
-				dataAnalysisLayoutModelImpl.getApplyLevel()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByDataUuidApplyLevel, args);
-			finderCache.removeResult(
-				_finderPathFetchByDataUuidApplyLevel, args);
-		}
-
-		if ((dataAnalysisLayoutModelImpl.getColumnBitmask() &
-			 _finderPathFetchByDataUuidApplyLevel.getColumnBitmask()) != 0) {
-
-			Object[] args = new Object[] {
-				dataAnalysisLayoutModelImpl.getOriginalDataUuid(),
-				dataAnalysisLayoutModelImpl.getOriginalApplyLevel()
-			};
-
-			finderCache.removeResult(
-				_finderPathCountByDataUuidApplyLevel, args);
-			finderCache.removeResult(
-				_finderPathFetchByDataUuidApplyLevel, args);
 		}
 	}
 
@@ -1244,12 +2404,32 @@ public class DataAnalysisLayoutPersistenceImpl
 		}
 		else if (isNew) {
 			Object[] args = new Object[] {
-				dataAnalysisLayoutModelImpl.getApplyLevel()
+				dataAnalysisLayoutModelImpl.getDataCollectionId()
 			};
 
-			finderCache.removeResult(_finderPathCountByApplyLevel, args);
+			finderCache.removeResult(_finderPathCountByDataCollectionId, args);
 			finderCache.removeResult(
-				_finderPathWithoutPaginationFindByApplyLevel, args);
+				_finderPathWithoutPaginationFindByDataCollectionId, args);
+
+			args = new Object[] {dataAnalysisLayoutModelImpl.getDataSetId()};
+
+			finderCache.removeResult(_finderPathCountByDataSetId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByDataSetId, args);
+
+			args = new Object[] {
+				dataAnalysisLayoutModelImpl.getDataSectionId()
+			};
+
+			finderCache.removeResult(_finderPathCountByDataSectionId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByDataSectionId, args);
+
+			args = new Object[] {dataAnalysisLayoutModelImpl.getDataPackId()};
+
+			finderCache.removeResult(_finderPathCountByDataPackId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByDataPackId, args);
 
 			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(
@@ -1257,33 +2437,95 @@ public class DataAnalysisLayoutPersistenceImpl
 		}
 		else {
 			if ((dataAnalysisLayoutModelImpl.getColumnBitmask() &
-				 _finderPathWithoutPaginationFindByApplyLevel.
+				 _finderPathWithoutPaginationFindByDataCollectionId.
 					 getColumnBitmask()) != 0) {
 
 				Object[] args = new Object[] {
-					dataAnalysisLayoutModelImpl.getOriginalApplyLevel()
+					dataAnalysisLayoutModelImpl.getOriginalDataCollectionId()
 				};
 
-				finderCache.removeResult(_finderPathCountByApplyLevel, args);
 				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByApplyLevel, args);
+					_finderPathCountByDataCollectionId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataCollectionId, args);
 
 				args = new Object[] {
-					dataAnalysisLayoutModelImpl.getApplyLevel()
+					dataAnalysisLayoutModelImpl.getDataCollectionId()
 				};
 
-				finderCache.removeResult(_finderPathCountByApplyLevel, args);
 				finderCache.removeResult(
-					_finderPathWithoutPaginationFindByApplyLevel, args);
+					_finderPathCountByDataCollectionId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataCollectionId, args);
+			}
+
+			if ((dataAnalysisLayoutModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByDataSetId.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					dataAnalysisLayoutModelImpl.getOriginalDataSetId()
+				};
+
+				finderCache.removeResult(_finderPathCountByDataSetId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataSetId, args);
+
+				args = new Object[] {
+					dataAnalysisLayoutModelImpl.getDataSetId()
+				};
+
+				finderCache.removeResult(_finderPathCountByDataSetId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataSetId, args);
+			}
+
+			if ((dataAnalysisLayoutModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByDataSectionId.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					dataAnalysisLayoutModelImpl.getOriginalDataSectionId()
+				};
+
+				finderCache.removeResult(_finderPathCountByDataSectionId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataSectionId, args);
+
+				args = new Object[] {
+					dataAnalysisLayoutModelImpl.getDataSectionId()
+				};
+
+				finderCache.removeResult(_finderPathCountByDataSectionId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataSectionId, args);
+			}
+
+			if ((dataAnalysisLayoutModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByDataPackId.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					dataAnalysisLayoutModelImpl.getOriginalDataPackId()
+				};
+
+				finderCache.removeResult(_finderPathCountByDataPackId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataPackId, args);
+
+				args = new Object[] {
+					dataAnalysisLayoutModelImpl.getDataPackId()
+				};
+
+				finderCache.removeResult(_finderPathCountByDataPackId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataPackId, args);
 			}
 		}
 
 		entityCache.putResult(
 			entityCacheEnabled, DataAnalysisLayoutImpl.class,
 			dataAnalysisLayout.getPrimaryKey(), dataAnalysisLayout, false);
-
-		clearUniqueFindersCache(dataAnalysisLayoutModelImpl, false);
-		cacheUniqueFindersCache(dataAnalysisLayoutModelImpl);
 
 		dataAnalysisLayout.resetOriginalValues();
 
@@ -1579,40 +2821,89 @@ public class DataAnalysisLayoutPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
 			new String[0]);
 
-		_finderPathWithPaginationFindByApplyLevel = new FinderPath(
+		_finderPathWithPaginationFindByDataCollectionId = new FinderPath(
 			entityCacheEnabled, finderCacheEnabled,
 			DataAnalysisLayoutImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByApplyLevel",
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByDataCollectionId",
 			new String[] {
-				String.class.getName(), Integer.class.getName(),
+				Long.class.getName(), Integer.class.getName(),
 				Integer.class.getName(), OrderByComparator.class.getName()
 			});
 
-		_finderPathWithoutPaginationFindByApplyLevel = new FinderPath(
+		_finderPathWithoutPaginationFindByDataCollectionId = new FinderPath(
 			entityCacheEnabled, finderCacheEnabled,
 			DataAnalysisLayoutImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByApplyLevel",
-			new String[] {String.class.getName()},
-			DataAnalysisLayoutModelImpl.APPLYLEVEL_COLUMN_BITMASK);
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByDataCollectionId",
+			new String[] {Long.class.getName()},
+			DataAnalysisLayoutModelImpl.DATACOLLECTIONID_COLUMN_BITMASK);
 
-		_finderPathCountByApplyLevel = new FinderPath(
-			entityCacheEnabled, finderCacheEnabled, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByApplyLevel",
-			new String[] {String.class.getName()});
-
-		_finderPathFetchByDataUuidApplyLevel = new FinderPath(
-			entityCacheEnabled, finderCacheEnabled,
-			DataAnalysisLayoutImpl.class, FINDER_CLASS_NAME_ENTITY,
-			"fetchByDataUuidApplyLevel",
-			new String[] {String.class.getName(), String.class.getName()},
-			DataAnalysisLayoutModelImpl.DATAUUID_COLUMN_BITMASK |
-			DataAnalysisLayoutModelImpl.APPLYLEVEL_COLUMN_BITMASK);
-
-		_finderPathCountByDataUuidApplyLevel = new FinderPath(
+		_finderPathCountByDataCollectionId = new FinderPath(
 			entityCacheEnabled, finderCacheEnabled, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByDataUuidApplyLevel",
-			new String[] {String.class.getName(), String.class.getName()});
+			"countByDataCollectionId", new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByDataSetId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			DataAnalysisLayoutImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByDataSetId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByDataSetId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			DataAnalysisLayoutImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByDataSetId",
+			new String[] {Long.class.getName()},
+			DataAnalysisLayoutModelImpl.DATASETID_COLUMN_BITMASK);
+
+		_finderPathCountByDataSetId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDataSetId",
+			new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByDataSectionId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			DataAnalysisLayoutImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByDataSectionId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByDataSectionId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			DataAnalysisLayoutImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByDataSectionId",
+			new String[] {Long.class.getName()},
+			DataAnalysisLayoutModelImpl.DATASECTIONID_COLUMN_BITMASK);
+
+		_finderPathCountByDataSectionId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDataSectionId",
+			new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByDataPackId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			DataAnalysisLayoutImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByDataPackId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByDataPackId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			DataAnalysisLayoutImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByDataPackId",
+			new String[] {Long.class.getName()},
+			DataAnalysisLayoutModelImpl.DATAPACKID_COLUMN_BITMASK);
+
+		_finderPathCountByDataPackId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDataPackId",
+			new String[] {Long.class.getName()});
 	}
 
 	@Deactivate

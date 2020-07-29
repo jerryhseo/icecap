@@ -19,21 +19,20 @@ import com.liferay.portal.kernel.service.ServiceWrapper;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * Provides a wrapper for {@link DataCollectionLayoutService}.
+ * Provides a wrapper for {@link DataTypeLayoutService}.
  *
  * @author Jerry H. Seo
- * @see DataCollectionLayoutService
+ * @see DataTypeLayoutService
  * @generated
  */
 @ProviderType
-public class DataCollectionLayoutServiceWrapper
-	implements DataCollectionLayoutService,
-			   ServiceWrapper<DataCollectionLayoutService> {
+public class DataTypeLayoutServiceWrapper
+	implements DataTypeLayoutService, ServiceWrapper<DataTypeLayoutService> {
 
-	public DataCollectionLayoutServiceWrapper(
-		DataCollectionLayoutService dataCollectionLayoutService) {
+	public DataTypeLayoutServiceWrapper(
+		DataTypeLayoutService dataTypeLayoutService) {
 
-		_dataCollectionLayoutService = dataCollectionLayoutService;
+		_dataTypeLayoutService = dataTypeLayoutService;
 	}
 
 	/**
@@ -43,21 +42,19 @@ public class DataCollectionLayoutServiceWrapper
 	 */
 	@Override
 	public String getOSGiServiceIdentifier() {
-		return _dataCollectionLayoutService.getOSGiServiceIdentifier();
+		return _dataTypeLayoutService.getOSGiServiceIdentifier();
 	}
 
 	@Override
-	public DataCollectionLayoutService getWrappedService() {
-		return _dataCollectionLayoutService;
+	public DataTypeLayoutService getWrappedService() {
+		return _dataTypeLayoutService;
 	}
 
 	@Override
-	public void setWrappedService(
-		DataCollectionLayoutService dataCollectionLayoutService) {
-
-		_dataCollectionLayoutService = dataCollectionLayoutService;
+	public void setWrappedService(DataTypeLayoutService dataTypeLayoutService) {
+		_dataTypeLayoutService = dataTypeLayoutService;
 	}
 
-	private DataCollectionLayoutService _dataCollectionLayoutService;
+	private DataTypeLayoutService _dataTypeLayoutService;
 
 }

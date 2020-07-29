@@ -16,17 +16,21 @@ package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.osp.icecap.exception.NoSuchDataSetException;
+import com.osp.icecap.exception.NoSuchMetaDataFieldException;
+import com.osp.icecap.model.DataAnalysisLayout;
+import com.osp.icecap.model.DataSection;
 import com.osp.icecap.model.DataSet;
+import com.osp.icecap.model.MetaData;
 import com.osp.icecap.service.base.DataSetLocalServiceBaseImpl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -48,7 +52,14 @@ import org.osgi.service.component.annotations.Component;
 	service = AopService.class
 )
 public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
-	public DataSet addDataSet( long dataCollectionId, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap, String version, long copiedFrom, ServiceContext sc) throws PortalException {
+	public DataSet addDataSet( 
+			long dataCollectionId, 
+			String name,
+			String version, 
+			long copiedFrom,
+			JSONObject metaDataJSON,
+			String layout,
+			ServiceContext sc) throws PortalException {
 		long dataSetId = super.counterLocalService.increment();
 		DataSet dataSet = super.dataSetPersistence.create(dataSetId);
 		
@@ -61,13 +72,19 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 		dataSet.setUserName(user.getFullName());
 		dataSet.setCreateDate(now);
 		dataSet.setModifiedDate(now);
-		dataSet.setDataCollectionId(dataCollectionId);
-		dataSet.setTitleMap(titleMap);
-		dataSet.setDescriptionMap(descriptionMap);
-		dataSet.setVersion(version);
-		dataSet.setCopiedFrom(copiedFrom);
 		
+		dataSet = assignDataSetAttributes(
+					dataSet,
+					dataCollectionId,
+					name,
+					version,
+					copiedFrom,
+					metaDataJSON,
+					layout
+				);
 		dataSet.setStatus(WorkflowConstants.STATUS_APPROVED);
+
+		
 		
 		return super.dataSetPersistence.update(dataSet, sc);
 	}
@@ -76,30 +93,36 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 		super.dataSectionPersistence.removeByDataSetId(dataSetId);
 		super.dataPackPersistence.removeByDataSetId(dataSetId);
 		super.dataEntryPersistence.removeByDataSetId(dataSetId);
-
+		super.dataAnalysisLayoutPersistence.removeByDataSetId(dataSetId);
+		super.metaDataPersistence.removeByDataCollectionId(dataSetId);
 		return super.dataSetPersistence.remove(dataSetId);
 	}
 	
-	public DataSet updateDataSet( long dataSetId, long dataCollectionId, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap, String version, ServiceContext sc){
+	public DataSet updateDataSet( 
+			long dataSetId, 
+			long dataCollectionId, 
+			String name,
+			String version,
+			long copiedFrom,
+			JSONObject metaDataJSON, 
+			String layout,
+			ServiceContext sc) throws NoSuchMetaDataFieldException{
 		DataSet dataSet = super.dataSetPersistence.fetchByPrimaryKey(dataSetId);
-		
-		dataSet.setModifiedDate(sc.getModifiedDate());
-		dataSet.setDataCollectionId(dataCollectionId);
-		dataSet.setTitleMap(titleMap);
-		dataSet.setDescriptionMap(descriptionMap);
-		dataSet.setVersion(version);
 
-		return super.dataSetPersistence.update(dataSet);
+		dataSet = this.assignDataSetAttributes(dataSet, dataCollectionId, name, version, copiedFrom, metaDataJSON, layout);
+		dataSet.setModifiedDate(sc.getModifiedDate());
+
+		return super.dataSetPersistence.update(dataSet, sc);
 	}
 	
-	public List<DataSet> getDataSetsByOrigin( long originId ){
-		return super.dataSetPersistence.findByCopiedFrom(originId);
+	public List<DataSet> getDataSetVariants( long dataSetId ){
+		return super.dataSetPersistence.findByCopiedFrom(dataSetId);
 	}
-	public List<DataSet> getDataSetsByOrigin( long originId, int start, int end ){
-		return super.dataSetPersistence.findByCopiedFrom(originId, start, end);
+	public List<DataSet> getDataSetsVariants( long dataSetId, int start, int end ){
+		return super.dataSetPersistence.findByCopiedFrom(dataSetId, start, end);
 	}
-	public int getDataSetsCountByOrigin( long originId ){
-		return super.dataSetPersistence.countByCopiedFrom(originId);
+	public int getDataSetVariantsCount( long dataSetId ){
+		return super.dataSetPersistence.countByCopiedFrom(dataSetId);
 	}
 
 	public List<DataSet> getDataSetsByDataCollectionId( long dataCollectionId ){
@@ -111,5 +134,50 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 	public int getDataSetsCountByDataCollectionId( long dataCollectionId ){
 		return super.dataSetPersistence.countByDataCollectionId(dataCollectionId);
 	}
+	
+	public List<DataSection> getDataSectionsByDataSetId( long dataSetId ){
+		return super.dataSectionPersistence.findByDataSetId(dataSetId);
+	}
+	public List<DataSection> getDataSectionsByDataSetId( long dataSetId, int start, int end ){
+		return super.dataSectionPersistence.findByDataSetId(dataSetId, start, end);
+	}
+	public int getDataSectionsCountByDataSetId( long dataSetId ){
+		return super.dataSectionPersistence.countByDataSetId(dataSetId);
+	}
 
+	private DataSet assignDataSetAttributes(
+			DataSet dataSet,
+			long dataCollectionId,
+			String name, 
+			String version,
+			long copiedFrom,
+			JSONObject metaDataJSON,
+			String layout ) throws NoSuchMetaDataFieldException {
+		
+		dataSet.setDataCollectionId(dataCollectionId);
+		dataSet.setName(name);
+		dataSet.setVersion(version);
+		dataSet.setCopiedFrom(copiedFrom);
+		
+		if( Validator.isNotNull(metaDataJSON) ) {
+			dataSet.setHasMetaData(true);
+			MetaData metaData = super.metaDataPersistence.create(dataSet.getUuid());
+			metaData.setMetaData(metaDataJSON);
+			super.metaDataPersistence.update(metaData);
+		}
+		else {
+			dataSet.setHasMetaData(false);
+		}
+		
+		if(Validator.isBlank(layout) ) {
+			dataSet.setHasLayout(false);
+		}
+		else {
+			DataAnalysisLayout dataAnalysisLayout = super.dataAnalysisLayoutPersistence.create(dataSet.getUuid());
+			dataAnalysisLayout.setLayout(layout);
+			super.dataAnalysisLayoutPersistence.update(dataAnalysisLayout);
+		}
+		
+		return dataSet;
+	}
 }

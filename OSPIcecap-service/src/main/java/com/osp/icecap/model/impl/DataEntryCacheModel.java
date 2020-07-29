@@ -65,7 +65,7 @@ public class DataEntryCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(39);
+		StringBundler sb = new StringBundler(45);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -91,6 +91,8 @@ public class DataEntryCacheModel
 		sb.append(statusByUserName);
 		sb.append(", statusDate=");
 		sb.append(statusDate);
+		sb.append(", dataTypeId=");
+		sb.append(dataTypeId);
 		sb.append(", dataPackId=");
 		sb.append(dataPackId);
 		sb.append(", dataSectionId=");
@@ -101,10 +103,14 @@ public class DataEntryCacheModel
 		sb.append(dataCollectionId);
 		sb.append(", accessURL=");
 		sb.append(accessURL);
-		sb.append(", pathType=");
-		sb.append(pathType);
+		sb.append(", sequenceId=");
+		sb.append(sequenceId);
+		sb.append(", accessType=");
+		sb.append(accessType);
 		sb.append(", copiedFrom=");
 		sb.append(copiedFrom);
+		sb.append(", hasMetaData=");
+		sb.append(hasMetaData);
 		sb.append("}");
 
 		return sb.toString();
@@ -164,6 +170,7 @@ public class DataEntryCacheModel
 			dataEntryImpl.setStatusDate(new Date(statusDate));
 		}
 
+		dataEntryImpl.setDataTypeId(dataTypeId);
 		dataEntryImpl.setDataPackId(dataPackId);
 		dataEntryImpl.setDataSectionId(dataSectionId);
 		dataEntryImpl.setDataSetId(dataSetId);
@@ -176,14 +183,22 @@ public class DataEntryCacheModel
 			dataEntryImpl.setAccessURL(accessURL);
 		}
 
-		if (pathType == null) {
-			dataEntryImpl.setPathType("");
+		if (sequenceId == null) {
+			dataEntryImpl.setSequenceId("");
 		}
 		else {
-			dataEntryImpl.setPathType(pathType);
+			dataEntryImpl.setSequenceId(sequenceId);
+		}
+
+		if (accessType == null) {
+			dataEntryImpl.setAccessType("");
+		}
+		else {
+			dataEntryImpl.setAccessType(accessType);
 		}
 
 		dataEntryImpl.setCopiedFrom(copiedFrom);
+		dataEntryImpl.setHasMetaData(hasMetaData);
 
 		dataEntryImpl.resetOriginalValues();
 
@@ -211,6 +226,8 @@ public class DataEntryCacheModel
 		statusByUserName = objectInput.readUTF();
 		statusDate = objectInput.readLong();
 
+		dataTypeId = objectInput.readLong();
+
 		dataPackId = objectInput.readLong();
 
 		dataSectionId = objectInput.readLong();
@@ -219,9 +236,12 @@ public class DataEntryCacheModel
 
 		dataCollectionId = objectInput.readLong();
 		accessURL = objectInput.readUTF();
-		pathType = objectInput.readUTF();
+		sequenceId = objectInput.readUTF();
+		accessType = objectInput.readUTF();
 
 		copiedFrom = objectInput.readLong();
+
+		hasMetaData = objectInput.readBoolean();
 	}
 
 	@Override
@@ -264,6 +284,8 @@ public class DataEntryCacheModel
 
 		objectOutput.writeLong(statusDate);
 
+		objectOutput.writeLong(dataTypeId);
+
 		objectOutput.writeLong(dataPackId);
 
 		objectOutput.writeLong(dataSectionId);
@@ -279,14 +301,23 @@ public class DataEntryCacheModel
 			objectOutput.writeUTF(accessURL);
 		}
 
-		if (pathType == null) {
+		if (sequenceId == null) {
 			objectOutput.writeUTF("");
 		}
 		else {
-			objectOutput.writeUTF(pathType);
+			objectOutput.writeUTF(sequenceId);
+		}
+
+		if (accessType == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(accessType);
 		}
 
 		objectOutput.writeLong(copiedFrom);
+
+		objectOutput.writeBoolean(hasMetaData);
 	}
 
 	public String uuid;
@@ -301,12 +332,15 @@ public class DataEntryCacheModel
 	public long statusByUserId;
 	public String statusByUserName;
 	public long statusDate;
+	public long dataTypeId;
 	public long dataPackId;
 	public long dataSectionId;
 	public long dataSetId;
 	public long dataCollectionId;
 	public String accessURL;
-	public String pathType;
+	public String sequenceId;
+	public String accessType;
 	public long copiedFrom;
+	public boolean hasMetaData;
 
 }

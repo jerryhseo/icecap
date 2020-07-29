@@ -53,15 +53,13 @@ public class DataSetLocalServiceUtil {
 	}
 
 	public static com.osp.icecap.model.DataSet addDataSet(
-			long dataCollectionId,
-			java.util.Map<java.util.Locale, String> titleMap,
-			java.util.Map<java.util.Locale, String> descriptionMap,
-			String version, long copiedFrom,
-			com.liferay.portal.kernel.service.ServiceContext sc)
+			long dataCollectionId, String name, String version, long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().addDataSet(
-			dataCollectionId, titleMap, descriptionMap, version, copiedFrom,
+			dataCollectionId, name, version, copiedFrom, metaDataJSON, layout,
 			sc);
 	}
 
@@ -278,18 +276,6 @@ public class DataSetLocalServiceUtil {
 			dataCollectionId, start, end);
 	}
 
-	public static java.util.List<com.osp.icecap.model.DataSet>
-		getDataSetsByOrigin(long originId) {
-
-		return getService().getDataSetsByOrigin(originId);
-	}
-
-	public static java.util.List<com.osp.icecap.model.DataSet>
-		getDataSetsByOrigin(long originId, int start, int end) {
-
-		return getService().getDataSetsByOrigin(originId, start, end);
-	}
-
 	/**
 	 * Returns all the data sets matching the UUID and company.
 	 *
@@ -339,8 +325,20 @@ public class DataSetLocalServiceUtil {
 			dataCollectionId);
 	}
 
-	public static int getDataSetsCountByOrigin(long originId) {
-		return getService().getDataSetsCountByOrigin(originId);
+	public static java.util.List<com.osp.icecap.model.DataSet>
+		getDataSetsVariants(long dataSetId, int start, int end) {
+
+		return getService().getDataSetsVariants(dataSetId, start, end);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataSet>
+		getDataSetVariants(long dataSetId) {
+
+		return getService().getDataSetVariants(dataSetId);
+	}
+
+	public static int getDataSetVariantsCount(long dataSetId) {
+		return getService().getDataSetVariantsCount(dataSetId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
@@ -393,13 +391,15 @@ public class DataSetLocalServiceUtil {
 	}
 
 	public static com.osp.icecap.model.DataSet updateDataSet(
-		long dataSetId, long dataCollectionId,
-		java.util.Map<java.util.Locale, String> titleMap,
-		java.util.Map<java.util.Locale, String> descriptionMap, String version,
-		com.liferay.portal.kernel.service.ServiceContext sc) {
+			long dataSetId, long dataCollectionId, String name, String version,
+			long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.osp.icecap.exception.NoSuchMetaDataFieldException {
 
 		return getService().updateDataSet(
-			dataSetId, dataCollectionId, titleMap, descriptionMap, version, sc);
+			dataSetId, dataCollectionId, name, version, copiedFrom,
+			metaDataJSON, layout, sc);
 	}
 
 	public static DataSetLocalService getService() {

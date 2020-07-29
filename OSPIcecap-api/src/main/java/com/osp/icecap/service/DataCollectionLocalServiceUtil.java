@@ -53,15 +53,13 @@ public class DataCollectionLocalServiceUtil {
 	}
 
 	public static com.osp.icecap.model.DataCollection addDataCollection(
-			String name, String version,
-			java.util.Map<java.util.Locale, String> titleMap,
-			java.util.Map<java.util.Locale, String> descriptionMap,
-			long organizationId,
-			com.liferay.portal.kernel.service.ServiceContext sc)
+			String name, String version, long organizationId,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().addDataCollection(
-			name, version, titleMap, descriptionMap, organizationId, sc);
+			name, version, organizationId, metaDataJSON, layout, sc);
 	}
 
 	/**
@@ -237,6 +235,15 @@ public class DataCollectionLocalServiceUtil {
 		return getService().getDataCollection(dataCollectionId);
 	}
 
+	public static com.osp.icecap.model.DataCollection
+			getDataCollectionByNameVersion(
+				String dataCollectionName, String dataCollectionVersion)
+		throws com.osp.icecap.exception.NoSuchDataCollectionException {
+
+		return getService().getDataCollectionByNameVersion(
+			dataCollectionName, dataCollectionVersion);
+	}
+
 	/**
 	 * Returns the data collection matching the UUID and group.
 	 *
@@ -250,6 +257,22 @@ public class DataCollectionLocalServiceUtil {
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getDataCollectionByUuidAndGroupId(uuid, groupId);
+	}
+
+	public static int getDataCollectionCountAll() {
+		return getService().getDataCollectionCountAll();
+	}
+
+	public static int getDataCollectionCountByGroupId(long groupId) {
+		return getService().getDataCollectionCountByGroupId(groupId);
+	}
+
+	public static int getDataCollectionCountByName(String dataCollectionName) {
+		return getService().getDataCollectionCountByName(dataCollectionName);
+	}
+
+	public static int getDataCollectionCountByUserId(long userId) {
+		return getService().getDataCollectionCountByUserId(userId);
 	}
 
 	/**
@@ -267,6 +290,56 @@ public class DataCollectionLocalServiceUtil {
 		getDataCollections(int start, int end) {
 
 		return getService().getDataCollections(start, end);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataCollection>
+		getDataCollectionsAll() {
+
+		return getService().getDataCollectionsAll();
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataCollection>
+		getDataCollectionsAll(int start, int end) {
+
+		return getService().getDataCollectionsAll(start, end);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataCollection>
+		getDataCollectionsByGroupId(long groupId) {
+
+		return getService().getDataCollectionsByGroupId(groupId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataCollection>
+		getDataCollectionsByGroupId(long groupId, int start, int end) {
+
+		return getService().getDataCollectionsByGroupId(groupId, start, end);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataCollection>
+		getDataCollectionsByName(String dataCollectionName) {
+
+		return getService().getDataCollectionsByName(dataCollectionName);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataCollection>
+		getDataCollectionsByName(
+			String dataCollectionName, int start, int end) {
+
+		return getService().getDataCollectionsByName(
+			dataCollectionName, start, end);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataCollection>
+		getDataCollectionsByUserId(long userId) {
+
+		return getService().getDataCollectionsByUserId(userId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataCollection>
+		getDataCollectionsByUserId(long userId, int start, int end) {
+
+		return getService().getDataCollectionsByUserId(userId, start, end);
 	}
 
 	/**
@@ -312,6 +385,23 @@ public class DataCollectionLocalServiceUtil {
 		return getService().getDataCollectionsCount();
 	}
 
+	public static int getDataCollectionVariantCount(long dataCollectionId) {
+		return getService().getDataCollectionVariantCount(dataCollectionId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataCollection>
+		getDataCollectionVariants(long dataCollectionId) {
+
+		return getService().getDataCollectionVariants(dataCollectionId);
+	}
+
+	public static java.util.List<com.osp.icecap.model.DataCollection>
+		getDataCollectionVariants(long dataCollectionId, int start, int end) {
+
+		return getService().getDataCollectionVariants(
+			dataCollectionId, start, end);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
 		getExportActionableDynamicQuery(
 			com.liferay.exportimport.kernel.lar.PortletDataContext
@@ -343,15 +433,18 @@ public class DataCollectionLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	/**
+	 * Removes all DataCollection related stuff.
+	 * DataAnalysysLayout
+	 * DataSet
+	 * DataPack
+	 * DataEntry
+	 */
 	public static com.osp.icecap.model.DataCollection removeDataCollection(
-			long collectionId)
+			long dataCollectionId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return getService().removeDataCollection(collectionId);
-	}
-
-	public static void removeDataCollections(String collectionName) {
-		getService().removeDataCollections(collectionName);
+		return getService().removeDataCollection(dataCollectionId);
 	}
 
 	/**
@@ -364,6 +457,19 @@ public class DataCollectionLocalServiceUtil {
 		com.osp.icecap.model.DataCollection dataCollection) {
 
 		return getService().updateDataCollection(dataCollection);
+	}
+
+	public static com.osp.icecap.model.DataCollection updateDataCollection(
+			long dataCollectionId, String name, String version,
+			long organizationId,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.osp.icecap.exception.NoSuchDataCollectionException,
+			   com.osp.icecap.exception.NoSuchMetaDataFieldException {
+
+		return getService().updateDataCollection(
+			dataCollectionId, name, version, organizationId, metaDataJSON,
+			layout, sc);
 	}
 
 	public static DataCollectionLocalService getService() {

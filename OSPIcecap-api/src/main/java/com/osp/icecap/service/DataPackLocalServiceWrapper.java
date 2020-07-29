@@ -51,15 +51,14 @@ public class DataPackLocalServiceWrapper
 	@Override
 	public com.osp.icecap.model.DataPack addDataPack(
 			long dataCollectionId, long dataSetId, long dataSectionId,
-			java.util.Map<java.util.Locale, String> titleMap,
-			java.util.Map<java.util.Locale, String> descriptionMap,
-			String version, long copiedFrom,
-			com.liferay.portal.kernel.service.ServiceContext sc)
+			String name, String version, long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataPackLocalService.addDataPack(
-			dataCollectionId, dataSetId, dataSectionId, titleMap,
-			descriptionMap, version, copiedFrom, sc);
+			dataCollectionId, dataSetId, dataSectionId, name, version,
+			copiedFrom, metaDataJSON, layout, sc);
 	}
 
 	/**
@@ -276,6 +275,21 @@ public class DataPackLocalServiceWrapper
 		return _dataPackLocalService.getDataPacks(start, end);
 	}
 
+	@Override
+	public java.util.List<com.osp.icecap.model.DataPack>
+		getDataPacksByDataSectionId(long dataSectionId) {
+
+		return _dataPackLocalService.getDataPacksByDataSectionId(dataSectionId);
+	}
+
+	@Override
+	public java.util.List<com.osp.icecap.model.DataPack>
+		getDataPacksByDataSectionId(long dataSectionId, int start, int end) {
+
+		return _dataPackLocalService.getDataPacksByDataSectionId(
+			dataSectionId, start, end);
+	}
+
 	/**
 	 * Returns all the data packs matching the UUID and company.
 	 *
@@ -323,6 +337,12 @@ public class DataPackLocalServiceWrapper
 	}
 
 	@Override
+	public int getDataPacksCountByDataSectionId(long dataSectionId) {
+		return _dataPackLocalService.getDataPacksCountByDataSectionId(
+			dataSectionId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
 		getExportActionableDynamicQuery(
 			com.liferay.exportimport.kernel.lar.PortletDataContext
@@ -364,22 +384,6 @@ public class DataPackLocalServiceWrapper
 		return _dataPackLocalService.removeDataPack(dataPackId);
 	}
 
-	@Override
-	public void removeDataPacksByDataCollectionId(long dataCollectionId) {
-		_dataPackLocalService.removeDataPacksByDataCollectionId(
-			dataCollectionId);
-	}
-
-	@Override
-	public void removeDataPacksByDataSectionId(long dataSectionId) {
-		_dataPackLocalService.removeDataPacksByDataSectionId(dataSectionId);
-	}
-
-	@Override
-	public void removeDataPacksByDataSetId(long dataSetId) {
-		_dataPackLocalService.removeDataPacksByDataSetId(dataSetId);
-	}
-
 	/**
 	 * Updates the data pack in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -395,13 +399,16 @@ public class DataPackLocalServiceWrapper
 
 	@Override
 	public com.osp.icecap.model.DataPack updateDataPack(
-			long dataPackId, java.util.Map<java.util.Locale, String> titleMap,
-			java.util.Map<java.util.Locale, String> descriptionMap,
-			String version, com.liferay.portal.kernel.service.ServiceContext sc)
-		throws com.osp.icecap.exception.NoSuchDataPackException {
+			long dataPackId, long dataCollectionId, long dataSetId,
+			long dataSectionId, String name, String version, long copiedFrom,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
+			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
+		throws com.osp.icecap.exception.NoSuchDataPackException,
+			   com.osp.icecap.exception.NoSuchMetaDataFieldException {
 
 		return _dataPackLocalService.updateDataPack(
-			dataPackId, titleMap, descriptionMap, version, sc);
+			dataPackId, dataCollectionId, dataSetId, dataSectionId, name,
+			version, copiedFrom, metaDataJSON, layout, sc);
 	}
 
 	@Override

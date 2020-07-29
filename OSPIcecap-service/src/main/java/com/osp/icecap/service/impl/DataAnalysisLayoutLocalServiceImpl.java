@@ -15,8 +15,7 @@
 package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.osp.icecap.model.DataAnalysisLayout;
+
 import com.osp.icecap.service.base.DataAnalysisLayoutLocalServiceBaseImpl;
 
 import org.osgi.service.component.annotations.Component;
@@ -41,24 +40,9 @@ import org.osgi.service.component.annotations.Component;
 public class DataAnalysisLayoutLocalServiceImpl
 	extends DataAnalysisLayoutLocalServiceBaseImpl {
 
-	public DataAnalysisLayout addDataAnalysisLayout( String dataUuid, String layout) {
-		long  layoutId = super.counterLocalService.increment();
-		DataAnalysisLayout newLayout = super.createDataAnalysisLayout(dataUuid);
-		newLayout.setLayout(layout);
-		
-		super.addDataAnalysisLayout(newLayout);
-		
-		return newLayout;
-	}
-	
-	public DataAnalysisLayout removeDataAnalysisLayout( String dataUuid ) throws PortalException {
-		return super.deleteDataAnalysisLayout(dataUuid);
-	}
-	
-	public DataAnalysisLayout updateDataAnalysisLayout( String dataUuid, String layout ) {
-		DataAnalysisLayout targetLayout = super.createDataAnalysisLayout(dataUuid);
-		targetLayout.setLayout(layout);
-		
-		return super.updateDataAnalysisLayout(targetLayout);
-	}
+	/*
+	 * NOTE FOR DEVELOPERS:
+	 *
+	 * Never reference this class directly. Use <code>com.osp.icecap.service.DataAnalysisLayoutLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.osp.icecap.service.DataAnalysisLayoutLocalServiceUtil</code>.
+	 */
 }

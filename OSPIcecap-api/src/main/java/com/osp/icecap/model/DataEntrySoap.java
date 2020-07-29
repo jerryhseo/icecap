@@ -46,13 +46,16 @@ public class DataEntrySoap implements Serializable {
 		soapModel.setStatusByUserId(model.getStatusByUserId());
 		soapModel.setStatusByUserName(model.getStatusByUserName());
 		soapModel.setStatusDate(model.getStatusDate());
+		soapModel.setDataTypeId(model.getDataTypeId());
 		soapModel.setDataPackId(model.getDataPackId());
 		soapModel.setDataSectionId(model.getDataSectionId());
 		soapModel.setDataSetId(model.getDataSetId());
 		soapModel.setDataCollectionId(model.getDataCollectionId());
 		soapModel.setAccessURL(model.getAccessURL());
-		soapModel.setPathType(model.getPathType());
+		soapModel.setSequenceId(model.getSequenceId());
+		soapModel.setAccessType(model.getAccessType());
 		soapModel.setCopiedFrom(model.getCopiedFrom());
+		soapModel.setHasMetaData(model.isHasMetaData());
 
 		return soapModel;
 	}
@@ -202,6 +205,14 @@ public class DataEntrySoap implements Serializable {
 		_statusDate = statusDate;
 	}
 
+	public long getDataTypeId() {
+		return _dataTypeId;
+	}
+
+	public void setDataTypeId(long dataTypeId) {
+		_dataTypeId = dataTypeId;
+	}
+
 	public long getDataPackId() {
 		return _dataPackId;
 	}
@@ -242,12 +253,20 @@ public class DataEntrySoap implements Serializable {
 		_accessURL = accessURL;
 	}
 
-	public String getPathType() {
-		return _pathType;
+	public String getSequenceId() {
+		return _sequenceId;
 	}
 
-	public void setPathType(String pathType) {
-		_pathType = pathType;
+	public void setSequenceId(String sequenceId) {
+		_sequenceId = sequenceId;
+	}
+
+	public String getAccessType() {
+		return _accessType;
+	}
+
+	public void setAccessType(String accessType) {
+		_accessType = accessType;
 	}
 
 	public long getCopiedFrom() {
@@ -256,6 +275,18 @@ public class DataEntrySoap implements Serializable {
 
 	public void setCopiedFrom(long copiedFrom) {
 		_copiedFrom = copiedFrom;
+	}
+
+	public boolean getHasMetaData() {
+		return _hasMetaData;
+	}
+
+	public boolean isHasMetaData() {
+		return _hasMetaData;
+	}
+
+	public void setHasMetaData(boolean hasMetaData) {
+		_hasMetaData = hasMetaData;
 	}
 
 	private String _uuid;
@@ -270,12 +301,15 @@ public class DataEntrySoap implements Serializable {
 	private long _statusByUserId;
 	private String _statusByUserName;
 	private Date _statusDate;
+	private long _dataTypeId;
 	private long _dataPackId;
 	private long _dataSectionId;
 	private long _dataSetId;
 	private long _dataCollectionId;
 	private String _accessURL;
-	private String _pathType;
+	private String _sequenceId;
+	private String _accessType;
 	private long _copiedFrom;
+	private boolean _hasMetaData;
 
 }

@@ -1,6 +1,9 @@
-create index IX_DF1BD3D8 on ICECAP_DataAnalysisLayout (applyLevel[$COLUMN_LENGTH:75$]);
-create index IX_8ABEE511 on ICECAP_DataAnalysisLayout (dataUuid[$COLUMN_LENGTH:75$], applyLevel[$COLUMN_LENGTH:75$]);
+create index IX_5B269905 on ICECAP_DataAnalysisLayout (dataCollectionId);
+create index IX_5EC06A80 on ICECAP_DataAnalysisLayout (dataPackId);
+create index IX_43C8DC98 on ICECAP_DataAnalysisLayout (dataSectionId);
+create index IX_CA7D4695 on ICECAP_DataAnalysisLayout (dataSetId);
 
+create index IX_E47C0A28 on ICECAP_DataCollection (copiedFrom);
 create index IX_8D4DDEAA on ICECAP_DataCollection (groupId, status);
 create index IX_4E0A58E4 on ICECAP_DataCollection (groupId, userId, status);
 create index IX_BF2560C3 on ICECAP_DataCollection (name[$COLUMN_LENGTH:75$], version[$COLUMN_LENGTH:75$]);
@@ -26,6 +29,7 @@ create index IX_8C748F8 on ICECAP_DataPack (dataCollectionId);
 create index IX_27D86985 on ICECAP_DataPack (dataSectionId);
 create index IX_9C0A5202 on ICECAP_DataPack (dataSetId);
 create index IX_32C5FBE9 on ICECAP_DataPack (groupId);
+create index IX_EA2E28E0 on ICECAP_DataPack (name[$COLUMN_LENGTH:75$]);
 create index IX_F84053C7 on ICECAP_DataPack (status);
 create index IX_99BF6D1B on ICECAP_DataPack (userId);
 create index IX_90F4B195 on ICECAP_DataPack (uuid_[$COLUMN_LENGTH:75$], companyId);
@@ -35,6 +39,7 @@ create index IX_AC580DEB on ICECAP_DataSection (copiedFrom);
 create index IX_A2FC2D00 on ICECAP_DataSection (dataCollectionId);
 create index IX_BD7A66FA on ICECAP_DataSection (dataSetId);
 create index IX_48A6EEE1 on ICECAP_DataSection (groupId);
+create index IX_51D2D8E8 on ICECAP_DataSection (name[$COLUMN_LENGTH:75$]);
 create index IX_97921CF on ICECAP_DataSection (status);
 create index IX_AAF83B23 on ICECAP_DataSection (userId);
 create index IX_2B29959D on ICECAP_DataSection (uuid_[$COLUMN_LENGTH:75$], companyId);
@@ -43,6 +48,7 @@ create unique index IX_6A64DF5F on ICECAP_DataSection (uuid_[$COLUMN_LENGTH:75$]
 create index IX_5EFEDBA8 on ICECAP_DataSet (copiedFrom);
 create index IX_AC8EF8FD on ICECAP_DataSet (dataCollectionId);
 create index IX_74D1167E on ICECAP_DataSet (groupId, userId);
+create index IX_621F865 on ICECAP_DataSet (name[$COLUMN_LENGTH:75$]);
 create index IX_E67E560C on ICECAP_DataSet (status);
 create index IX_34BC619A on ICECAP_DataSet (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_AD44869C on ICECAP_DataSet (uuid_[$COLUMN_LENGTH:75$], groupId);
@@ -62,3 +68,9 @@ create unique index IX_975E2038 on ICECAP_DataType (uuid_[$COLUMN_LENGTH:75$], g
 create index IX_4FF777CD on ICECAP_DataTypeVisualizerLink (dataTypeId);
 create index IX_5D42A1B2 on ICECAP_DataTypeVisualizerLink (editable);
 create unique index IX_B506253 on ICECAP_DataTypeVisualizerLink (visualizerName[$COLUMN_LENGTH:75$], visualizerVersion[$COLUMN_LENGTH:75$]);
+
+create index IX_4F9DD1AF on ICECAP_MetaData (creator[$COLUMN_LENGTH:75$]);
+create index IX_639E964 on ICECAP_MetaData (dataCollectionId);
+create index IX_ED332E1F on ICECAP_MetaData (dataPackId);
+create index IX_21038099 on ICECAP_MetaData (dataSectionId);
+create index IX_8E41316 on ICECAP_MetaData (dataSetId);

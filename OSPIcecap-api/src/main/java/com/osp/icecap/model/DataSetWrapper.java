@@ -59,10 +59,12 @@ public class DataSetWrapper
 		attributes.put("statusByUserName", getStatusByUserName());
 		attributes.put("statusDate", getStatusDate());
 		attributes.put("dataCollectionId", getDataCollectionId());
-		attributes.put("title", getTitle());
+		attributes.put("dataTypeId", getDataTypeId());
+		attributes.put("name", getName());
 		attributes.put("version", getVersion());
-		attributes.put("description", getDescription());
 		attributes.put("copiedFrom", getCopiedFrom());
+		attributes.put("hasMetaData", isHasMetaData());
+		attributes.put("hasLayout", isHasLayout());
 
 		return attributes;
 	}
@@ -147,10 +149,16 @@ public class DataSetWrapper
 			setDataCollectionId(dataCollectionId);
 		}
 
-		String title = (String)attributes.get("title");
+		Long dataTypeId = (Long)attributes.get("dataTypeId");
 
-		if (title != null) {
-			setTitle(title);
+		if (dataTypeId != null) {
+			setDataTypeId(dataTypeId);
+		}
+
+		String name = (String)attributes.get("name");
+
+		if (name != null) {
+			setName(name);
 		}
 
 		String version = (String)attributes.get("version");
@@ -159,22 +167,23 @@ public class DataSetWrapper
 			setVersion(version);
 		}
 
-		String description = (String)attributes.get("description");
-
-		if (description != null) {
-			setDescription(description);
-		}
-
 		Long copiedFrom = (Long)attributes.get("copiedFrom");
 
 		if (copiedFrom != null) {
 			setCopiedFrom(copiedFrom);
 		}
-	}
 
-	@Override
-	public String[] getAvailableLanguageIds() {
-		return model.getAvailableLanguageIds();
+		Boolean hasMetaData = (Boolean)attributes.get("hasMetaData");
+
+		if (hasMetaData != null) {
+			setHasMetaData(hasMetaData);
+		}
+
+		Boolean hasLayout = (Boolean)attributes.get("hasLayout");
+
+		if (hasLayout != null) {
+			setHasLayout(hasLayout);
+		}
 	}
 
 	/**
@@ -227,85 +236,14 @@ public class DataSetWrapper
 		return model.getDataSetId();
 	}
 
-	@Override
-	public String getDefaultLanguageId() {
-		return model.getDefaultLanguageId();
-	}
-
 	/**
-	 * Returns the description of this data set.
+	 * Returns the data type ID of this data set.
 	 *
-	 * @return the description of this data set
+	 * @return the data type ID of this data set
 	 */
 	@Override
-	public String getDescription() {
-		return model.getDescription();
-	}
-
-	/**
-	 * Returns the localized description of this data set in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the locale of the language
-	 * @return the localized description of this data set
-	 */
-	@Override
-	public String getDescription(java.util.Locale locale) {
-		return model.getDescription(locale);
-	}
-
-	/**
-	 * Returns the localized description of this data set in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized description of this data set. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	 */
-	@Override
-	public String getDescription(java.util.Locale locale, boolean useDefault) {
-		return model.getDescription(locale, useDefault);
-	}
-
-	/**
-	 * Returns the localized description of this data set in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized description of this data set
-	 */
-	@Override
-	public String getDescription(String languageId) {
-		return model.getDescription(languageId);
-	}
-
-	/**
-	 * Returns the localized description of this data set in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized description of this data set
-	 */
-	@Override
-	public String getDescription(String languageId, boolean useDefault) {
-		return model.getDescription(languageId, useDefault);
-	}
-
-	@Override
-	public String getDescriptionCurrentLanguageId() {
-		return model.getDescriptionCurrentLanguageId();
-	}
-
-	@Override
-	public String getDescriptionCurrentValue() {
-		return model.getDescriptionCurrentValue();
-	}
-
-	/**
-	 * Returns a map of the locales and localized descriptions of this data set.
-	 *
-	 * @return the locales and localized descriptions of this data set
-	 */
-	@Override
-	public Map<java.util.Locale, String> getDescriptionMap() {
-		return model.getDescriptionMap();
+	public long getDataTypeId() {
+		return model.getDataTypeId();
 	}
 
 	/**
@@ -319,6 +257,26 @@ public class DataSetWrapper
 	}
 
 	/**
+	 * Returns the has layout of this data set.
+	 *
+	 * @return the has layout of this data set
+	 */
+	@Override
+	public boolean getHasLayout() {
+		return model.getHasLayout();
+	}
+
+	/**
+	 * Returns the has meta data of this data set.
+	 *
+	 * @return the has meta data of this data set
+	 */
+	@Override
+	public boolean getHasMetaData() {
+		return model.getHasMetaData();
+	}
+
+	/**
 	 * Returns the modified date of this data set.
 	 *
 	 * @return the modified date of this data set
@@ -326,6 +284,16 @@ public class DataSetWrapper
 	@Override
 	public Date getModifiedDate() {
 		return model.getModifiedDate();
+	}
+
+	/**
+	 * Returns the name of this data set.
+	 *
+	 * @return the name of this data set
+	 */
+	@Override
+	public String getName() {
+		return model.getName();
 	}
 
 	/**
@@ -386,82 +354,6 @@ public class DataSetWrapper
 	@Override
 	public Date getStatusDate() {
 		return model.getStatusDate();
-	}
-
-	/**
-	 * Returns the title of this data set.
-	 *
-	 * @return the title of this data set
-	 */
-	@Override
-	public String getTitle() {
-		return model.getTitle();
-	}
-
-	/**
-	 * Returns the localized title of this data set in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the locale of the language
-	 * @return the localized title of this data set
-	 */
-	@Override
-	public String getTitle(java.util.Locale locale) {
-		return model.getTitle(locale);
-	}
-
-	/**
-	 * Returns the localized title of this data set in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized title of this data set. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	 */
-	@Override
-	public String getTitle(java.util.Locale locale, boolean useDefault) {
-		return model.getTitle(locale, useDefault);
-	}
-
-	/**
-	 * Returns the localized title of this data set in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized title of this data set
-	 */
-	@Override
-	public String getTitle(String languageId) {
-		return model.getTitle(languageId);
-	}
-
-	/**
-	 * Returns the localized title of this data set in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized title of this data set
-	 */
-	@Override
-	public String getTitle(String languageId, boolean useDefault) {
-		return model.getTitle(languageId, useDefault);
-	}
-
-	@Override
-	public String getTitleCurrentLanguageId() {
-		return model.getTitleCurrentLanguageId();
-	}
-
-	@Override
-	public String getTitleCurrentValue() {
-		return model.getTitleCurrentValue();
-	}
-
-	/**
-	 * Returns a map of the locales and localized titles of this data set.
-	 *
-	 * @return the locales and localized titles of this data set
-	 */
-	@Override
-	public Map<java.util.Locale, String> getTitleMap() {
-		return model.getTitleMap();
 	}
 
 	/**
@@ -555,6 +447,26 @@ public class DataSetWrapper
 	}
 
 	/**
+	 * Returns <code>true</code> if this data set is has layout.
+	 *
+	 * @return <code>true</code> if this data set is has layout; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isHasLayout() {
+		return model.isHasLayout();
+	}
+
+	/**
+	 * Returns <code>true</code> if this data set is has meta data.
+	 *
+	 * @return <code>true</code> if this data set is has meta data; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isHasMetaData() {
+		return model.isHasMetaData();
+	}
+
+	/**
 	 * Returns <code>true</code> if this data set is inactive.
 	 *
 	 * @return <code>true</code> if this data set is inactive; <code>false</code> otherwise
@@ -597,21 +509,6 @@ public class DataSetWrapper
 	@Override
 	public void persist() {
 		model.persist();
-	}
-
-	@Override
-	public void prepareLocalizedFieldsForImport()
-		throws com.liferay.portal.kernel.exception.LocaleException {
-
-		model.prepareLocalizedFieldsForImport();
-	}
-
-	@Override
-	public void prepareLocalizedFieldsForImport(
-			java.util.Locale defaultImportLocale)
-		throws com.liferay.portal.kernel.exception.LocaleException {
-
-		model.prepareLocalizedFieldsForImport(defaultImportLocale);
 	}
 
 	/**
@@ -665,70 +562,13 @@ public class DataSetWrapper
 	}
 
 	/**
-	 * Sets the description of this data set.
+	 * Sets the data type ID of this data set.
 	 *
-	 * @param description the description of this data set
+	 * @param dataTypeId the data type ID of this data set
 	 */
 	@Override
-	public void setDescription(String description) {
-		model.setDescription(description);
-	}
-
-	/**
-	 * Sets the localized description of this data set in the language.
-	 *
-	 * @param description the localized description of this data set
-	 * @param locale the locale of the language
-	 */
-	@Override
-	public void setDescription(String description, java.util.Locale locale) {
-		model.setDescription(description, locale);
-	}
-
-	/**
-	 * Sets the localized description of this data set in the language, and sets the default locale.
-	 *
-	 * @param description the localized description of this data set
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
-	 */
-	@Override
-	public void setDescription(
-		String description, java.util.Locale locale,
-		java.util.Locale defaultLocale) {
-
-		model.setDescription(description, locale, defaultLocale);
-	}
-
-	@Override
-	public void setDescriptionCurrentLanguageId(String languageId) {
-		model.setDescriptionCurrentLanguageId(languageId);
-	}
-
-	/**
-	 * Sets the localized descriptions of this data set from the map of locales and localized descriptions.
-	 *
-	 * @param descriptionMap the locales and localized descriptions of this data set
-	 */
-	@Override
-	public void setDescriptionMap(
-		Map<java.util.Locale, String> descriptionMap) {
-
-		model.setDescriptionMap(descriptionMap);
-	}
-
-	/**
-	 * Sets the localized descriptions of this data set from the map of locales and localized descriptions, and sets the default locale.
-	 *
-	 * @param descriptionMap the locales and localized descriptions of this data set
-	 * @param defaultLocale the default locale
-	 */
-	@Override
-	public void setDescriptionMap(
-		Map<java.util.Locale, String> descriptionMap,
-		java.util.Locale defaultLocale) {
-
-		model.setDescriptionMap(descriptionMap, defaultLocale);
+	public void setDataTypeId(long dataTypeId) {
+		model.setDataTypeId(dataTypeId);
 	}
 
 	/**
@@ -742,6 +582,26 @@ public class DataSetWrapper
 	}
 
 	/**
+	 * Sets whether this data set is has layout.
+	 *
+	 * @param hasLayout the has layout of this data set
+	 */
+	@Override
+	public void setHasLayout(boolean hasLayout) {
+		model.setHasLayout(hasLayout);
+	}
+
+	/**
+	 * Sets whether this data set is has meta data.
+	 *
+	 * @param hasMetaData the has meta data of this data set
+	 */
+	@Override
+	public void setHasMetaData(boolean hasMetaData) {
+		model.setHasMetaData(hasMetaData);
+	}
+
+	/**
 	 * Sets the modified date of this data set.
 	 *
 	 * @param modifiedDate the modified date of this data set
@@ -749,6 +609,16 @@ public class DataSetWrapper
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		model.setModifiedDate(modifiedDate);
+	}
+
+	/**
+	 * Sets the name of this data set.
+	 *
+	 * @param name the name of this data set
+	 */
+	@Override
+	public void setName(String name) {
+		model.setName(name);
 	}
 
 	/**
@@ -809,70 +679,6 @@ public class DataSetWrapper
 	@Override
 	public void setStatusDate(Date statusDate) {
 		model.setStatusDate(statusDate);
-	}
-
-	/**
-	 * Sets the title of this data set.
-	 *
-	 * @param title the title of this data set
-	 */
-	@Override
-	public void setTitle(String title) {
-		model.setTitle(title);
-	}
-
-	/**
-	 * Sets the localized title of this data set in the language.
-	 *
-	 * @param title the localized title of this data set
-	 * @param locale the locale of the language
-	 */
-	@Override
-	public void setTitle(String title, java.util.Locale locale) {
-		model.setTitle(title, locale);
-	}
-
-	/**
-	 * Sets the localized title of this data set in the language, and sets the default locale.
-	 *
-	 * @param title the localized title of this data set
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
-	 */
-	@Override
-	public void setTitle(
-		String title, java.util.Locale locale, java.util.Locale defaultLocale) {
-
-		model.setTitle(title, locale, defaultLocale);
-	}
-
-	@Override
-	public void setTitleCurrentLanguageId(String languageId) {
-		model.setTitleCurrentLanguageId(languageId);
-	}
-
-	/**
-	 * Sets the localized titles of this data set from the map of locales and localized titles.
-	 *
-	 * @param titleMap the locales and localized titles of this data set
-	 */
-	@Override
-	public void setTitleMap(Map<java.util.Locale, String> titleMap) {
-		model.setTitleMap(titleMap);
-	}
-
-	/**
-	 * Sets the localized titles of this data set from the map of locales and localized titles, and sets the default locale.
-	 *
-	 * @param titleMap the locales and localized titles of this data set
-	 * @param defaultLocale the default locale
-	 */
-	@Override
-	public void setTitleMap(
-		Map<java.util.Locale, String> titleMap,
-		java.util.Locale defaultLocale) {
-
-		model.setTitleMap(titleMap, defaultLocale);
 	}
 
 	/**

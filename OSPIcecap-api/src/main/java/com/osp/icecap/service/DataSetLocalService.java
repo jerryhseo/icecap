@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -34,13 +35,12 @@ import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchDataSetException;
+import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataSet;
 
 import java.io.Serializable;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -78,9 +78,8 @@ public interface DataSetLocalService
 	public DataSet addDataSet(DataSet dataSet);
 
 	public DataSet addDataSet(
-			long dataCollectionId, Map<Locale, String> titleMap,
-			Map<Locale, String> descriptionMap, String version, long copiedFrom,
-			ServiceContext sc)
+			long dataCollectionId, String name, String version, long copiedFrom,
+			JSONObject metaDataJSON, String layout, ServiceContext sc)
 		throws PortalException;
 
 	/**
@@ -243,12 +242,6 @@ public interface DataSetLocalService
 	public List<DataSet> getDataSetsByDataCollectionId(
 		long dataCollectionId, int start, int end);
 
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<DataSet> getDataSetsByOrigin(long originId);
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<DataSet> getDataSetsByOrigin(long originId, int start, int end);
-
 	/**
 	 * Returns all the data sets matching the UUID and company.
 	 *
@@ -287,7 +280,14 @@ public interface DataSetLocalService
 	public int getDataSetsCountByDataCollectionId(long dataCollectionId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public int getDataSetsCountByOrigin(long originId);
+	public List<DataSet> getDataSetsVariants(
+		long dataSetId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataSet> getDataSetVariants(long dataSetId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getDataSetVariantsCount(long dataSetId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
@@ -320,7 +320,9 @@ public interface DataSetLocalService
 	public DataSet updateDataSet(DataSet dataSet);
 
 	public DataSet updateDataSet(
-		long dataSetId, long dataCollectionId, Map<Locale, String> titleMap,
-		Map<Locale, String> descriptionMap, String version, ServiceContext sc);
+			long dataSetId, long dataCollectionId, String name, String version,
+			long copiedFrom, JSONObject metaDataJSON, String layout,
+			ServiceContext sc)
+		throws NoSuchMetaDataFieldException;
 
 }

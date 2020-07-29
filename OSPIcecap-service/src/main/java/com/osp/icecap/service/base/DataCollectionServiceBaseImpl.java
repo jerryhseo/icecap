@@ -32,10 +32,10 @@ import com.osp.icecap.service.persistence.DataEntryPersistence;
 import com.osp.icecap.service.persistence.DataPackPersistence;
 import com.osp.icecap.service.persistence.DataSectionPersistence;
 import com.osp.icecap.service.persistence.DataSetPersistence;
-import com.osp.icecap.service.persistence.DataTypeLinkPersistence;
 import com.osp.icecap.service.persistence.DataTypePersistence;
 import com.osp.icecap.service.persistence.DataTypeStructurePersistence;
 import com.osp.icecap.service.persistence.DataTypeVisualizerLinkPersistence;
+import com.osp.icecap.service.persistence.MetaDataPersistence;
 
 import javax.sql.DataSource;
 
@@ -143,14 +143,14 @@ public abstract class DataCollectionServiceBaseImpl
 	protected DataTypePersistence dataTypePersistence;
 
 	@Reference
-	protected DataTypeLinkPersistence dataTypeLinkPersistence;
-
-	@Reference
 	protected DataTypeStructurePersistence dataTypeStructurePersistence;
 
 	@Reference
 	protected DataTypeVisualizerLinkPersistence
 		dataTypeVisualizerLinkPersistence;
+
+	@Reference
+	protected MetaDataPersistence metaDataPersistence;
 
 	@Reference
 	protected com.liferay.counter.kernel.service.CounterLocalService
@@ -178,6 +178,14 @@ public abstract class DataCollectionServiceBaseImpl
 	@Reference
 	protected com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService
 		workflowInstanceLinkLocalService;
+
+	@Reference
+	protected com.liferay.asset.kernel.service.AssetCategoryLocalService
+		assetCategoryLocalService;
+
+	@Reference
+	protected com.liferay.asset.kernel.service.AssetCategoryService
+		assetCategoryService;
 
 	@Reference
 	protected com.liferay.asset.kernel.service.AssetEntryLocalService
