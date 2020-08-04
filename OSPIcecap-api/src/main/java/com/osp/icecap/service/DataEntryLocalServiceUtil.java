@@ -342,6 +342,31 @@ public class DataEntryLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static void removeDataEntriesByDataCollectionId(
+			long dataCollectionId)
+		throws com.osp.icecap.exception.NoSuchMetaDataException {
+
+		getService().removeDataEntriesByDataCollectionId(dataCollectionId);
+	}
+
+	public static void removeDataEntriesByDataPackId(long dataPackId)
+		throws com.osp.icecap.exception.NoSuchMetaDataException {
+
+		getService().removeDataEntriesByDataPackId(dataPackId);
+	}
+
+	public static void removeDataEntriesByDataSectionId(long dataSectionId)
+		throws com.osp.icecap.exception.NoSuchMetaDataException {
+
+		getService().removeDataEntriesByDataSectionId(dataSectionId);
+	}
+
+	public static void removeDataEntriesByDataSetId(long dataSetId)
+		throws com.osp.icecap.exception.NoSuchMetaDataException {
+
+		getService().removeDataEntriesByDataSetId(dataSetId);
+	}
+
 	public static com.osp.icecap.model.DataEntry removeDataEntry(
 			long dataEntryId)
 		throws com.osp.icecap.exception.NoSuchDataEntryException,

@@ -394,27 +394,6 @@ public interface DataSectionModel
 	public void setHasMetaData(boolean hasMetaData);
 
 	/**
-	 * Returns the has layout of this data section.
-	 *
-	 * @return the has layout of this data section
-	 */
-	public boolean getHasLayout();
-
-	/**
-	 * Returns <code>true</code> if this data section is has layout.
-	 *
-	 * @return <code>true</code> if this data section is has layout; <code>false</code> otherwise
-	 */
-	public boolean isHasLayout();
-
-	/**
-	 * Sets whether this data section is has layout.
-	 *
-	 * @param hasLayout the has layout of this data section
-	 */
-	public void setHasLayout(boolean hasLayout);
-
-	/**
 	 * Returns <code>true</code> if this data section is approved.
 	 *
 	 * @return <code>true</code> if this data section is approved; <code>false</code> otherwise

@@ -66,7 +66,6 @@ public class DataPackWrapper
 		attributes.put("component", getComponent());
 		attributes.put("copiedFrom", getCopiedFrom());
 		attributes.put("hasMetaData", isHasMetaData());
-		attributes.put("hasLayout", isHasLayout());
 
 		return attributes;
 	}
@@ -192,12 +191,6 @@ public class DataPackWrapper
 		if (hasMetaData != null) {
 			setHasMetaData(hasMetaData);
 		}
-
-		Boolean hasLayout = (Boolean)attributes.get("hasLayout");
-
-		if (hasLayout != null) {
-			setHasLayout(hasLayout);
-		}
 	}
 
 	/**
@@ -288,16 +281,6 @@ public class DataPackWrapper
 	@Override
 	public long getGroupId() {
 		return model.getGroupId();
-	}
-
-	/**
-	 * Returns the has layout of this data pack.
-	 *
-	 * @return the has layout of this data pack
-	 */
-	@Override
-	public boolean getHasLayout() {
-		return model.getHasLayout();
 	}
 
 	/**
@@ -481,16 +464,6 @@ public class DataPackWrapper
 	}
 
 	/**
-	 * Returns <code>true</code> if this data pack is has layout.
-	 *
-	 * @return <code>true</code> if this data pack is has layout; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isHasLayout() {
-		return model.isHasLayout();
-	}
-
-	/**
 	 * Returns <code>true</code> if this data pack is has meta data.
 	 *
 	 * @return <code>true</code> if this data pack is has meta data; <code>false</code> otherwise
@@ -633,16 +606,6 @@ public class DataPackWrapper
 	@Override
 	public void setGroupId(long groupId) {
 		model.setGroupId(groupId);
-	}
-
-	/**
-	 * Sets whether this data pack is has layout.
-	 *
-	 * @param hasLayout the has layout of this data pack
-	 */
-	@Override
-	public void setHasLayout(boolean hasLayout) {
-		model.setHasLayout(hasLayout);
 	}
 
 	/**

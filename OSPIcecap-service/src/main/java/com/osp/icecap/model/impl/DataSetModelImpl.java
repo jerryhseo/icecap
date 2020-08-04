@@ -87,8 +87,7 @@ public class DataSetModelImpl
 		{"statusByUserName", Types.VARCHAR}, {"statusDate", Types.TIMESTAMP},
 		{"dataCollectionId", Types.BIGINT}, {"dataTypeId", Types.BIGINT},
 		{"name", Types.VARCHAR}, {"version", Types.VARCHAR},
-		{"copiedFrom", Types.BIGINT}, {"hasMetaData", Types.BOOLEAN},
-		{"hasLayout", Types.BOOLEAN}
+		{"copiedFrom", Types.BIGINT}, {"hasMetaData", Types.BOOLEAN}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -113,11 +112,10 @@ public class DataSetModelImpl
 		TABLE_COLUMNS_MAP.put("version", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("copiedFrom", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("hasMetaData", Types.BOOLEAN);
-		TABLE_COLUMNS_MAP.put("hasLayout", Types.BOOLEAN);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataSet (uuid_ VARCHAR(75) null,dataSetId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,dataCollectionId LONG,dataTypeId LONG,name VARCHAR(75) null,version VARCHAR(75) null,copiedFrom LONG,hasMetaData BOOLEAN,hasLayout BOOLEAN)";
+		"create table ICECAP_DataSet (uuid_ VARCHAR(75) null,dataSetId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,dataCollectionId LONG,dataTypeId LONG,name VARCHAR(75) null,version VARCHAR(75) null,copiedFrom LONG,hasMetaData BOOLEAN)";
 
 	public static final String TABLE_SQL_DROP = "drop table ICECAP_DataSet";
 
@@ -190,7 +188,6 @@ public class DataSetModelImpl
 		model.setVersion(soapModel.getVersion());
 		model.setCopiedFrom(soapModel.getCopiedFrom());
 		model.setHasMetaData(soapModel.isHasMetaData());
-		model.setHasLayout(soapModel.isHasLayout());
 
 		return model;
 	}
@@ -400,9 +397,6 @@ public class DataSetModelImpl
 		attributeSetterBiConsumers.put(
 			"hasMetaData",
 			(BiConsumer<DataSet, Boolean>)DataSet::setHasMetaData);
-		attributeGetterFunctions.put("hasLayout", DataSet::getHasLayout);
-		attributeSetterBiConsumers.put(
-			"hasLayout", (BiConsumer<DataSet, Boolean>)DataSet::setHasLayout);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -769,23 +763,6 @@ public class DataSetModelImpl
 		_hasMetaData = hasMetaData;
 	}
 
-	@JSON
-	@Override
-	public boolean getHasLayout() {
-		return _hasLayout;
-	}
-
-	@JSON
-	@Override
-	public boolean isHasLayout() {
-		return _hasLayout;
-	}
-
-	@Override
-	public void setHasLayout(boolean hasLayout) {
-		_hasLayout = hasLayout;
-	}
-
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(
@@ -892,7 +869,12 @@ public class DataSetModelImpl
 	@Override
 	public DataSet toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, DataSet>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -921,7 +903,6 @@ public class DataSetModelImpl
 		dataSetImpl.setVersion(getVersion());
 		dataSetImpl.setCopiedFrom(getCopiedFrom());
 		dataSetImpl.setHasMetaData(isHasMetaData());
-		dataSetImpl.setHasLayout(isHasLayout());
 
 		dataSetImpl.resetOriginalValues();
 
@@ -1109,8 +1090,6 @@ public class DataSetModelImpl
 
 		dataSetCacheModel.hasMetaData = isHasMetaData();
 
-		dataSetCacheModel.hasLayout = isHasLayout();
-
 		return dataSetCacheModel;
 	}
 
@@ -1177,8 +1156,13 @@ public class DataSetModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, DataSet>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, DataSet>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
+
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 
@@ -1215,7 +1199,6 @@ public class DataSetModelImpl
 	private long _originalCopiedFrom;
 	private boolean _setOriginalCopiedFrom;
 	private boolean _hasMetaData;
-	private boolean _hasLayout;
 	private long _columnBitmask;
 	private DataSet _escapedModel;
 

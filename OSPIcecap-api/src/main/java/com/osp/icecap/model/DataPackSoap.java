@@ -54,7 +54,6 @@ public class DataPackSoap implements Serializable {
 		soapModel.setComponent(model.getComponent());
 		soapModel.setCopiedFrom(model.getCopiedFrom());
 		soapModel.setHasMetaData(model.isHasMetaData());
-		soapModel.setHasLayout(model.isHasLayout());
 
 		return soapModel;
 	}
@@ -272,18 +271,6 @@ public class DataPackSoap implements Serializable {
 		_hasMetaData = hasMetaData;
 	}
 
-	public boolean getHasLayout() {
-		return _hasLayout;
-	}
-
-	public boolean isHasLayout() {
-		return _hasLayout;
-	}
-
-	public void setHasLayout(boolean hasLayout) {
-		_hasLayout = hasLayout;
-	}
-
 	private String _uuid;
 	private long _dataPackId;
 	private long _companyId;
@@ -304,6 +291,5 @@ public class DataPackSoap implements Serializable {
 	private String _component;
 	private long _copiedFrom;
 	private boolean _hasMetaData;
-	private boolean _hasLayout;
 
 }

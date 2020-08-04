@@ -34,7 +34,9 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
 import com.osp.icecap.exception.NoSuchDataPackException;
+import com.osp.icecap.exception.NoSuchMetaDataException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.model.DataPack;
@@ -311,7 +313,17 @@ public interface DataPackLocalService
 		throws PortalException;
 
 	public DataPack removeDataPack(long dataPackId)
-		throws NoSuchDataPackException;
+		throws NoSuchDataAnalysisLayoutException, NoSuchDataPackException,
+			   NoSuchMetaDataException;
+
+	public void removeDataPacksByDataCollectionId(long dataCollectionId)
+		throws NoSuchDataAnalysisLayoutException, NoSuchMetaDataException;
+
+	public void removeDataPacksByDataSectionId(long dataSectionId)
+		throws NoSuchDataAnalysisLayoutException, NoSuchMetaDataException;
+
+	public void removeDataPacksByDataSetId(long dataSetId)
+		throws NoSuchDataAnalysisLayoutException, NoSuchMetaDataException;
 
 	/**
 	 * Updates the data pack in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

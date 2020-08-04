@@ -394,9 +394,26 @@ public class DataSectionLocalServiceUtil {
 
 	public static com.osp.icecap.model.DataSection removeDataSection(
 			long dataSectionId)
-		throws com.osp.icecap.exception.NoSuchDataSectionException {
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchDataSectionException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
 
 		return getService().removeDataSection(dataSectionId);
+	}
+
+	public static void removeDataSectionsByDataCollectionId(
+			long dataCollectionId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		getService().removeDataSectionsByDataCollectionId(dataCollectionId);
+	}
+
+	public static void removeDataSectionsByDataSetId(long dataSetId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		getService().removeDataSectionsByDataSetId(dataSetId);
 	}
 
 	/**

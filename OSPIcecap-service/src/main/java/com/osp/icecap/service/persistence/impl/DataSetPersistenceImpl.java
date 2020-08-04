@@ -22,14 +22,15 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.service.persistence.CompanyProvider;
-import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -136,18 +137,21 @@ public class DataSetPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid(String, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sets
 	 */
+	@Deprecated
 	@Override
 	public List<DataSet> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataSet> orderByComparator) {
+		OrderByComparator<DataSet> orderByComparator, boolean useFinderCache) {
 
-		return findByUuid(uuid, start, end, orderByComparator, true);
+		return findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
@@ -161,14 +165,12 @@ public class DataSetPersistenceImpl
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sets
 	 */
 	@Override
 	public List<DataSet> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataSet> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSet> orderByComparator) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -188,19 +190,15 @@ public class DataSetPersistenceImpl
 			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
-		List<DataSet> list = null;
+		List<DataSet> list = (List<DataSet>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSet>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSet dataSet : list) {
+				if (!uuid.equals(dataSet.getUuid())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSet dataSet : list) {
-					if (!uuid.equals(dataSet.getUuid())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -678,15 +676,20 @@ public class DataSetPersistenceImpl
 	}
 
 	/**
-	 * Returns the data set where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data set where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByUUID_G(String,long)}
 	 * @param uuid the uuid
 	 * @param groupId the group ID
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data set, or <code>null</code> if a matching data set could not be found
 	 */
+	@Deprecated
 	@Override
-	public DataSet fetchByUUID_G(String uuid, long groupId) {
-		return fetchByUUID_G(uuid, groupId, true);
+	public DataSet fetchByUUID_G(
+		String uuid, long groupId, boolean useFinderCache) {
+
+		return fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
@@ -694,23 +697,17 @@ public class DataSetPersistenceImpl
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data set, or <code>null</code> if a matching data set could not be found
 	 */
 	@Override
-	public DataSet fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache) {
-
+	public DataSet fetchByUUID_G(String uuid, long groupId) {
 		uuid = Objects.toString(uuid, "");
 
 		Object[] finderArgs = new Object[] {uuid, groupId};
 
-		Object result = null;
-
-		if (retrieveFromCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByUUID_G, finderArgs, this);
-		}
+		Object result = finderCache.getResult(
+			_finderPathFetchByUUID_G, finderArgs, this);
 
 		if (result instanceof DataSet) {
 			DataSet dataSet = (DataSet)result;
@@ -927,20 +924,22 @@ public class DataSetPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid_C(String,long, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sets
 	 */
+	@Deprecated
 	@Override
 	public List<DataSet> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataSet> orderByComparator) {
+		OrderByComparator<DataSet> orderByComparator, boolean useFinderCache) {
 
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
+		return findByUuid_C(uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
@@ -955,14 +954,12 @@ public class DataSetPersistenceImpl
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sets
 	 */
 	@Override
 	public List<DataSet> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataSet> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSet> orderByComparator) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -984,21 +981,17 @@ public class DataSetPersistenceImpl
 			};
 		}
 
-		List<DataSet> list = null;
+		List<DataSet> list = (List<DataSet>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSet>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSet dataSet : list) {
+				if (!uuid.equals(dataSet.getUuid()) ||
+					(companyId != dataSet.getCompanyId())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSet dataSet : list) {
-					if (!uuid.equals(dataSet.getUuid()) ||
-						(companyId != dataSet.getCompanyId())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -1513,18 +1506,21 @@ public class DataSetPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByGroupId(long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sets
 	 */
+	@Deprecated
 	@Override
 	public List<DataSet> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataSet> orderByComparator) {
+		OrderByComparator<DataSet> orderByComparator, boolean useFinderCache) {
 
-		return findByGroupId(groupId, start, end, orderByComparator, true);
+		return findByGroupId(groupId, start, end, orderByComparator);
 	}
 
 	/**
@@ -1538,14 +1534,12 @@ public class DataSetPersistenceImpl
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sets
 	 */
 	@Override
 	public List<DataSet> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataSet> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSet> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1563,19 +1557,15 @@ public class DataSetPersistenceImpl
 			finderArgs = new Object[] {groupId, start, end, orderByComparator};
 		}
 
-		List<DataSet> list = null;
+		List<DataSet> list = (List<DataSet>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSet>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSet dataSet : list) {
+				if ((groupId != dataSet.getGroupId())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSet dataSet : list) {
-					if ((groupId != dataSet.getGroupId())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -1906,6 +1896,327 @@ public class DataSetPersistenceImpl
 	}
 
 	/**
+	 * Returns all the data sets that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching data sets that the user has permission to view
+	 */
+	@Override
+	public List<DataSet> filterFindByGroupId(long groupId) {
+		return filterFindByGroupId(
+			groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data sets that the user has permission to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of data sets
+	 * @param end the upper bound of the range of data sets (not inclusive)
+	 * @return the range of matching data sets that the user has permission to view
+	 */
+	@Override
+	public List<DataSet> filterFindByGroupId(long groupId, int start, int end) {
+		return filterFindByGroupId(groupId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data sets that the user has permissions to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of data sets
+	 * @param end the upper bound of the range of data sets (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data sets that the user has permission to view
+	 */
+	@Override
+	public List<DataSet> filterFindByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<DataSet> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupId(groupId, start, end, orderByComparator);
+		}
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				3 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATASET_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_DATASET_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATASET_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataSetModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataSetModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataSet.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, DataSetImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, DataSetImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			return (List<DataSet>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the data sets before and after the current data set in the ordered set of data sets that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param dataSetId the primary key of the current data set
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data set
+	 * @throws NoSuchDataSetException if a data set with the primary key could not be found
+	 */
+	@Override
+	public DataSet[] filterFindByGroupId_PrevAndNext(
+			long dataSetId, long groupId,
+			OrderByComparator<DataSet> orderByComparator)
+		throws NoSuchDataSetException {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupId_PrevAndNext(
+				dataSetId, groupId, orderByComparator);
+		}
+
+		DataSet dataSet = findByPrimaryKey(dataSetId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataSet[] array = new DataSetImpl[3];
+
+			array[0] = filterGetByGroupId_PrevAndNext(
+				session, dataSet, groupId, orderByComparator, true);
+
+			array[1] = dataSet;
+
+			array[2] = filterGetByGroupId_PrevAndNext(
+				session, dataSet, groupId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataSet filterGetByGroupId_PrevAndNext(
+		Session session, DataSet dataSet, long groupId,
+		OrderByComparator<DataSet> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATASET_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_DATASET_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATASET_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataSetModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataSetModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataSet.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, DataSetImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, DataSetImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataSet)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataSet> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the data sets where groupId = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -1971,6 +2282,54 @@ public class DataSetPersistenceImpl
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of data sets that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the number of matching data sets that the user has permission to view
+	 */
+	@Override
+	public int filterCountByGroupId(long groupId) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByGroupId(groupId);
+		}
+
+		StringBundler query = new StringBundler(2);
+
+		query.append(_FILTER_SQL_COUNT_DATASET_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataSet.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
 	private static final String _FINDER_COLUMN_GROUPID_GROUPID_2 =
 		"dataSet.groupId = ?";
 
@@ -2018,20 +2377,22 @@ public class DataSetPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUserId(long,long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sets
 	 */
+	@Deprecated
 	@Override
 	public List<DataSet> findByUserId(
 		long groupId, long userId, int start, int end,
-		OrderByComparator<DataSet> orderByComparator) {
+		OrderByComparator<DataSet> orderByComparator, boolean useFinderCache) {
 
-		return findByUserId(
-			groupId, userId, start, end, orderByComparator, true);
+		return findByUserId(groupId, userId, start, end, orderByComparator);
 	}
 
 	/**
@@ -2046,14 +2407,12 @@ public class DataSetPersistenceImpl
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sets
 	 */
 	@Override
 	public List<DataSet> findByUserId(
 		long groupId, long userId, int start, int end,
-		OrderByComparator<DataSet> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSet> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2073,21 +2432,17 @@ public class DataSetPersistenceImpl
 			};
 		}
 
-		List<DataSet> list = null;
+		List<DataSet> list = (List<DataSet>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSet>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSet dataSet : list) {
+				if ((groupId != dataSet.getGroupId()) ||
+					(userId != dataSet.getUserId())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSet dataSet : list) {
-					if ((groupId != dataSet.getGroupId()) ||
-						(userId != dataSet.getUserId())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -2444,6 +2799,341 @@ public class DataSetPersistenceImpl
 	}
 
 	/**
+	 * Returns all the data sets that the user has permission to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @return the matching data sets that the user has permission to view
+	 */
+	@Override
+	public List<DataSet> filterFindByUserId(long groupId, long userId) {
+		return filterFindByUserId(
+			groupId, userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data sets that the user has permission to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of data sets
+	 * @param end the upper bound of the range of data sets (not inclusive)
+	 * @return the range of matching data sets that the user has permission to view
+	 */
+	@Override
+	public List<DataSet> filterFindByUserId(
+		long groupId, long userId, int start, int end) {
+
+		return filterFindByUserId(groupId, userId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data sets that the user has permissions to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of data sets
+	 * @param end the upper bound of the range of data sets (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data sets that the user has permission to view
+	 */
+	@Override
+	public List<DataSet> filterFindByUserId(
+		long groupId, long userId, int start, int end,
+		OrderByComparator<DataSet> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByUserId(groupId, userId, start, end, orderByComparator);
+		}
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATASET_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_DATASET_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_USERID_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_USERID_USERID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATASET_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataSetModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataSetModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataSet.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, DataSetImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, DataSetImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(userId);
+
+			return (List<DataSet>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the data sets before and after the current data set in the ordered set of data sets that the user has permission to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * @param dataSetId the primary key of the current data set
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data set
+	 * @throws NoSuchDataSetException if a data set with the primary key could not be found
+	 */
+	@Override
+	public DataSet[] filterFindByUserId_PrevAndNext(
+			long dataSetId, long groupId, long userId,
+			OrderByComparator<DataSet> orderByComparator)
+		throws NoSuchDataSetException {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByUserId_PrevAndNext(
+				dataSetId, groupId, userId, orderByComparator);
+		}
+
+		DataSet dataSet = findByPrimaryKey(dataSetId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataSet[] array = new DataSetImpl[3];
+
+			array[0] = filterGetByUserId_PrevAndNext(
+				session, dataSet, groupId, userId, orderByComparator, true);
+
+			array[1] = dataSet;
+
+			array[2] = filterGetByUserId_PrevAndNext(
+				session, dataSet, groupId, userId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataSet filterGetByUserId_PrevAndNext(
+		Session session, DataSet dataSet, long groupId, long userId,
+		OrderByComparator<DataSet> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATASET_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_DATASET_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_USERID_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_USERID_USERID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATASET_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataSetModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataSetModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataSet.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, DataSetImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, DataSetImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(userId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataSet)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataSet> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the data sets where groupId = &#63; and userId = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -2516,6 +3206,59 @@ public class DataSetPersistenceImpl
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of data sets that the user has permission to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @return the number of matching data sets that the user has permission to view
+	 */
+	@Override
+	public int filterCountByUserId(long groupId, long userId) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByUserId(groupId, userId);
+		}
+
+		StringBundler query = new StringBundler(3);
+
+		query.append(_FILTER_SQL_COUNT_DATASET_WHERE);
+
+		query.append(_FINDER_COLUMN_USERID_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_USERID_USERID_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataSet.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(userId);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
 	private static final String _FINDER_COLUMN_USERID_GROUPID_2 =
 		"dataSet.groupId = ? AND ";
 
@@ -2561,18 +3304,21 @@ public class DataSetPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByStatus(int, int, int, OrderByComparator)}
 	 * @param status the status
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sets
 	 */
+	@Deprecated
 	@Override
 	public List<DataSet> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataSet> orderByComparator) {
+		OrderByComparator<DataSet> orderByComparator, boolean useFinderCache) {
 
-		return findByStatus(status, start, end, orderByComparator, true);
+		return findByStatus(status, start, end, orderByComparator);
 	}
 
 	/**
@@ -2586,14 +3332,12 @@ public class DataSetPersistenceImpl
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sets
 	 */
 	@Override
 	public List<DataSet> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataSet> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSet> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2611,19 +3355,15 @@ public class DataSetPersistenceImpl
 			finderArgs = new Object[] {status, start, end, orderByComparator};
 		}
 
-		List<DataSet> list = null;
+		List<DataSet> list = (List<DataSet>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSet>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSet dataSet : list) {
+				if ((status != dataSet.getStatus())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSet dataSet : list) {
-					if ((status != dataSet.getStatus())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -3064,19 +3804,22 @@ public class DataSetPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
 	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sets
 	 */
+	@Deprecated
 	@Override
 	public List<DataSet> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<DataSet> orderByComparator) {
+		OrderByComparator<DataSet> orderByComparator, boolean useFinderCache) {
 
 		return findByDataCollectionId(
-			dataCollectionId, start, end, orderByComparator, true);
+			dataCollectionId, start, end, orderByComparator);
 	}
 
 	/**
@@ -3090,14 +3833,12 @@ public class DataSetPersistenceImpl
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sets
 	 */
 	@Override
 	public List<DataSet> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<DataSet> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSet> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3117,19 +3858,15 @@ public class DataSetPersistenceImpl
 			};
 		}
 
-		List<DataSet> list = null;
+		List<DataSet> list = (List<DataSet>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSet>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSet dataSet : list) {
+				if ((dataCollectionId != dataSet.getDataCollectionId())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSet dataSet : list) {
-					if ((dataCollectionId != dataSet.getDataCollectionId())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -3573,19 +4310,21 @@ public class DataSetPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByCopiedFrom(long, int, int, OrderByComparator)}
 	 * @param copiedFrom the copied from
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sets
 	 */
+	@Deprecated
 	@Override
 	public List<DataSet> findByCopiedFrom(
 		long copiedFrom, int start, int end,
-		OrderByComparator<DataSet> orderByComparator) {
+		OrderByComparator<DataSet> orderByComparator, boolean useFinderCache) {
 
-		return findByCopiedFrom(
-			copiedFrom, start, end, orderByComparator, true);
+		return findByCopiedFrom(copiedFrom, start, end, orderByComparator);
 	}
 
 	/**
@@ -3599,14 +4338,12 @@ public class DataSetPersistenceImpl
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sets
 	 */
 	@Override
 	public List<DataSet> findByCopiedFrom(
 		long copiedFrom, int start, int end,
-		OrderByComparator<DataSet> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSet> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3626,19 +4363,15 @@ public class DataSetPersistenceImpl
 			};
 		}
 
-		List<DataSet> list = null;
+		List<DataSet> list = (List<DataSet>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSet>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSet dataSet : list) {
+				if ((copiedFrom != dataSet.getCopiedFrom())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSet dataSet : list) {
-					if ((copiedFrom != dataSet.getCopiedFrom())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -4078,18 +4811,21 @@ public class DataSetPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName(String, int, int, OrderByComparator)}
 	 * @param name the name
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sets
 	 */
+	@Deprecated
 	@Override
 	public List<DataSet> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataSet> orderByComparator) {
+		OrderByComparator<DataSet> orderByComparator, boolean useFinderCache) {
 
-		return findByName(name, start, end, orderByComparator, true);
+		return findByName(name, start, end, orderByComparator);
 	}
 
 	/**
@@ -4103,14 +4839,12 @@ public class DataSetPersistenceImpl
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sets
 	 */
 	@Override
 	public List<DataSet> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataSet> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSet> orderByComparator) {
 
 		name = Objects.toString(name, "");
 
@@ -4130,19 +4864,15 @@ public class DataSetPersistenceImpl
 			finderArgs = new Object[] {name, start, end, orderByComparator};
 		}
 
-		List<DataSet> list = null;
+		List<DataSet> list = (List<DataSet>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSet>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSet dataSet : list) {
+				if (!name.equals(dataSet.getName())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSet dataSet : list) {
-					if (!name.equals(dataSet.getName())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -4730,7 +5460,7 @@ public class DataSetPersistenceImpl
 
 		dataSet.setUuid(uuid);
 
-		dataSet.setCompanyId(companyProvider.getCompanyId());
+		dataSet.setCompanyId(CompanyThreadLocal.getCompanyId());
 
 		return dataSet;
 	}
@@ -5209,16 +5939,20 @@ public class DataSetPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSetModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data sets
 	 */
+	@Deprecated
 	@Override
 	public List<DataSet> findAll(
-		int start, int end, OrderByComparator<DataSet> orderByComparator) {
+		int start, int end, OrderByComparator<DataSet> orderByComparator,
+		boolean useFinderCache) {
 
-		return findAll(start, end, orderByComparator, true);
+		return findAll(start, end, orderByComparator);
 	}
 
 	/**
@@ -5231,13 +5965,11 @@ public class DataSetPersistenceImpl
 	 * @param start the lower bound of the range of data sets
 	 * @param end the upper bound of the range of data sets (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data sets
 	 */
 	@Override
 	public List<DataSet> findAll(
-		int start, int end, OrderByComparator<DataSet> orderByComparator,
-		boolean retrieveFromCache) {
+		int start, int end, OrderByComparator<DataSet> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -5255,12 +5987,8 @@ public class DataSetPersistenceImpl
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
-		List<DataSet> list = null;
-
-		if (retrieveFromCache) {
-			list = (List<DataSet>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
+		List<DataSet> list = (List<DataSet>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
 		if (list == null) {
 			StringBundler query = null;
@@ -5628,9 +6356,6 @@ public class DataSetPersistenceImpl
 
 	private boolean _columnBitmaskEnabled;
 
-	@Reference(service = CompanyProviderWrapper.class)
-	protected CompanyProvider companyProvider;
-
 	@Reference
 	protected EntityCache entityCache;
 
@@ -5649,7 +6374,30 @@ public class DataSetPersistenceImpl
 	private static final String _SQL_COUNT_DATASET_WHERE =
 		"SELECT COUNT(dataSet) FROM DataSet dataSet WHERE ";
 
+	private static final String _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN =
+		"dataSet.dataSetId";
+
+	private static final String _FILTER_SQL_SELECT_DATASET_WHERE =
+		"SELECT DISTINCT {dataSet.*} FROM ICECAP_DataSet dataSet WHERE ";
+
+	private static final String
+		_FILTER_SQL_SELECT_DATASET_NO_INLINE_DISTINCT_WHERE_1 =
+			"SELECT {ICECAP_DataSet.*} FROM (SELECT DISTINCT dataSet.dataSetId FROM ICECAP_DataSet dataSet WHERE ";
+
+	private static final String
+		_FILTER_SQL_SELECT_DATASET_NO_INLINE_DISTINCT_WHERE_2 =
+			") TEMP_TABLE INNER JOIN ICECAP_DataSet ON TEMP_TABLE.dataSetId = ICECAP_DataSet.dataSetId";
+
+	private static final String _FILTER_SQL_COUNT_DATASET_WHERE =
+		"SELECT COUNT(DISTINCT dataSet.dataSetId) AS COUNT_VALUE FROM ICECAP_DataSet dataSet WHERE ";
+
+	private static final String _FILTER_ENTITY_ALIAS = "dataSet";
+
+	private static final String _FILTER_ENTITY_TABLE = "ICECAP_DataSet";
+
 	private static final String _ORDER_BY_ENTITY_ALIAS = "dataSet.";
+
+	private static final String _ORDER_BY_ENTITY_TABLE = "ICECAP_DataSet.";
 
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
 		"No DataSet exists with the primary key ";
@@ -5662,5 +6410,14 @@ public class DataSetPersistenceImpl
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
+
+	static {
+		try {
+			Class.forName(ICECAPPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
 
 }

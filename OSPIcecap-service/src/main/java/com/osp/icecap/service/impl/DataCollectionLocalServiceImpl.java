@@ -15,8 +15,10 @@
 package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
@@ -28,6 +30,13 @@ import com.osp.icecap.model.DataAnalysisLayout;
 import com.osp.icecap.model.DataCollection;
 import com.osp.icecap.model.DataSet;
 import com.osp.icecap.model.MetaData;
+import com.osp.icecap.service.DataAnalysisLayoutLocalService;
+import com.osp.icecap.service.DataEntryLocalService;
+import com.osp.icecap.service.DataPackLocalService;
+import com.osp.icecap.service.DataSectionLocalService;
+import com.osp.icecap.service.DataSetLocalService;
+import com.osp.icecap.service.DataTypeLocalService;
+import com.osp.icecap.service.MetaDataLocalService;
 import com.osp.icecap.service.base.DataCollectionLocalServiceBaseImpl;
 
 import java.util.Date;
@@ -75,8 +84,18 @@ public class DataCollectionLocalServiceImpl
 		collection.setCreateDate(new Date());
 		
 		collection = this.assignDataCollectionAttributes(collection, name, version, organizationId, metaDataJSON, layout);
-
-		return super.dataCollectionPersistence.update(collection, sc);
+		collection = super.dataCollectionPersistence.update(collection, sc);
+		
+		// Add resource to the database to control permissions
+		super.resourceLocalService.addResources(
+				user.getCompanyId(), 
+				user.getGroupId(), 
+				user.getUserId(),
+			    DataCollection.class.getName(), 
+			    collection.getDataCollectionId(), 
+			    false, true, true);
+		
+		return collection;
 	}
 	
 	/**
@@ -87,13 +106,26 @@ public class DataCollectionLocalServiceImpl
 	 * DataEntry
 	 */
 	public DataCollection removeDataCollection( long dataCollectionId ) throws PortalException {
-		super.metaDataPersistence.removeByDataCollectionId(dataCollectionId);
-		super.dataSetPersistence.removeByDataCollectionId(dataCollectionId);
-		super.dataSectionPersistence.removeByDataCollectionId(dataCollectionId);
-		super.dataPackPersistence.removeByDataCollectionId(dataCollectionId);
-		super.dataEntryPersistence.removeByDataCollectionId(dataCollectionId);
-		super.dataAnalysisLayoutPersistence.removeByDataCollectionId(dataCollectionId);
-		return super.dataCollectionPersistence.remove(dataCollectionId);
+		DataCollection dataCollection = super.dataCollectionPersistence.findByPrimaryKey(dataCollectionId);
+		
+		return this.removeDataCollection( dataCollection );
+	}
+	
+	private DataCollection removeDataCollection( DataCollection dataCollection ) throws PortalException {
+		if( dataCollection.getHasMetaData() ) {
+			this.metaDataLocalService.removeMetaData(dataCollection.getUuid());
+		}
+		this.dataAnalysisLayoutLocalService.removeDataAnalysisLayout(dataCollection.getUuid());
+		this.dataSetLocalService.removeDataSetsByDataCollectionId(dataCollection.getDataCollectionId());
+
+		//Remove resources for conrolling permissions. Other
+		super.resourceLocalService.deleteResource(
+						dataCollection.getCompanyId(),
+					    DataCollection.class.getName(), 
+					    ResourceConstants.SCOPE_INDIVIDUAL,
+					    dataCollection.getDataCollectionId());
+				
+		return super.dataCollectionPersistence.remove(dataCollection);
 	}
 	
 	public DataCollection updateDataCollection(
@@ -103,15 +135,23 @@ public class DataCollectionLocalServiceImpl
 			long organizationId,
 			JSONObject metaDataJSON,
 			String layout,
-			ServiceContext sc  ) throws NoSuchDataCollectionException, NoSuchMetaDataFieldException {
+			ServiceContext sc  ) throws PortalException {
 		
 		DataCollection dataCollection = super.dataCollectionPersistence.findByPrimaryKey(dataCollectionId);
 
 		dataCollection = this.assignDataCollectionAttributes(dataCollection, name, version, organizationId, metaDataJSON, layout);
 		
 		dataCollection.setModifiedDate(sc.getModifiedDate());
-		super.dataCollectionPersistence.update(dataCollection, sc);
+		dataCollection = super.dataCollectionPersistence.update(dataCollection, sc);
 
+		// Update resource to the database to control permissions
+		super.resourceLocalService.updateResources(
+						dataCollection.getCompanyId(), 
+						dataCollection.getGroupId(), 
+					    DataCollection.class.getName(), 
+					    dataCollection.getDataCollectionId(), 
+					    sc.getModelPermissions());
+		
 		/* indexes for the collection updated here. */
 
 		return dataCollection;
@@ -215,15 +255,31 @@ public class DataCollectionLocalServiceImpl
 			dataCollection.setHasMetaData(false);
 		}
 		
-		if(Validator.isBlank(layout) ) {
-			dataCollection.setHasLayout(false);
-		}
-		else {
-			DataAnalysisLayout dataAnalysisLayout = super.dataAnalysisLayoutPersistence.create(dataCollection.getUuid());
-			dataAnalysisLayout.setLayout(layout);
-			super.dataAnalysisLayoutPersistence.update(dataAnalysisLayout);
-		}
-		
+		DataAnalysisLayout dataAnalysisLayout = super.dataAnalysisLayoutPersistence.create(dataCollection.getUuid());
+		dataAnalysisLayout.setLayout(layout);
+		super.dataAnalysisLayoutPersistence.update(dataAnalysisLayout);
+
 		return dataCollection;
 	}
+	
+	@BeanReference
+	private volatile DataTypeLocalService dataTypeLocalService;
+	
+	@BeanReference
+	private volatile MetaDataLocalService metaDataLocalService;
+	
+	@BeanReference
+	private volatile DataAnalysisLayoutLocalService dataAnalysisLayoutLocalService;
+	
+	@BeanReference
+	private volatile DataSetLocalService dataSetLocalService;
+	
+	@BeanReference
+	private volatile DataSectionLocalService dataSectionLocalService;
+	
+	@BeanReference
+	private volatile DataPackLocalService dataPackLocalService;
+	
+	@BeanReference
+	private volatile DataEntryLocalService dataEntryLocalService;
 }

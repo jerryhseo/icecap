@@ -372,9 +372,32 @@ public class DataPackLocalServiceUtil {
 	}
 
 	public static com.osp.icecap.model.DataPack removeDataPack(long dataPackId)
-		throws com.osp.icecap.exception.NoSuchDataPackException {
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchDataPackException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
 
 		return getService().removeDataPack(dataPackId);
+	}
+
+	public static void removeDataPacksByDataCollectionId(long dataCollectionId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		getService().removeDataPacksByDataCollectionId(dataCollectionId);
+	}
+
+	public static void removeDataPacksByDataSectionId(long dataSectionId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		getService().removeDataPacksByDataSectionId(dataSectionId);
+	}
+
+	public static void removeDataPacksByDataSetId(long dataSetId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		getService().removeDataPacksByDataSetId(dataSetId);
 	}
 
 	/**

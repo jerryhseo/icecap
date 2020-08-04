@@ -558,8 +558,7 @@ public class DataCollectionLocalServiceWrapper
 			long organizationId,
 			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
 			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
-		throws com.osp.icecap.exception.NoSuchDataCollectionException,
-			   com.osp.icecap.exception.NoSuchMetaDataFieldException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataCollectionLocalService.updateDataCollection(
 			dataCollectionId, name, version, organizationId, metaDataJSON,

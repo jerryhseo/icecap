@@ -52,6 +52,14 @@ public class MetaDataLocalServiceUtil {
 		return getService().addMetaData(metaData);
 	}
 
+	public static com.osp.icecap.model.MetaData addMetaData(
+			String dataUuid,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON)
+		throws com.osp.icecap.exception.NoSuchMetaDataFieldException {
+
+		return getService().addMetaData(dataUuid, metaDataJSON);
+	}
+
 	/**
 	 * Creates a new meta data with the primary key. Does not add the meta data to the database.
 	 *
@@ -244,6 +252,34 @@ public class MetaDataLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static void removeByDataCollectionId(long dataCollectionId) {
+		getService().removeByDataCollectionId(dataCollectionId);
+	}
+
+	public static void removeByDataPackId(long dataPackId) {
+		getService().removeByDataPackId(dataPackId);
+	}
+
+	public static void removeByDataSectionId(long dataSectionId) {
+		getService().removeByDataSectionId(dataSectionId);
+	}
+
+	public static void removeByDataSetId(long dataSetId) {
+		getService().removeByDataSetId(dataSetId);
+	}
+
+	public static com.osp.icecap.model.MetaData removeMetaData(
+		com.osp.icecap.model.MetaData metaData) {
+
+		return getService().removeMetaData(metaData);
+	}
+
+	public static com.osp.icecap.model.MetaData removeMetaData(String dataUuid)
+		throws com.osp.icecap.exception.NoSuchMetaDataException {
+
+		return getService().removeMetaData(dataUuid);
+	}
+
 	/**
 	 * Updates the meta data in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -254,6 +290,15 @@ public class MetaDataLocalServiceUtil {
 		com.osp.icecap.model.MetaData metaData) {
 
 		return getService().updateMetaData(metaData);
+	}
+
+	public static com.osp.icecap.model.MetaData updateMetaData(
+			String dataUuid,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON)
+		throws com.osp.icecap.exception.NoSuchMetaDataException,
+			   com.osp.icecap.exception.NoSuchMetaDataFieldException {
+
+		return getService().updateMetaData(dataUuid, metaDataJSON);
 	}
 
 	public static MetaDataLocalService getService() {

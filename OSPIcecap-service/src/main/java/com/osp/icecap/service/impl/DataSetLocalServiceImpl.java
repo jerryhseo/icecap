@@ -15,18 +15,25 @@
 package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.osp.icecap.exception.NoSuchDataSetException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataAnalysisLayout;
 import com.osp.icecap.model.DataSection;
 import com.osp.icecap.model.DataSet;
 import com.osp.icecap.model.MetaData;
+import com.osp.icecap.service.DataAnalysisLayoutLocalService;
+import com.osp.icecap.service.DataEntryLocalService;
+import com.osp.icecap.service.DataPackLocalService;
+import com.osp.icecap.service.DataSectionLocalService;
+import com.osp.icecap.service.DataTypeLocalService;
+import com.osp.icecap.service.MetaDataLocalService;
 import com.osp.icecap.service.base.DataSetLocalServiceBaseImpl;
 
 import java.util.Date;
@@ -83,19 +90,48 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 					layout
 				);
 		dataSet.setStatus(WorkflowConstants.STATUS_APPROVED);
-
+		super.dataSetPersistence.update( dataSet, sc );
 		
+		// Add resource to the database to control permissions
+		super.resourceLocalService.addResources(
+						user.getCompanyId(), 
+						user.getGroupId(), 
+						user.getUserId(),
+					    DataSet.class.getName(), 
+					    dataSet.getDataSetId(), 
+					    false, true, true);
 		
-		return super.dataSetPersistence.update(dataSet, sc);
+		return dataSet;
 	}
 	
-	public DataSet removeDataSet( long dataSetId ) throws NoSuchDataSetException {
-		super.dataSectionPersistence.removeByDataSetId(dataSetId);
-		super.dataPackPersistence.removeByDataSetId(dataSetId);
-		super.dataEntryPersistence.removeByDataSetId(dataSetId);
-		super.dataAnalysisLayoutPersistence.removeByDataSetId(dataSetId);
-		super.metaDataPersistence.removeByDataCollectionId(dataSetId);
-		return super.dataSetPersistence.remove(dataSetId);
+	public DataSet removeDataSet( long dataSetId ) throws PortalException {
+		DataSet dataSet = super.dataSetPersistence.findByPrimaryKey(dataSetId);
+		
+		this.removeDataSet(dataSet);
+		
+		return dataSet;
+	}
+	
+	private DataSet removeDataSet( DataSet dataSet ) throws PortalException {
+		this.metaDataLocalService.removeMetaData(dataSet.getUuid());
+		this.dataSectionLocalService.removeDataSectionsByDataSetId(dataSet.getDataSetId());
+		this.dataAnalysisLayoutLocalService.removeDataAnalysisLayout(dataSet.getUuid());
+
+		//Remove resources for conrolling permissions. Other
+		super.resourceLocalService.deleteResource(
+						dataSet.getCompanyId(),
+					    DataSet.class.getName(), 
+					    ResourceConstants.SCOPE_INDIVIDUAL,
+					    dataSet.getDataSetId());
+				
+		return super.dataSetPersistence.remove(dataSet);
+	}
+	
+	public void removeDataSetsByDataCollectionId( long dataCollectionId ) throws PortalException {
+		List<DataSet> dataSetLIST = super.dataSetPersistence.findByDataCollectionId(dataCollectionId);
+		for( DataSet dataSet : dataSetLIST ) {
+			this.removeDataSet(dataSet);
+		}
 	}
 	
 	public DataSet updateDataSet( 
@@ -106,11 +142,19 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 			long copiedFrom,
 			JSONObject metaDataJSON, 
 			String layout,
-			ServiceContext sc) throws NoSuchMetaDataFieldException{
+			ServiceContext sc) throws PortalException{
 		DataSet dataSet = super.dataSetPersistence.fetchByPrimaryKey(dataSetId);
 
 		dataSet = this.assignDataSetAttributes(dataSet, dataCollectionId, name, version, copiedFrom, metaDataJSON, layout);
 		dataSet.setModifiedDate(sc.getModifiedDate());
+		
+		// Update resource to the database to control permissions
+		super.resourceLocalService.updateResources(
+								dataSet.getCompanyId(), 
+								dataSet.getGroupId(), 
+							    DataSet.class.getName(), 
+							    dataSet.getDataSetId(), 
+							    sc.getModelPermissions());
 
 		return super.dataSetPersistence.update(dataSet, sc);
 	}
@@ -169,15 +213,28 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 			dataSet.setHasMetaData(false);
 		}
 		
-		if(Validator.isBlank(layout) ) {
-			dataSet.setHasLayout(false);
-		}
-		else {
-			DataAnalysisLayout dataAnalysisLayout = super.dataAnalysisLayoutPersistence.create(dataSet.getUuid());
-			dataAnalysisLayout.setLayout(layout);
-			super.dataAnalysisLayoutPersistence.update(dataAnalysisLayout);
-		}
+		DataAnalysisLayout dataAnalysisLayout = super.dataAnalysisLayoutPersistence.create(dataSet.getUuid());
+		dataAnalysisLayout.setLayout(layout);
+		super.dataAnalysisLayoutPersistence.update(dataAnalysisLayout);
 		
 		return dataSet;
 	}
+	
+	@BeanReference
+	private volatile DataTypeLocalService dataTypeLocalService;
+	
+	@BeanReference
+	private volatile MetaDataLocalService metaDataLocalService;
+	
+	@BeanReference
+	private volatile DataAnalysisLayoutLocalService dataAnalysisLayoutLocalService;
+	
+	@BeanReference
+	private volatile DataSectionLocalService dataSectionLocalService;
+	
+	@BeanReference
+	private volatile DataPackLocalService dataPackLocalService;
+	
+	@BeanReference
+	private volatile DataEntryLocalService dataEntryLocalService;
 }

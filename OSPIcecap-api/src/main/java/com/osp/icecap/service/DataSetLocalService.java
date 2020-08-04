@@ -34,8 +34,6 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
-import com.osp.icecap.exception.NoSuchDataSetException;
-import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataSection;
 import com.osp.icecap.model.DataSet;
 
@@ -319,7 +317,10 @@ public interface DataSetLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	public DataSet removeDataSet(long dataSetId) throws NoSuchDataSetException;
+	public DataSet removeDataSet(long dataSetId) throws PortalException;
+
+	public void removeDataSetsByDataCollectionId(long dataCollectionId)
+		throws PortalException;
 
 	/**
 	 * Updates the data set in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
@@ -334,6 +335,6 @@ public interface DataSetLocalService
 			long dataSetId, long dataCollectionId, String name, String version,
 			long copiedFrom, JSONObject metaDataJSON, String layout,
 			ServiceContext sc)
-		throws NoSuchMetaDataFieldException;
+		throws PortalException;
 
 }

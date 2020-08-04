@@ -22,14 +22,15 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.service.persistence.CompanyProvider;
-import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -136,18 +137,22 @@ public class DataSectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid(String, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	@Override
 	public List<DataSection> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataSection> orderByComparator) {
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByUuid(uuid, start, end, orderByComparator, true);
+		return findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
@@ -161,14 +166,12 @@ public class DataSectionPersistenceImpl
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	@Override
 	public List<DataSection> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataSection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSection> orderByComparator) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -188,19 +191,15 @@ public class DataSectionPersistenceImpl
 			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
-		List<DataSection> list = null;
+		List<DataSection> list = (List<DataSection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSection dataSection : list) {
+				if (!uuid.equals(dataSection.getUuid())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSection dataSection : list) {
-					if (!uuid.equals(dataSection.getUuid())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -679,15 +678,20 @@ public class DataSectionPersistenceImpl
 	}
 
 	/**
-	 * Returns the data section where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data section where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByUUID_G(String,long)}
 	 * @param uuid the uuid
 	 * @param groupId the group ID
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data section, or <code>null</code> if a matching data section could not be found
 	 */
+	@Deprecated
 	@Override
-	public DataSection fetchByUUID_G(String uuid, long groupId) {
-		return fetchByUUID_G(uuid, groupId, true);
+	public DataSection fetchByUUID_G(
+		String uuid, long groupId, boolean useFinderCache) {
+
+		return fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
@@ -695,23 +699,17 @@ public class DataSectionPersistenceImpl
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	@Override
-	public DataSection fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache) {
-
+	public DataSection fetchByUUID_G(String uuid, long groupId) {
 		uuid = Objects.toString(uuid, "");
 
 		Object[] finderArgs = new Object[] {uuid, groupId};
 
-		Object result = null;
-
-		if (retrieveFromCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByUUID_G, finderArgs, this);
-		}
+		Object result = finderCache.getResult(
+			_finderPathFetchByUUID_G, finderArgs, this);
 
 		if (result instanceof DataSection) {
 			DataSection dataSection = (DataSection)result;
@@ -928,20 +926,23 @@ public class DataSectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid_C(String,long, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	@Override
 	public List<DataSection> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataSection> orderByComparator) {
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
+		return findByUuid_C(uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
@@ -956,14 +957,12 @@ public class DataSectionPersistenceImpl
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	@Override
 	public List<DataSection> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataSection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSection> orderByComparator) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -985,21 +984,17 @@ public class DataSectionPersistenceImpl
 			};
 		}
 
-		List<DataSection> list = null;
+		List<DataSection> list = (List<DataSection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSection dataSection : list) {
+				if (!uuid.equals(dataSection.getUuid()) ||
+					(companyId != dataSection.getCompanyId())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSection dataSection : list) {
-					if (!uuid.equals(dataSection.getUuid()) ||
-						(companyId != dataSection.getCompanyId())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -1515,18 +1510,22 @@ public class DataSectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByGroupId(long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	@Override
 	public List<DataSection> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataSection> orderByComparator) {
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByGroupId(groupId, start, end, orderByComparator, true);
+		return findByGroupId(groupId, start, end, orderByComparator);
 	}
 
 	/**
@@ -1540,14 +1539,12 @@ public class DataSectionPersistenceImpl
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	@Override
 	public List<DataSection> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataSection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1565,19 +1562,15 @@ public class DataSectionPersistenceImpl
 			finderArgs = new Object[] {groupId, start, end, orderByComparator};
 		}
 
-		List<DataSection> list = null;
+		List<DataSection> list = (List<DataSection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSection dataSection : list) {
+				if ((groupId != dataSection.getGroupId())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSection dataSection : list) {
-					if ((groupId != dataSection.getGroupId())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -1911,6 +1904,334 @@ public class DataSectionPersistenceImpl
 	}
 
 	/**
+	 * Returns all the data sections that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching data sections that the user has permission to view
+	 */
+	@Override
+	public List<DataSection> filterFindByGroupId(long groupId) {
+		return filterFindByGroupId(
+			groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data sections that the user has permission to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of data sections
+	 * @param end the upper bound of the range of data sections (not inclusive)
+	 * @return the range of matching data sections that the user has permission to view
+	 */
+	@Override
+	public List<DataSection> filterFindByGroupId(
+		long groupId, int start, int end) {
+
+		return filterFindByGroupId(groupId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data sections that the user has permissions to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of data sections
+	 * @param end the upper bound of the range of data sections (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data sections that the user has permission to view
+	 */
+	@Override
+	public List<DataSection> filterFindByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<DataSection> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupId(groupId, start, end, orderByComparator);
+		}
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				3 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATASECTION_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATASECTION_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATASECTION_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataSectionModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataSectionModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataSection.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, DataSectionImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, DataSectionImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			return (List<DataSection>)QueryUtil.list(
+				q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the data sections before and after the current data section in the ordered set of data sections that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param dataSectionId the primary key of the current data section
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data section
+	 * @throws NoSuchDataSectionException if a data section with the primary key could not be found
+	 */
+	@Override
+	public DataSection[] filterFindByGroupId_PrevAndNext(
+			long dataSectionId, long groupId,
+			OrderByComparator<DataSection> orderByComparator)
+		throws NoSuchDataSectionException {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupId_PrevAndNext(
+				dataSectionId, groupId, orderByComparator);
+		}
+
+		DataSection dataSection = findByPrimaryKey(dataSectionId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataSection[] array = new DataSectionImpl[3];
+
+			array[0] = filterGetByGroupId_PrevAndNext(
+				session, dataSection, groupId, orderByComparator, true);
+
+			array[1] = dataSection;
+
+			array[2] = filterGetByGroupId_PrevAndNext(
+				session, dataSection, groupId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataSection filterGetByGroupId_PrevAndNext(
+		Session session, DataSection dataSection, long groupId,
+		OrderByComparator<DataSection> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATASECTION_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATASECTION_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATASECTION_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataSectionModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataSectionModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataSection.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, DataSectionImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, DataSectionImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataSection)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataSection> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the data sections where groupId = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -1976,6 +2297,54 @@ public class DataSectionPersistenceImpl
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of data sections that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the number of matching data sections that the user has permission to view
+	 */
+	@Override
+	public int filterCountByGroupId(long groupId) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByGroupId(groupId);
+		}
+
+		StringBundler query = new StringBundler(2);
+
+		query.append(_FILTER_SQL_COUNT_DATASECTION_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataSection.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
 	private static final String _FINDER_COLUMN_GROUPID_GROUPID_2 =
 		"dataSection.groupId = ?";
 
@@ -2018,18 +2387,22 @@ public class DataSectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUserId(long, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	@Override
 	public List<DataSection> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataSection> orderByComparator) {
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByUserId(userId, start, end, orderByComparator, true);
+		return findByUserId(userId, start, end, orderByComparator);
 	}
 
 	/**
@@ -2043,14 +2416,12 @@ public class DataSectionPersistenceImpl
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	@Override
 	public List<DataSection> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataSection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2068,19 +2439,15 @@ public class DataSectionPersistenceImpl
 			finderArgs = new Object[] {userId, start, end, orderByComparator};
 		}
 
-		List<DataSection> list = null;
+		List<DataSection> list = (List<DataSection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSection dataSection : list) {
+				if ((userId != dataSection.getUserId())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSection dataSection : list) {
-					if ((userId != dataSection.getUserId())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -2519,18 +2886,22 @@ public class DataSectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByStatus(int, int, int, OrderByComparator)}
 	 * @param status the status
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	@Override
 	public List<DataSection> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataSection> orderByComparator) {
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByStatus(status, start, end, orderByComparator, true);
+		return findByStatus(status, start, end, orderByComparator);
 	}
 
 	/**
@@ -2544,14 +2915,12 @@ public class DataSectionPersistenceImpl
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	@Override
 	public List<DataSection> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataSection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2569,19 +2938,15 @@ public class DataSectionPersistenceImpl
 			finderArgs = new Object[] {status, start, end, orderByComparator};
 		}
 
-		List<DataSection> list = null;
+		List<DataSection> list = (List<DataSection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSection dataSection : list) {
+				if ((status != dataSection.getStatus())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSection dataSection : list) {
-					if ((status != dataSection.getStatus())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -3023,19 +3388,23 @@ public class DataSectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
 	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	@Override
 	public List<DataSection> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<DataSection> orderByComparator) {
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache) {
 
 		return findByDataCollectionId(
-			dataCollectionId, start, end, orderByComparator, true);
+			dataCollectionId, start, end, orderByComparator);
 	}
 
 	/**
@@ -3049,14 +3418,12 @@ public class DataSectionPersistenceImpl
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	@Override
 	public List<DataSection> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<DataSection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3076,21 +3443,15 @@ public class DataSectionPersistenceImpl
 			};
 		}
 
-		List<DataSection> list = null;
+		List<DataSection> list = (List<DataSection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSection dataSection : list) {
+				if ((dataCollectionId != dataSection.getDataCollectionId())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSection dataSection : list) {
-					if ((dataCollectionId !=
-							dataSection.getDataCollectionId())) {
-
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -3542,18 +3903,22 @@ public class DataSectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSetId(long, int, int, OrderByComparator)}
 	 * @param dataSetId the data set ID
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	@Override
 	public List<DataSection> findByDataSetId(
 		long dataSetId, int start, int end,
-		OrderByComparator<DataSection> orderByComparator) {
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByDataSetId(dataSetId, start, end, orderByComparator, true);
+		return findByDataSetId(dataSetId, start, end, orderByComparator);
 	}
 
 	/**
@@ -3567,14 +3932,12 @@ public class DataSectionPersistenceImpl
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	@Override
 	public List<DataSection> findByDataSetId(
 		long dataSetId, int start, int end,
-		OrderByComparator<DataSection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3594,19 +3957,15 @@ public class DataSectionPersistenceImpl
 			};
 		}
 
-		List<DataSection> list = null;
+		List<DataSection> list = (List<DataSection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSection dataSection : list) {
+				if ((dataSetId != dataSection.getDataSetId())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSection dataSection : list) {
-					if ((dataSetId != dataSection.getDataSetId())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -4050,19 +4409,22 @@ public class DataSectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByCopiedFrom(long, int, int, OrderByComparator)}
 	 * @param copiedFrom the copied from
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	@Override
 	public List<DataSection> findByCopiedFrom(
 		long copiedFrom, int start, int end,
-		OrderByComparator<DataSection> orderByComparator) {
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByCopiedFrom(
-			copiedFrom, start, end, orderByComparator, true);
+		return findByCopiedFrom(copiedFrom, start, end, orderByComparator);
 	}
 
 	/**
@@ -4076,14 +4438,12 @@ public class DataSectionPersistenceImpl
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	@Override
 	public List<DataSection> findByCopiedFrom(
 		long copiedFrom, int start, int end,
-		OrderByComparator<DataSection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -4103,19 +4463,15 @@ public class DataSectionPersistenceImpl
 			};
 		}
 
-		List<DataSection> list = null;
+		List<DataSection> list = (List<DataSection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSection dataSection : list) {
+				if ((copiedFrom != dataSection.getCopiedFrom())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSection dataSection : list) {
-					if ((copiedFrom != dataSection.getCopiedFrom())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -4556,18 +4912,22 @@ public class DataSectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName(String, int, int, OrderByComparator)}
 	 * @param name the name
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	@Override
 	public List<DataSection> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataSection> orderByComparator) {
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByName(name, start, end, orderByComparator, true);
+		return findByName(name, start, end, orderByComparator);
 	}
 
 	/**
@@ -4581,14 +4941,12 @@ public class DataSectionPersistenceImpl
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	@Override
 	public List<DataSection> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataSection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataSection> orderByComparator) {
 
 		name = Objects.toString(name, "");
 
@@ -4608,19 +4966,15 @@ public class DataSectionPersistenceImpl
 			finderArgs = new Object[] {name, start, end, orderByComparator};
 		}
 
-		List<DataSection> list = null;
+		List<DataSection> list = (List<DataSection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataSection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataSection dataSection : list) {
+				if (!name.equals(dataSection.getName())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataSection dataSection : list) {
-					if (!name.equals(dataSection.getName())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -5215,7 +5569,7 @@ public class DataSectionPersistenceImpl
 
 		dataSection.setUuid(uuid);
 
-		dataSection.setCompanyId(companyProvider.getCompanyId());
+		dataSection.setCompanyId(CompanyThreadLocal.getCompanyId());
 
 		return dataSection;
 	}
@@ -5722,16 +6076,20 @@ public class DataSectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data sections
 	 */
+	@Deprecated
 	@Override
 	public List<DataSection> findAll(
-		int start, int end, OrderByComparator<DataSection> orderByComparator) {
+		int start, int end, OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findAll(start, end, orderByComparator, true);
+		return findAll(start, end, orderByComparator);
 	}
 
 	/**
@@ -5744,13 +6102,11 @@ public class DataSectionPersistenceImpl
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data sections
 	 */
 	@Override
 	public List<DataSection> findAll(
-		int start, int end, OrderByComparator<DataSection> orderByComparator,
-		boolean retrieveFromCache) {
+		int start, int end, OrderByComparator<DataSection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -5768,12 +6124,8 @@ public class DataSectionPersistenceImpl
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
-		List<DataSection> list = null;
-
-		if (retrieveFromCache) {
-			list = (List<DataSection>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
+		List<DataSection> list = (List<DataSection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
 		if (list == null) {
 			StringBundler query = null;
@@ -6158,9 +6510,6 @@ public class DataSectionPersistenceImpl
 
 	private boolean _columnBitmaskEnabled;
 
-	@Reference(service = CompanyProviderWrapper.class)
-	protected CompanyProvider companyProvider;
-
 	@Reference
 	protected EntityCache entityCache;
 
@@ -6179,7 +6528,30 @@ public class DataSectionPersistenceImpl
 	private static final String _SQL_COUNT_DATASECTION_WHERE =
 		"SELECT COUNT(dataSection) FROM DataSection dataSection WHERE ";
 
+	private static final String _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN =
+		"dataSection.dataSectionId";
+
+	private static final String _FILTER_SQL_SELECT_DATASECTION_WHERE =
+		"SELECT DISTINCT {dataSection.*} FROM ICECAP_DataSection dataSection WHERE ";
+
+	private static final String
+		_FILTER_SQL_SELECT_DATASECTION_NO_INLINE_DISTINCT_WHERE_1 =
+			"SELECT {ICECAP_DataSection.*} FROM (SELECT DISTINCT dataSection.dataSectionId FROM ICECAP_DataSection dataSection WHERE ";
+
+	private static final String
+		_FILTER_SQL_SELECT_DATASECTION_NO_INLINE_DISTINCT_WHERE_2 =
+			") TEMP_TABLE INNER JOIN ICECAP_DataSection ON TEMP_TABLE.dataSectionId = ICECAP_DataSection.dataSectionId";
+
+	private static final String _FILTER_SQL_COUNT_DATASECTION_WHERE =
+		"SELECT COUNT(DISTINCT dataSection.dataSectionId) AS COUNT_VALUE FROM ICECAP_DataSection dataSection WHERE ";
+
+	private static final String _FILTER_ENTITY_ALIAS = "dataSection";
+
+	private static final String _FILTER_ENTITY_TABLE = "ICECAP_DataSection";
+
 	private static final String _ORDER_BY_ENTITY_ALIAS = "dataSection.";
+
+	private static final String _ORDER_BY_ENTITY_TABLE = "ICECAP_DataSection.";
 
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
 		"No DataSection exists with the primary key ";
@@ -6192,5 +6564,14 @@ public class DataSectionPersistenceImpl
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
+
+	static {
+		try {
+			Class.forName(ICECAPPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
 
 }

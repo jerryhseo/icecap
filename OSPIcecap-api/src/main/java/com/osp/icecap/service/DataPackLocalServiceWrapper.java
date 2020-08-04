@@ -400,9 +400,36 @@ public class DataPackLocalServiceWrapper
 
 	@Override
 	public com.osp.icecap.model.DataPack removeDataPack(long dataPackId)
-		throws com.osp.icecap.exception.NoSuchDataPackException {
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchDataPackException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
 
 		return _dataPackLocalService.removeDataPack(dataPackId);
+	}
+
+	@Override
+	public void removeDataPacksByDataCollectionId(long dataCollectionId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		_dataPackLocalService.removeDataPacksByDataCollectionId(
+			dataCollectionId);
+	}
+
+	@Override
+	public void removeDataPacksByDataSectionId(long dataSectionId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		_dataPackLocalService.removeDataPacksByDataSectionId(dataSectionId);
+	}
+
+	@Override
+	public void removeDataPacksByDataSetId(long dataSetId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		_dataPackLocalService.removeDataPacksByDataSetId(dataSetId);
 	}
 
 	/**

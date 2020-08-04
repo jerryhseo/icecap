@@ -64,7 +64,6 @@ public class DataSetWrapper
 		attributes.put("version", getVersion());
 		attributes.put("copiedFrom", getCopiedFrom());
 		attributes.put("hasMetaData", isHasMetaData());
-		attributes.put("hasLayout", isHasLayout());
 
 		return attributes;
 	}
@@ -178,12 +177,6 @@ public class DataSetWrapper
 		if (hasMetaData != null) {
 			setHasMetaData(hasMetaData);
 		}
-
-		Boolean hasLayout = (Boolean)attributes.get("hasLayout");
-
-		if (hasLayout != null) {
-			setHasLayout(hasLayout);
-		}
 	}
 
 	/**
@@ -254,16 +247,6 @@ public class DataSetWrapper
 	@Override
 	public long getGroupId() {
 		return model.getGroupId();
-	}
-
-	/**
-	 * Returns the has layout of this data set.
-	 *
-	 * @return the has layout of this data set
-	 */
-	@Override
-	public boolean getHasLayout() {
-		return model.getHasLayout();
 	}
 
 	/**
@@ -447,16 +430,6 @@ public class DataSetWrapper
 	}
 
 	/**
-	 * Returns <code>true</code> if this data set is has layout.
-	 *
-	 * @return <code>true</code> if this data set is has layout; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isHasLayout() {
-		return model.isHasLayout();
-	}
-
-	/**
 	 * Returns <code>true</code> if this data set is has meta data.
 	 *
 	 * @return <code>true</code> if this data set is has meta data; <code>false</code> otherwise
@@ -579,16 +552,6 @@ public class DataSetWrapper
 	@Override
 	public void setGroupId(long groupId) {
 		model.setGroupId(groupId);
-	}
-
-	/**
-	 * Sets whether this data set is has layout.
-	 *
-	 * @param hasLayout the has layout of this data set
-	 */
-	@Override
-	public void setHasLayout(boolean hasLayout) {
-		model.setHasLayout(hasLayout);
 	}
 
 	/**

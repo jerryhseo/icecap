@@ -20,8 +20,6 @@ import com.osp.icecap.exception.NoSuchDataTypeVisualizerLinkException;
 import com.osp.icecap.model.DataTypeVisualizerLink;
 import com.osp.icecap.service.base.DataTypeVisualizerLinkLocalServiceBaseImpl;
 
-import java.util.List;
-
 import org.osgi.service.component.annotations.Component;
 
 /**

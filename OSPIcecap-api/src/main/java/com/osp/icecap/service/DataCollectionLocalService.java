@@ -37,7 +37,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
 import com.osp.icecap.exception.NoSuchDataCollectionException;
 import com.osp.icecap.exception.NoSuchMetaDataException;
-import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataCollection;
 import com.osp.icecap.model.DataSet;
 import com.osp.icecap.model.MetaData;
@@ -393,6 +392,6 @@ public interface DataCollectionLocalService
 			long dataCollectionId, String name, String version,
 			long organizationId, JSONObject metaDataJSON, String layout,
 			ServiceContext sc)
-		throws NoSuchDataCollectionException, NoSuchMetaDataFieldException;
+		throws PortalException;
 
 }

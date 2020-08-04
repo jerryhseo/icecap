@@ -291,6 +291,18 @@ public interface DataEntryLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	public void removeDataEntriesByDataCollectionId(long dataCollectionId)
+		throws NoSuchMetaDataException;
+
+	public void removeDataEntriesByDataPackId(long dataPackId)
+		throws NoSuchMetaDataException;
+
+	public void removeDataEntriesByDataSectionId(long dataSectionId)
+		throws NoSuchMetaDataException;
+
+	public void removeDataEntriesByDataSetId(long dataSetId)
+		throws NoSuchMetaDataException;
+
 	public DataEntry removeDataEntry(long dataEntryId)
 		throws NoSuchDataEntryException, NoSuchMetaDataException;
 

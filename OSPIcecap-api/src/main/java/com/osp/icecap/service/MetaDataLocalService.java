@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -28,6 +29,8 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.osp.icecap.exception.NoSuchMetaDataException;
+import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.MetaData;
 
 import java.io.Serializable;
@@ -68,6 +71,9 @@ public interface MetaDataLocalService
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public MetaData addMetaData(MetaData metaData);
+
+	public MetaData addMetaData(String dataUuid, JSONObject metaDataJSON)
+		throws NoSuchMetaDataFieldException;
 
 	/**
 	 * Creates a new meta data with the primary key. Does not add the meta data to the database.
@@ -217,6 +223,19 @@ public interface MetaDataLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	public void removeByDataCollectionId(long dataCollectionId);
+
+	public void removeByDataPackId(long dataPackId);
+
+	public void removeByDataSectionId(long dataSectionId);
+
+	public void removeByDataSetId(long dataSetId);
+
+	public MetaData removeMetaData(MetaData metaData);
+
+	public MetaData removeMetaData(String dataUuid)
+		throws NoSuchMetaDataException;
+
 	/**
 	 * Updates the meta data in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -225,5 +244,8 @@ public interface MetaDataLocalService
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public MetaData updateMetaData(MetaData metaData);
+
+	public MetaData updateMetaData(String dataUuid, JSONObject metaDataJSON)
+		throws NoSuchMetaDataException, NoSuchMetaDataFieldException;
 
 }

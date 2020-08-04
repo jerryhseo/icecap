@@ -65,7 +65,6 @@ public class DataSectionWrapper
 		attributes.put("version", getVersion());
 		attributes.put("copiedFrom", getCopiedFrom());
 		attributes.put("hasMetaData", isHasMetaData());
-		attributes.put("hasLayout", isHasLayout());
 
 		return attributes;
 	}
@@ -185,12 +184,6 @@ public class DataSectionWrapper
 		if (hasMetaData != null) {
 			setHasMetaData(hasMetaData);
 		}
-
-		Boolean hasLayout = (Boolean)attributes.get("hasLayout");
-
-		if (hasLayout != null) {
-			setHasLayout(hasLayout);
-		}
 	}
 
 	/**
@@ -271,16 +264,6 @@ public class DataSectionWrapper
 	@Override
 	public long getGroupId() {
 		return model.getGroupId();
-	}
-
-	/**
-	 * Returns the has layout of this data section.
-	 *
-	 * @return the has layout of this data section
-	 */
-	@Override
-	public boolean getHasLayout() {
-		return model.getHasLayout();
 	}
 
 	/**
@@ -464,16 +447,6 @@ public class DataSectionWrapper
 	}
 
 	/**
-	 * Returns <code>true</code> if this data section is has layout.
-	 *
-	 * @return <code>true</code> if this data section is has layout; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isHasLayout() {
-		return model.isHasLayout();
-	}
-
-	/**
 	 * Returns <code>true</code> if this data section is has meta data.
 	 *
 	 * @return <code>true</code> if this data section is has meta data; <code>false</code> otherwise
@@ -606,16 +579,6 @@ public class DataSectionWrapper
 	@Override
 	public void setGroupId(long groupId) {
 		model.setGroupId(groupId);
-	}
-
-	/**
-	 * Sets whether this data section is has layout.
-	 *
-	 * @param hasLayout the has layout of this data section
-	 */
-	@Override
-	public void setHasLayout(boolean hasLayout) {
-		model.setHasLayout(hasLayout);
 	}
 
 	/**

@@ -63,7 +63,6 @@ public class DataCollectionWrapper
 		attributes.put("copiedFrom", getCopiedFrom());
 		attributes.put("organizationId", getOrganizationId());
 		attributes.put("hasMetaData", isHasMetaData());
-		attributes.put("hasLayout", isHasLayout());
 
 		return attributes;
 	}
@@ -171,12 +170,6 @@ public class DataCollectionWrapper
 		if (hasMetaData != null) {
 			setHasMetaData(hasMetaData);
 		}
-
-		Boolean hasLayout = (Boolean)attributes.get("hasLayout");
-
-		if (hasLayout != null) {
-			setHasLayout(hasLayout);
-		}
 	}
 
 	/**
@@ -227,16 +220,6 @@ public class DataCollectionWrapper
 	@Override
 	public long getGroupId() {
 		return model.getGroupId();
-	}
-
-	/**
-	 * Returns the has layout of this data collection.
-	 *
-	 * @return the has layout of this data collection
-	 */
-	@Override
-	public boolean getHasLayout() {
-		return model.getHasLayout();
 	}
 
 	/**
@@ -430,16 +413,6 @@ public class DataCollectionWrapper
 	}
 
 	/**
-	 * Returns <code>true</code> if this data collection is has layout.
-	 *
-	 * @return <code>true</code> if this data collection is has layout; <code>false</code> otherwise
-	 */
-	@Override
-	public boolean isHasLayout() {
-		return model.isHasLayout();
-	}
-
-	/**
 	 * Returns <code>true</code> if this data collection is has meta data.
 	 *
 	 * @return <code>true</code> if this data collection is has meta data; <code>false</code> otherwise
@@ -542,16 +515,6 @@ public class DataCollectionWrapper
 	@Override
 	public void setGroupId(long groupId) {
 		model.setGroupId(groupId);
-	}
-
-	/**
-	 * Sets whether this data collection is has layout.
-	 *
-	 * @param hasLayout the has layout of this data collection
-	 */
-	@Override
-	public void setHasLayout(boolean hasLayout) {
-		model.setHasLayout(hasLayout);
 	}
 
 	/**

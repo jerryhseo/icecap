@@ -65,7 +65,7 @@ public class DataPackCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(43);
+		StringBundler sb = new StringBundler(41);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -107,8 +107,6 @@ public class DataPackCacheModel
 		sb.append(copiedFrom);
 		sb.append(", hasMetaData=");
 		sb.append(hasMetaData);
-		sb.append(", hasLayout=");
-		sb.append(hasLayout);
 		sb.append("}");
 
 		return sb.toString();
@@ -195,7 +193,6 @@ public class DataPackCacheModel
 
 		dataPackImpl.setCopiedFrom(copiedFrom);
 		dataPackImpl.setHasMetaData(hasMetaData);
-		dataPackImpl.setHasLayout(hasLayout);
 
 		dataPackImpl.resetOriginalValues();
 
@@ -235,8 +232,6 @@ public class DataPackCacheModel
 		copiedFrom = objectInput.readLong();
 
 		hasMetaData = objectInput.readBoolean();
-
-		hasLayout = objectInput.readBoolean();
 	}
 
 	@Override
@@ -309,8 +304,6 @@ public class DataPackCacheModel
 		objectOutput.writeLong(copiedFrom);
 
 		objectOutput.writeBoolean(hasMetaData);
-
-		objectOutput.writeBoolean(hasLayout);
 	}
 
 	public String uuid;
@@ -333,6 +326,5 @@ public class DataPackCacheModel
 	public String component;
 	public long copiedFrom;
 	public boolean hasMetaData;
-	public boolean hasLayout;
 
 }

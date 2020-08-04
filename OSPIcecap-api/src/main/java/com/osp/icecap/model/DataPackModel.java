@@ -409,27 +409,6 @@ public interface DataPackModel
 	public void setHasMetaData(boolean hasMetaData);
 
 	/**
-	 * Returns the has layout of this data pack.
-	 *
-	 * @return the has layout of this data pack
-	 */
-	public boolean getHasLayout();
-
-	/**
-	 * Returns <code>true</code> if this data pack is has layout.
-	 *
-	 * @return <code>true</code> if this data pack is has layout; <code>false</code> otherwise
-	 */
-	public boolean isHasLayout();
-
-	/**
-	 * Sets whether this data pack is has layout.
-	 *
-	 * @param hasLayout the has layout of this data pack
-	 */
-	public void setHasLayout(boolean hasLayout);
-
-	/**
 	 * Returns <code>true</code> if this data pack is approved.
 	 *
 	 * @return <code>true</code> if this data pack is approved; <code>false</code> otherwise

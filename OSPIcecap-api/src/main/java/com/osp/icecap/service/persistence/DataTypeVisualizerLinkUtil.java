@@ -169,18 +169,22 @@ public class DataTypeVisualizerLinkUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByVisualizerName(String, int, int, OrderByComparator)}
 	 * @param visualizerName the visualizer name
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
+	@Deprecated
 	public static List<DataTypeVisualizerLink> findByVisualizerName(
 		String visualizerName, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
+		boolean useFinderCache) {
 
 		return getPersistence().findByVisualizerName(
-			visualizerName, start, end, orderByComparator);
+			visualizerName, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -194,16 +198,14 @@ public class DataTypeVisualizerLinkUtil {
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
 	public static List<DataTypeVisualizerLink> findByVisualizerName(
 		String visualizerName, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
 
 		return getPersistence().findByVisualizerName(
-			visualizerName, start, end, orderByComparator, retrieveFromCache);
+			visualizerName, start, end, orderByComparator);
 	}
 
 	/**
@@ -324,17 +326,21 @@ public class DataTypeVisualizerLinkUtil {
 	}
 
 	/**
-	 * Returns the data type visualizer link where visualizerName = &#63; and visualizerVersion = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data type visualizer link where visualizerName = &#63; and visualizerVersion = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByVisualizerNameVersion(String,String)}
 	 * @param visualizerName the visualizer name
 	 * @param visualizerVersion the visualizer version
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type visualizer link, or <code>null</code> if a matching data type visualizer link could not be found
 	 */
+	@Deprecated
 	public static DataTypeVisualizerLink fetchByVisualizerNameVersion(
-		String visualizerName, String visualizerVersion) {
+		String visualizerName, String visualizerVersion,
+		boolean useFinderCache) {
 
 		return getPersistence().fetchByVisualizerNameVersion(
-			visualizerName, visualizerVersion);
+			visualizerName, visualizerVersion, useFinderCache);
 	}
 
 	/**
@@ -342,15 +348,14 @@ public class DataTypeVisualizerLinkUtil {
 	 *
 	 * @param visualizerName the visualizer name
 	 * @param visualizerVersion the visualizer version
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type visualizer link, or <code>null</code> if a matching data type visualizer link could not be found
 	 */
 	public static DataTypeVisualizerLink fetchByVisualizerNameVersion(
-		String visualizerName, String visualizerVersion,
-		boolean retrieveFromCache) {
+		String visualizerName, String visualizerVersion) {
 
 		return getPersistence().fetchByVisualizerNameVersion(
-			visualizerName, visualizerVersion, retrieveFromCache);
+			visualizerName, visualizerVersion);
 	}
 
 	/**
@@ -419,18 +424,22 @@ public class DataTypeVisualizerLinkUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByEditable(boolean, int, int, OrderByComparator)}
 	 * @param editable the editable
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
+	@Deprecated
 	public static List<DataTypeVisualizerLink> findByEditable(
 		boolean editable, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
+		boolean useFinderCache) {
 
 		return getPersistence().findByEditable(
-			editable, start, end, orderByComparator);
+			editable, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -444,16 +453,14 @@ public class DataTypeVisualizerLinkUtil {
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
 	public static List<DataTypeVisualizerLink> findByEditable(
 		boolean editable, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
 
 		return getPersistence().findByEditable(
-			editable, start, end, orderByComparator, retrieveFromCache);
+			editable, start, end, orderByComparator);
 	}
 
 	/**
@@ -594,18 +601,22 @@ public class DataTypeVisualizerLinkUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataTypeId(long, int, int, OrderByComparator)}
 	 * @param dataTypeId the data type ID
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
+	@Deprecated
 	public static List<DataTypeVisualizerLink> findByDataTypeId(
 		long dataTypeId, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
+		boolean useFinderCache) {
 
 		return getPersistence().findByDataTypeId(
-			dataTypeId, start, end, orderByComparator);
+			dataTypeId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -619,16 +630,14 @@ public class DataTypeVisualizerLinkUtil {
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
 	public static List<DataTypeVisualizerLink> findByDataTypeId(
 		long dataTypeId, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
 
 		return getPersistence().findByDataTypeId(
-			dataTypeId, start, end, orderByComparator, retrieveFromCache);
+			dataTypeId, start, end, orderByComparator);
 	}
 
 	/**
@@ -840,16 +849,21 @@ public class DataTypeVisualizerLinkUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data type visualizer links
 	 */
+	@Deprecated
 	public static List<DataTypeVisualizerLink> findAll(
 		int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
+		boolean useFinderCache) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findAll(
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -862,16 +876,13 @@ public class DataTypeVisualizerLinkUtil {
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data type visualizer links
 	 */
 	public static List<DataTypeVisualizerLink> findAll(
 		int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, retrieveFromCache);
+		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**

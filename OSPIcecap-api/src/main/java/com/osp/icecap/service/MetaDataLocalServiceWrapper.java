@@ -48,6 +48,15 @@ public class MetaDataLocalServiceWrapper
 		return _metaDataLocalService.addMetaData(metaData);
 	}
 
+	@Override
+	public com.osp.icecap.model.MetaData addMetaData(
+			String dataUuid,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON)
+		throws com.osp.icecap.exception.NoSuchMetaDataFieldException {
+
+		return _metaDataLocalService.addMetaData(dataUuid, metaDataJSON);
+	}
+
 	/**
 	 * Creates a new meta data with the primary key. Does not add the meta data to the database.
 	 *
@@ -252,6 +261,40 @@ public class MetaDataLocalServiceWrapper
 		return _metaDataLocalService.getPersistedModel(primaryKeyObj);
 	}
 
+	@Override
+	public void removeByDataCollectionId(long dataCollectionId) {
+		_metaDataLocalService.removeByDataCollectionId(dataCollectionId);
+	}
+
+	@Override
+	public void removeByDataPackId(long dataPackId) {
+		_metaDataLocalService.removeByDataPackId(dataPackId);
+	}
+
+	@Override
+	public void removeByDataSectionId(long dataSectionId) {
+		_metaDataLocalService.removeByDataSectionId(dataSectionId);
+	}
+
+	@Override
+	public void removeByDataSetId(long dataSetId) {
+		_metaDataLocalService.removeByDataSetId(dataSetId);
+	}
+
+	@Override
+	public com.osp.icecap.model.MetaData removeMetaData(
+		com.osp.icecap.model.MetaData metaData) {
+
+		return _metaDataLocalService.removeMetaData(metaData);
+	}
+
+	@Override
+	public com.osp.icecap.model.MetaData removeMetaData(String dataUuid)
+		throws com.osp.icecap.exception.NoSuchMetaDataException {
+
+		return _metaDataLocalService.removeMetaData(dataUuid);
+	}
+
 	/**
 	 * Updates the meta data in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -263,6 +306,16 @@ public class MetaDataLocalServiceWrapper
 		com.osp.icecap.model.MetaData metaData) {
 
 		return _metaDataLocalService.updateMetaData(metaData);
+	}
+
+	@Override
+	public com.osp.icecap.model.MetaData updateMetaData(
+			String dataUuid,
+			com.liferay.portal.kernel.json.JSONObject metaDataJSON)
+		throws com.osp.icecap.exception.NoSuchMetaDataException,
+			   com.osp.icecap.exception.NoSuchMetaDataFieldException {
+
+		return _metaDataLocalService.updateMetaData(dataUuid, metaDataJSON);
 	}
 
 	@Override

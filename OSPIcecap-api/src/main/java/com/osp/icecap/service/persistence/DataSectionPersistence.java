@@ -15,6 +15,7 @@
 package com.osp.icecap.service.persistence;
 
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
+import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchDataSectionException;
 import com.osp.icecap.model.DataSection;
@@ -71,16 +72,19 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid(String, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	public java.util.List<DataSection> findByUuid(
 		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data sections where uuid = &#63;.
@@ -93,14 +97,11 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	public java.util.List<DataSection> findByUuid(
 		String uuid, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the first data section in the ordered set where uuid = &#63;.
@@ -111,9 +112,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByUuid_First(
-			String uuid,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			String uuid, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -124,9 +123,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the first matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByUuid_First(
-		String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		String uuid, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the last data section in the ordered set where uuid = &#63;.
@@ -137,9 +134,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByUuid_Last(
-			String uuid,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			String uuid, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -150,9 +145,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the last matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByUuid_Last(
-		String uuid,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		String uuid, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the data sections before and after the current data section in the ordered set where uuid = &#63;.
@@ -165,8 +158,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection[] findByUuid_PrevAndNext(
 			long dataSectionId, String uuid,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -196,24 +188,27 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 		throws NoSuchDataSectionException;
 
 	/**
-	 * Returns the data section where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data section where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByUUID_G(String,long)}
 	 * @param uuid the uuid
 	 * @param groupId the group ID
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data section, or <code>null</code> if a matching data section could not be found
 	 */
-	public DataSection fetchByUUID_G(String uuid, long groupId);
+	@Deprecated
+	public DataSection fetchByUUID_G(
+		String uuid, long groupId, boolean useFinderCache);
 
 	/**
 	 * Returns the data section where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data section, or <code>null</code> if a matching data section could not be found
 	 */
-	public DataSection fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache);
+	public DataSection fetchByUUID_G(String uuid, long groupId);
 
 	/**
 	 * Removes the data section where uuid = &#63; and groupId = &#63; from the database.
@@ -267,17 +262,20 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid_C(String,long, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	public java.util.List<DataSection> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data sections where uuid = &#63; and companyId = &#63;.
@@ -291,14 +289,11 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	public java.util.List<DataSection> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the first data section in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -311,8 +306,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection findByUuid_C_First(
 			String uuid, long companyId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -325,8 +319,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection fetchByUuid_C_First(
 		String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the last data section in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -339,8 +332,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection findByUuid_C_Last(
 			String uuid, long companyId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -353,8 +345,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection fetchByUuid_C_Last(
 		String uuid, long companyId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the data sections before and after the current data section in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -368,8 +359,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection[] findByUuid_C_PrevAndNext(
 			long dataSectionId, String uuid, long companyId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -419,16 +409,19 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByGroupId(long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	public java.util.List<DataSection> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data sections where groupId = &#63;.
@@ -441,14 +434,11 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	public java.util.List<DataSection> findByGroupId(
 		long groupId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the first data section in the ordered set where groupId = &#63;.
@@ -459,9 +449,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByGroupId_First(
-			long groupId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			long groupId, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -472,9 +460,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the first matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByGroupId_First(
-		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		long groupId, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the last data section in the ordered set where groupId = &#63;.
@@ -485,9 +471,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByGroupId_Last(
-			long groupId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			long groupId, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -498,9 +482,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the last matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByGroupId_Last(
-		long groupId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		long groupId, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the data sections before and after the current data section in the ordered set where groupId = &#63;.
@@ -513,8 +495,61 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection[] findByGroupId_PrevAndNext(
 			long dataSectionId, long groupId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
+		throws NoSuchDataSectionException;
+
+	/**
+	 * Returns all the data sections that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching data sections that the user has permission to view
+	 */
+	public java.util.List<DataSection> filterFindByGroupId(long groupId);
+
+	/**
+	 * Returns a range of all the data sections that the user has permission to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of data sections
+	 * @param end the upper bound of the range of data sections (not inclusive)
+	 * @return the range of matching data sections that the user has permission to view
+	 */
+	public java.util.List<DataSection> filterFindByGroupId(
+		long groupId, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data sections that the user has permissions to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of data sections
+	 * @param end the upper bound of the range of data sections (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data sections that the user has permission to view
+	 */
+	public java.util.List<DataSection> filterFindByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<DataSection> orderByComparator);
+
+	/**
+	 * Returns the data sections before and after the current data section in the ordered set of data sections that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param dataSectionId the primary key of the current data section
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data section
+	 * @throws NoSuchDataSectionException if a data section with the primary key could not be found
+	 */
+	public DataSection[] filterFindByGroupId_PrevAndNext(
+			long dataSectionId, long groupId,
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -531,6 +566,14 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the number of matching data sections
 	 */
 	public int countByGroupId(long groupId);
+
+	/**
+	 * Returns the number of data sections that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the number of matching data sections that the user has permission to view
+	 */
+	public int filterCountByGroupId(long groupId);
 
 	/**
 	 * Returns all the data sections where userId = &#63;.
@@ -562,16 +605,19 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUserId(long, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	public java.util.List<DataSection> findByUserId(
 		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data sections where userId = &#63;.
@@ -584,14 +630,11 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	public java.util.List<DataSection> findByUserId(
 		long userId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the first data section in the ordered set where userId = &#63;.
@@ -602,9 +645,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByUserId_First(
-			long userId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			long userId, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -615,9 +656,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the first matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByUserId_First(
-		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		long userId, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the last data section in the ordered set where userId = &#63;.
@@ -628,9 +667,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByUserId_Last(
-			long userId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			long userId, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -641,9 +678,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the last matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByUserId_Last(
-		long userId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		long userId, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the data sections before and after the current data section in the ordered set where userId = &#63;.
@@ -656,8 +691,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection[] findByUserId_PrevAndNext(
 			long dataSectionId, long userId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -705,16 +739,19 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByStatus(int, int, int, OrderByComparator)}
 	 * @param status the status
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	public java.util.List<DataSection> findByStatus(
 		int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data sections where status = &#63;.
@@ -727,14 +764,11 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	public java.util.List<DataSection> findByStatus(
 		int status, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the first data section in the ordered set where status = &#63;.
@@ -745,9 +779,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByStatus_First(
-			int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			int status, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -758,9 +790,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the first matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByStatus_First(
-		int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		int status, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the last data section in the ordered set where status = &#63;.
@@ -771,9 +801,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByStatus_Last(
-			int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			int status, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -784,9 +812,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the last matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByStatus_Last(
-		int status,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		int status, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the data sections before and after the current data section in the ordered set where status = &#63;.
@@ -799,8 +825,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection[] findByStatus_PrevAndNext(
 			long dataSectionId, int status,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -849,16 +874,19 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
 	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	public java.util.List<DataSection> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data sections where dataCollectionId = &#63;.
@@ -871,14 +899,11 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	public java.util.List<DataSection> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the first data section in the ordered set where dataCollectionId = &#63;.
@@ -890,8 +915,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection findByDataCollectionId_First(
 			long dataCollectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -903,8 +927,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection fetchByDataCollectionId_First(
 		long dataCollectionId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the last data section in the ordered set where dataCollectionId = &#63;.
@@ -916,8 +939,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection findByDataCollectionId_Last(
 			long dataCollectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -929,8 +951,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection fetchByDataCollectionId_Last(
 		long dataCollectionId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the data sections before and after the current data section in the ordered set where dataCollectionId = &#63;.
@@ -943,8 +964,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection[] findByDataCollectionId_PrevAndNext(
 			long dataSectionId, long dataCollectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -992,16 +1012,19 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSetId(long, int, int, OrderByComparator)}
 	 * @param dataSetId the data set ID
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	public java.util.List<DataSection> findByDataSetId(
 		long dataSetId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data sections where dataSetId = &#63;.
@@ -1014,14 +1037,11 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	public java.util.List<DataSection> findByDataSetId(
 		long dataSetId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the first data section in the ordered set where dataSetId = &#63;.
@@ -1032,9 +1052,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByDataSetId_First(
-			long dataSetId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			long dataSetId, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -1045,9 +1063,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the first matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByDataSetId_First(
-		long dataSetId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		long dataSetId, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the last data section in the ordered set where dataSetId = &#63;.
@@ -1058,9 +1074,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByDataSetId_Last(
-			long dataSetId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			long dataSetId, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -1071,9 +1085,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the last matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByDataSetId_Last(
-		long dataSetId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		long dataSetId, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the data sections before and after the current data section in the ordered set where dataSetId = &#63;.
@@ -1086,8 +1098,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection[] findByDataSetId_PrevAndNext(
 			long dataSectionId, long dataSetId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -1135,16 +1146,19 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByCopiedFrom(long, int, int, OrderByComparator)}
 	 * @param copiedFrom the copied from
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	public java.util.List<DataSection> findByCopiedFrom(
 		long copiedFrom, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data sections where copiedFrom = &#63;.
@@ -1157,14 +1171,11 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	public java.util.List<DataSection> findByCopiedFrom(
 		long copiedFrom, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the first data section in the ordered set where copiedFrom = &#63;.
@@ -1175,9 +1186,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByCopiedFrom_First(
-			long copiedFrom,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			long copiedFrom, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -1188,9 +1197,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the first matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByCopiedFrom_First(
-		long copiedFrom,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		long copiedFrom, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the last data section in the ordered set where copiedFrom = &#63;.
@@ -1201,9 +1208,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByCopiedFrom_Last(
-			long copiedFrom,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			long copiedFrom, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -1214,9 +1219,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the last matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByCopiedFrom_Last(
-		long copiedFrom,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		long copiedFrom, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the data sections before and after the current data section in the ordered set where copiedFrom = &#63;.
@@ -1229,8 +1232,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection[] findByCopiedFrom_PrevAndNext(
 			long dataSectionId, long copiedFrom,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -1278,16 +1280,19 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName(String, int, int, OrderByComparator)}
 	 * @param name the name
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data sections
 	 */
+	@Deprecated
 	public java.util.List<DataSection> findByName(
 		String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data sections where name = &#63;.
@@ -1300,14 +1305,11 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data sections
 	 */
 	public java.util.List<DataSection> findByName(
 		String name, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the first data section in the ordered set where name = &#63;.
@@ -1318,9 +1320,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByName_First(
-			String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			String name, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -1331,9 +1331,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the first matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByName_First(
-		String name,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		String name, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the last data section in the ordered set where name = &#63;.
@@ -1344,9 +1342,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @throws NoSuchDataSectionException if a matching data section could not be found
 	 */
 	public DataSection findByName_Last(
-			String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			String name, OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -1357,9 +1353,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @return the last matching data section, or <code>null</code> if a matching data section could not be found
 	 */
 	public DataSection fetchByName_Last(
-		String name,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		String name, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Returns the data sections before and after the current data section in the ordered set where name = &#63;.
@@ -1372,8 +1366,7 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 */
 	public DataSection[] findByName_PrevAndNext(
 			long dataSectionId, String name,
-			com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-				orderByComparator)
+			OrderByComparator<DataSection> orderByComparator)
 		throws NoSuchDataSectionException;
 
 	/**
@@ -1470,15 +1463,17 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataSectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data sections
 	 */
+	@Deprecated
 	public java.util.List<DataSection> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator);
+		int start, int end, OrderByComparator<DataSection> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data sections.
@@ -1490,14 +1485,10 @@ public interface DataSectionPersistence extends BasePersistence<DataSection> {
 	 * @param start the lower bound of the range of data sections
 	 * @param end the upper bound of the range of data sections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data sections
 	 */
 	public java.util.List<DataSection> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataSection>
-			orderByComparator,
-		boolean retrieveFromCache);
+		int start, int end, OrderByComparator<DataSection> orderByComparator);
 
 	/**
 	 * Removes all the data sections from the database.

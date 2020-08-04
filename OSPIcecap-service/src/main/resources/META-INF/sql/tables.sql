@@ -24,8 +24,7 @@ create table ICECAP_DataCollection (
 	version VARCHAR(75) null,
 	copiedFrom LONG,
 	organizationId LONG,
-	hasMetaData BOOLEAN,
-	hasLayout BOOLEAN
+	hasMetaData BOOLEAN
 );
 
 create table ICECAP_DataCollectionLayout (
@@ -106,8 +105,7 @@ create table ICECAP_DataPack (
 	version VARCHAR(75) null,
 	component VARCHAR(75) null,
 	copiedFrom LONG,
-	hasMetaData BOOLEAN,
-	hasLayout BOOLEAN
+	hasMetaData BOOLEAN
 );
 
 create table ICECAP_DataPackLayout (
@@ -134,8 +132,7 @@ create table ICECAP_DataSection (
 	name VARCHAR(75) null,
 	version VARCHAR(75) null,
 	copiedFrom LONG,
-	hasMetaData BOOLEAN,
-	hasLayout BOOLEAN
+	hasMetaData BOOLEAN
 );
 
 create table ICECAP_DataSectionLayout (
@@ -161,8 +158,7 @@ create table ICECAP_DataSet (
 	name VARCHAR(75) null,
 	version VARCHAR(75) null,
 	copiedFrom LONG,
-	hasMetaData BOOLEAN,
-	hasLayout BOOLEAN
+	hasMetaData BOOLEAN
 );
 
 create table ICECAP_DataSetLayout (

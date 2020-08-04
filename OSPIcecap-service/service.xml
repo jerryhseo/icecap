@@ -168,7 +168,6 @@
 
 		<!-- Order -->
         <column name="hasMetaData" type="boolean"></column>
-        <column name="hasLayout" type="boolean"></column>
 		<order by="asc">
 			<order-column name="createDate" />
 		</order>
@@ -221,6 +220,7 @@
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
         <reference entity="AssetCategory" package-path="com.liferay.portlet.asset"></reference>
+        <reference entity="DataType" package-path="com.osp.icecap"></reference>
 	</entity>
     <entity name="DataAnalysisLayout" remote-service="false" local-service="true">
         <column name="dataUuid" type="String" primary="true"></column>
@@ -315,7 +315,6 @@
 		
 		<!-- Finders -->
         <column name="hasMetaData" type="boolean"></column>
-        <column name="hasLayout" type="boolean"></column>
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
         </finder>
@@ -375,7 +374,6 @@
 		<!-- Finders -->
         <column name="copiedFrom" type="long"></column>
         <column name="hasMetaData" type="boolean"></column>
-        <column name="hasLayout" type="boolean"></column>
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
         </finder>
@@ -437,7 +435,6 @@
 		
 		<!-- Finders -->
         <column name="hasMetaData" type="boolean"></column>
-        <column name="hasLayout" type="boolean"></column>
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
         </finder>

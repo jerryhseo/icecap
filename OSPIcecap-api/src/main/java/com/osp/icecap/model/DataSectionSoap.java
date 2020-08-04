@@ -53,7 +53,6 @@ public class DataSectionSoap implements Serializable {
 		soapModel.setVersion(model.getVersion());
 		soapModel.setCopiedFrom(model.getCopiedFrom());
 		soapModel.setHasMetaData(model.isHasMetaData());
-		soapModel.setHasLayout(model.isHasLayout());
 
 		return soapModel;
 	}
@@ -263,18 +262,6 @@ public class DataSectionSoap implements Serializable {
 		_hasMetaData = hasMetaData;
 	}
 
-	public boolean getHasLayout() {
-		return _hasLayout;
-	}
-
-	public boolean isHasLayout() {
-		return _hasLayout;
-	}
-
-	public void setHasLayout(boolean hasLayout) {
-		_hasLayout = hasLayout;
-	}
-
 	private String _uuid;
 	private long _dataSectionId;
 	private long _companyId;
@@ -294,6 +281,5 @@ public class DataSectionSoap implements Serializable {
 	private String _version;
 	private long _copiedFrom;
 	private boolean _hasMetaData;
-	private boolean _hasLayout;
 
 }

@@ -15,14 +15,16 @@
 package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
 import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
 import com.osp.icecap.exception.NoSuchDataSectionException;
-import com.osp.icecap.exception.NoSuchDataTypeLinkException;
+import com.osp.icecap.exception.NoSuchMetaDataException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataAnalysisLayout;
 import com.osp.icecap.model.DataEntry;
@@ -30,12 +32,16 @@ import com.osp.icecap.model.DataPack;
 import com.osp.icecap.model.DataSection;
 import com.osp.icecap.model.DataSet;
 import com.osp.icecap.model.MetaData;
+import com.osp.icecap.service.DataAnalysisLayoutLocalService;
+import com.osp.icecap.service.DataEntryLocalService;
+import com.osp.icecap.service.DataPackLocalService;
+import com.osp.icecap.service.DataSectionLocalService;
+import com.osp.icecap.service.DataTypeLocalService;
+import com.osp.icecap.service.MetaDataLocalService;
 import com.osp.icecap.service.base.DataSectionLocalServiceBaseImpl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -92,15 +98,57 @@ public class DataSectionLocalServiceImpl
 				metaDataJSON, 
 				layout);
 		
-		return super.dataSectionPersistence.update(dataSection, sc);
+		super.dataSectionPersistence.update(dataSection, sc);
+		
+		// Add resource to the database to control permissions
+		super.resourceLocalService.addResources(
+								user.getCompanyId(), 
+								user.getGroupId(), 
+								user.getUserId(),
+							    DataSection.class.getName(), 
+							    dataSection.getDataSectionId(), 
+							    false, true, true);
+		
+		return dataSection;
 	}
 	
-	public DataSection removeDataSection( long dataSectionId ) throws NoSuchDataSectionException {
-		super.dataPackPersistence.removeByDataSectionId(dataSectionId);
-		super.dataEntryPersistence.removeByDataSectionId(dataSectionId);
-		super.dataAnalysisLayoutPersistence.removeByDataSectionId(dataSectionId);
-		super.metaDataPersistence.removeByDataSectionId(dataSectionId);
-		return super.dataSectionPersistence.remove(dataSectionId);
+	public DataSection removeDataSection( long dataSectionId ) throws PortalException {
+		DataSection dataSection = super.dataSectionPersistence.findByPrimaryKey(dataSectionId);
+		
+		return this.removeDataSection(dataSection);
+	}
+	
+	private DataSection removeDataSection( DataSection dataSection ) throws PortalException {
+		this.metaDataLocalService.removeMetaData(dataSection.getUuid());
+		this.dataAnalysisLayoutLocalService.removeDataAnalysisLayout(dataSection.getUuid());
+		this.dataPackLocalService.removeDataPacksByDataSectionId(dataSection.getDataSectionId());
+		
+		super.dataSectionPersistence.remove(dataSection);
+		
+		//Remove resources for conrolling permissions. Other
+		super.resourceLocalService.deleteResource(
+								dataSection.getCompanyId(),
+								DataSection.class.getName(), 
+							    ResourceConstants.SCOPE_INDIVIDUAL,
+							    dataSection.getDataSectionId());
+		
+		return dataSection;
+	}
+	
+	private void removeDataSectionList( List<DataSection> dataSectionLIST ) throws PortalException {
+		for( DataSection dataSection : dataSectionLIST ) {
+			this.removeDataSection(dataSection);
+		}
+	}
+	
+	public void removeDataSectionsByDataCollectionId( long dataCollectionId ) throws PortalException {
+		List<DataSection> dataSectionLIST = super.dataSectionPersistence.findByDataCollectionId(dataCollectionId);
+		this.removeDataSectionList(dataSectionLIST);
+	}
+	
+	public void removeDataSectionsByDataSetId( long dataSetId ) throws PortalException {
+		List<DataSection> dataSectionLIST = super.dataSectionPersistence.findByDataSetId(dataSetId);
+		this.removeDataSectionList(dataSectionLIST);
 	}
 	
 	public DataSection updateDataSection(
@@ -127,7 +175,17 @@ public class DataSectionLocalServiceImpl
 				metaDataJSON, 
 				layout);
 
-		return super.dataSectionPersistence.update(dataSection, sc);
+		super.dataSectionPersistence.update(dataSection, sc);
+		
+		// Update resource to the database to control permissions
+		super.resourceLocalService.updateResources(
+										dataSection.getCompanyId(), 
+										dataSection.getGroupId(), 
+									    DataSection.class.getName(), 
+									    dataSet.getDataSetId(), 
+									    sc.getModelPermissions());
+		
+		return dataSection;
 	}
 	
 	public List<DataSection> getDataSectionVarients( long dataSectionId ){
@@ -186,15 +244,28 @@ public class DataSectionLocalServiceImpl
 			dataSection.setHasMetaData(false);
 		}
 		
-		if(Validator.isBlank(layout) ) {
-			dataSection.setHasLayout(false);
-		}
-		else {
-			DataAnalysisLayout dataAnalysisLayout = super.dataAnalysisLayoutPersistence.create(dataSection.getUuid());
-			dataAnalysisLayout.setLayout(layout);
-			super.dataAnalysisLayoutPersistence.update(dataAnalysisLayout);
-		}
+		DataAnalysisLayout dataAnalysisLayout = super.dataAnalysisLayoutPersistence.create(dataSection.getUuid());
+		dataAnalysisLayout.setLayout(layout);
+		super.dataAnalysisLayoutPersistence.update(dataAnalysisLayout);
 		
 		return dataSection;
 	}
+	
+	@BeanReference
+	private volatile DataTypeLocalService dataTypeLocalService;
+	
+	@BeanReference
+	private volatile MetaDataLocalService metaDataLocalService;
+	
+	@BeanReference
+	private volatile DataAnalysisLayoutLocalService dataAnalysisLayoutLocalService;
+	
+	@BeanReference
+	private volatile DataSectionLocalService dataSectionLocalService;
+	
+	@BeanReference
+	private volatile DataPackLocalService dataPackLocalService;
+	
+	@BeanReference
+	private volatile DataEntryLocalService dataEntryLocalService;
 }

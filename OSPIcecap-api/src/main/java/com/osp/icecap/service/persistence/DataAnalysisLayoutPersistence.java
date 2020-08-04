@@ -15,6 +15,7 @@
 package com.osp.icecap.service.persistence;
 
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
+import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
 import com.osp.icecap.model.DataAnalysisLayout;
@@ -73,16 +74,19 @@ public interface DataAnalysisLayoutPersistence
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
 	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
+	@Deprecated
 	public java.util.List<DataAnalysisLayout> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data analysis layouts where dataCollectionId = &#63;.
@@ -95,14 +99,11 @@ public interface DataAnalysisLayoutPersistence
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
 	public java.util.List<DataAnalysisLayout> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the first data analysis layout in the ordered set where dataCollectionId = &#63;.
@@ -114,8 +115,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout findByDataCollectionId_First(
 			long dataCollectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -127,8 +127,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout fetchByDataCollectionId_First(
 		long dataCollectionId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the last data analysis layout in the ordered set where dataCollectionId = &#63;.
@@ -140,8 +139,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout findByDataCollectionId_Last(
 			long dataCollectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -153,8 +151,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout fetchByDataCollectionId_Last(
 		long dataCollectionId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataCollectionId = &#63;.
@@ -167,8 +164,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout[] findByDataCollectionId_PrevAndNext(
 			String dataUuid, long dataCollectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -216,16 +212,19 @@ public interface DataAnalysisLayoutPersistence
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSetId(long, int, int, OrderByComparator)}
 	 * @param dataSetId the data set ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
+	@Deprecated
 	public java.util.List<DataAnalysisLayout> findByDataSetId(
 		long dataSetId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data analysis layouts where dataSetId = &#63;.
@@ -238,14 +237,11 @@ public interface DataAnalysisLayoutPersistence
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
 	public java.util.List<DataAnalysisLayout> findByDataSetId(
 		long dataSetId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the first data analysis layout in the ordered set where dataSetId = &#63;.
@@ -257,8 +253,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout findByDataSetId_First(
 			long dataSetId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -270,8 +265,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout fetchByDataSetId_First(
 		long dataSetId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the last data analysis layout in the ordered set where dataSetId = &#63;.
@@ -283,8 +277,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout findByDataSetId_Last(
 			long dataSetId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -296,8 +289,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout fetchByDataSetId_Last(
 		long dataSetId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataSetId = &#63;.
@@ -310,8 +302,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout[] findByDataSetId_PrevAndNext(
 			String dataUuid, long dataSetId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -360,16 +351,19 @@ public interface DataAnalysisLayoutPersistence
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSectionId(long, int, int, OrderByComparator)}
 	 * @param dataSectionId the data section ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
+	@Deprecated
 	public java.util.List<DataAnalysisLayout> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data analysis layouts where dataSectionId = &#63;.
@@ -382,14 +376,11 @@ public interface DataAnalysisLayoutPersistence
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
 	public java.util.List<DataAnalysisLayout> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the first data analysis layout in the ordered set where dataSectionId = &#63;.
@@ -401,8 +392,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout findByDataSectionId_First(
 			long dataSectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -414,8 +404,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout fetchByDataSectionId_First(
 		long dataSectionId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the last data analysis layout in the ordered set where dataSectionId = &#63;.
@@ -427,8 +416,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout findByDataSectionId_Last(
 			long dataSectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -440,8 +428,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout fetchByDataSectionId_Last(
 		long dataSectionId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataSectionId = &#63;.
@@ -454,8 +441,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout[] findByDataSectionId_PrevAndNext(
 			String dataUuid, long dataSectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -503,16 +489,19 @@ public interface DataAnalysisLayoutPersistence
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataPackId(long, int, int, OrderByComparator)}
 	 * @param dataPackId the data pack ID
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
+	@Deprecated
 	public java.util.List<DataAnalysisLayout> findByDataPackId(
 		long dataPackId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data analysis layouts where dataPackId = &#63;.
@@ -525,14 +514,11 @@ public interface DataAnalysisLayoutPersistence
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data analysis layouts
 	 */
 	public java.util.List<DataAnalysisLayout> findByDataPackId(
 		long dataPackId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the first data analysis layout in the ordered set where dataPackId = &#63;.
@@ -544,8 +530,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout findByDataPackId_First(
 			long dataPackId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -557,8 +542,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout fetchByDataPackId_First(
 		long dataPackId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the last data analysis layout in the ordered set where dataPackId = &#63;.
@@ -570,8 +554,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout findByDataPackId_Last(
 			long dataPackId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -583,8 +566,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout fetchByDataPackId_Last(
 		long dataPackId,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Returns the data analysis layouts before and after the current data analysis layout in the ordered set where dataPackId = &#63;.
@@ -597,8 +579,7 @@ public interface DataAnalysisLayoutPersistence
 	 */
 	public DataAnalysisLayout[] findByDataPackId_PrevAndNext(
 			String dataUuid, long dataPackId,
-			com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-				orderByComparator)
+			OrderByComparator<DataAnalysisLayout> orderByComparator)
 		throws NoSuchDataAnalysisLayoutException;
 
 	/**
@@ -696,15 +677,18 @@ public interface DataAnalysisLayoutPersistence
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataAnalysisLayoutModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data analysis layouts
 	 */
+	@Deprecated
 	public java.util.List<DataAnalysisLayout> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator);
+		OrderByComparator<DataAnalysisLayout> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the data analysis layouts.
@@ -716,14 +700,11 @@ public interface DataAnalysisLayoutPersistence
 	 * @param start the lower bound of the range of data analysis layouts
 	 * @param end the upper bound of the range of data analysis layouts (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data analysis layouts
 	 */
 	public java.util.List<DataAnalysisLayout> findAll(
 		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<DataAnalysisLayout>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<DataAnalysisLayout> orderByComparator);
 
 	/**
 	 * Removes all the data analysis layouts from the database.

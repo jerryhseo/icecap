@@ -415,9 +415,16 @@ public class DataSetLocalServiceWrapper
 
 	@Override
 	public com.osp.icecap.model.DataSet removeDataSet(long dataSetId)
-		throws com.osp.icecap.exception.NoSuchDataSetException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataSetLocalService.removeDataSet(dataSetId);
+	}
+
+	@Override
+	public void removeDataSetsByDataCollectionId(long dataCollectionId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_dataSetLocalService.removeDataSetsByDataCollectionId(dataCollectionId);
 	}
 
 	/**
@@ -439,7 +446,7 @@ public class DataSetLocalServiceWrapper
 			long copiedFrom,
 			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
 			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
-		throws com.osp.icecap.exception.NoSuchMetaDataFieldException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataSetLocalService.updateDataSet(
 			dataSetId, dataCollectionId, name, version, copiedFrom,

@@ -431,9 +431,28 @@ public class DataSectionLocalServiceWrapper
 	@Override
 	public com.osp.icecap.model.DataSection removeDataSection(
 			long dataSectionId)
-		throws com.osp.icecap.exception.NoSuchDataSectionException {
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchDataSectionException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
 
 		return _dataSectionLocalService.removeDataSection(dataSectionId);
+	}
+
+	@Override
+	public void removeDataSectionsByDataCollectionId(long dataCollectionId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		_dataSectionLocalService.removeDataSectionsByDataCollectionId(
+			dataCollectionId);
+	}
+
+	@Override
+	public void removeDataSectionsByDataSetId(long dataSetId)
+		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
+			   com.osp.icecap.exception.NoSuchMetaDataException {
+
+		_dataSectionLocalService.removeDataSectionsByDataSetId(dataSetId);
 	}
 
 	/**

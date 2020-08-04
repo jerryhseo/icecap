@@ -15,7 +15,10 @@
 package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
-
+import com.liferay.portal.kernel.json.JSONObject;
+import com.osp.icecap.exception.NoSuchMetaDataException;
+import com.osp.icecap.exception.NoSuchMetaDataFieldException;
+import com.osp.icecap.model.MetaData;
 import com.osp.icecap.service.base.MetaDataLocalServiceBaseImpl;
 
 import org.osgi.service.component.annotations.Component;
@@ -39,9 +42,43 @@ import org.osgi.service.component.annotations.Component;
 )
 public class MetaDataLocalServiceImpl extends MetaDataLocalServiceBaseImpl {
 
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. Use <code>com.osp.icecap.service.MetaDataLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.osp.icecap.service.MetaDataLocalServiceUtil</code>.
-	 */
+	public MetaData addMetaData( String dataUuid, JSONObject metaDataJSON ) throws NoSuchMetaDataFieldException {
+		MetaData metaData = super.metaDataPersistence.create(dataUuid);
+		
+		metaData.setMetaData(metaDataJSON);
+		
+		super.metaDataPersistence.update(metaData);
+		return metaData;
+	}
+	
+	public MetaData removeMetaData( String dataUuid ) throws NoSuchMetaDataException {
+		return super.metaDataPersistence.remove(dataUuid);
+	}
+	public MetaData removeMetaData( MetaData metaData ){
+		return super.metaDataPersistence.remove(metaData);
+	}
+	
+	public void removeByDataCollectionId( long dataCollectionId ) {
+		super.metaDataPersistence.removeByDataCollectionId(dataCollectionId);
+	}
+	
+	public void removeByDataSetId( long dataSetId ) {
+		super.metaDataPersistence.removeByDataSetId(dataSetId);
+	}
+	
+	public void removeByDataSectionId( long dataSectionId ) {
+		super.metaDataPersistence.removeByDataSectionId(dataSectionId);
+	}
+	
+	public void removeByDataPackId( long dataPackId ) {
+		super.metaDataPersistence.removeByDataPackId(dataPackId);
+	}
+	
+	public MetaData updateMetaData( String dataUuid, JSONObject metaDataJSON ) throws NoSuchMetaDataException, NoSuchMetaDataFieldException {
+		MetaData metaData = super.metaDataPersistence.findByPrimaryKey(dataUuid);
+		metaData.setMetaData(metaDataJSON);
+		
+		super.metaDataPersistence.update(metaData);
+		return metaData;
+	}
 }

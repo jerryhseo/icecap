@@ -380,27 +380,6 @@ public interface DataSetModel
 	public void setHasMetaData(boolean hasMetaData);
 
 	/**
-	 * Returns the has layout of this data set.
-	 *
-	 * @return the has layout of this data set
-	 */
-	public boolean getHasLayout();
-
-	/**
-	 * Returns <code>true</code> if this data set is has layout.
-	 *
-	 * @return <code>true</code> if this data set is has layout; <code>false</code> otherwise
-	 */
-	public boolean isHasLayout();
-
-	/**
-	 * Sets whether this data set is has layout.
-	 *
-	 * @param hasLayout the has layout of this data set
-	 */
-	public void setHasLayout(boolean hasLayout);
-
-	/**
 	 * Returns <code>true</code> if this data set is approved.
 	 *
 	 * @return <code>true</code> if this data set is approved; <code>false</code> otherwise

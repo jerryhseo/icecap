@@ -22,14 +22,15 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.service.persistence.CompanyProvider;
-import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -137,18 +138,21 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid(String, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByUuid(uuid, start, end, orderByComparator, true);
+		return findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
@@ -162,14 +166,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -189,19 +191,15 @@ public class DataTypePersistenceImpl
 			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if (!uuid.equals(dataType.getUuid())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if (!uuid.equals(dataType.getUuid())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -680,15 +678,20 @@ public class DataTypePersistenceImpl
 	}
 
 	/**
-	 * Returns the data type where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data type where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByUUID_G(String,long)}
 	 * @param uuid the uuid
 	 * @param groupId the group ID
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
+	@Deprecated
 	@Override
-	public DataType fetchByUUID_G(String uuid, long groupId) {
-		return fetchByUUID_G(uuid, groupId, true);
+	public DataType fetchByUUID_G(
+		String uuid, long groupId, boolean useFinderCache) {
+
+		return fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
@@ -696,23 +699,17 @@ public class DataTypePersistenceImpl
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	@Override
-	public DataType fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache) {
-
+	public DataType fetchByUUID_G(String uuid, long groupId) {
 		uuid = Objects.toString(uuid, "");
 
 		Object[] finderArgs = new Object[] {uuid, groupId};
 
-		Object result = null;
-
-		if (retrieveFromCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByUUID_G, finderArgs, this);
-		}
+		Object result = finderCache.getResult(
+			_finderPathFetchByUUID_G, finderArgs, this);
 
 		if (result instanceof DataType) {
 			DataType dataType = (DataType)result;
@@ -929,20 +926,22 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid_C(String,long, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
+		return findByUuid_C(uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
@@ -957,14 +956,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -986,21 +983,17 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if (!uuid.equals(dataType.getUuid()) ||
+					(companyId != dataType.getCompanyId())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if (!uuid.equals(dataType.getUuid()) ||
-						(companyId != dataType.getCompanyId())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -1515,18 +1508,21 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByGroupId(long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByGroupId(groupId, start, end, orderByComparator, true);
+		return findByGroupId(groupId, start, end, orderByComparator);
 	}
 
 	/**
@@ -1540,14 +1536,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1565,19 +1559,15 @@ public class DataTypePersistenceImpl
 			finderArgs = new Object[] {groupId, start, end, orderByComparator};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((groupId != dataType.getGroupId())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((groupId != dataType.getGroupId())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -1908,6 +1898,333 @@ public class DataTypePersistenceImpl
 	}
 
 	/**
+	 * Returns all the data types that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByGroupId(long groupId) {
+		return filterFindByGroupId(
+			groupId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data types that the user has permission to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @return the range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByGroupId(
+		long groupId, int start, int end) {
+
+		return filterFindByGroupId(groupId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data types that the user has permissions to view where groupId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByGroupId(
+		long groupId, int start, int end,
+		OrderByComparator<DataType> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupId(groupId, start, end, orderByComparator);
+		}
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				3 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			return (List<DataType>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the data types before and after the current data type in the ordered set of data types that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param dataTypeId the primary key of the current data type
+	 * @param groupId the group ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data type
+	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
+	 */
+	@Override
+	public DataType[] filterFindByGroupId_PrevAndNext(
+			long dataTypeId, long groupId,
+			OrderByComparator<DataType> orderByComparator)
+		throws NoSuchDataTypeException {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupId_PrevAndNext(
+				dataTypeId, groupId, orderByComparator);
+		}
+
+		DataType dataType = findByPrimaryKey(dataTypeId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataType[] array = new DataTypeImpl[3];
+
+			array[0] = filterGetByGroupId_PrevAndNext(
+				session, dataType, groupId, orderByComparator, true);
+
+			array[1] = dataType;
+
+			array[2] = filterGetByGroupId_PrevAndNext(
+				session, dataType, groupId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataType filterGetByGroupId_PrevAndNext(
+		Session session, DataType dataType, long groupId,
+		OrderByComparator<DataType> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataType)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataType> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the data types where groupId = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -1973,6 +2290,54 @@ public class DataTypePersistenceImpl
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of data types that the user has permission to view where groupId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @return the number of matching data types that the user has permission to view
+	 */
+	@Override
+	public int filterCountByGroupId(long groupId) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByGroupId(groupId);
+		}
+
+		StringBundler query = new StringBundler(2);
+
+		query.append(_FILTER_SQL_COUNT_DATATYPE_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPID_GROUPID_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
 	private static final String _FINDER_COLUMN_GROUPID_GROUPID_2 =
 		"dataType.groupId = ?";
 
@@ -2015,18 +2380,21 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUserId(long, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByUserId(userId, start, end, orderByComparator, true);
+		return findByUserId(userId, start, end, orderByComparator);
 	}
 
 	/**
@@ -2040,14 +2408,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2065,19 +2431,15 @@ public class DataTypePersistenceImpl
 			finderArgs = new Object[] {userId, start, end, orderByComparator};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((userId != dataType.getUserId())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((userId != dataType.getUserId())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -2515,18 +2877,21 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByStatus(int, int, int, OrderByComparator)}
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByStatus(status, start, end, orderByComparator, true);
+		return findByStatus(status, start, end, orderByComparator);
 	}
 
 	/**
@@ -2540,14 +2905,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2565,19 +2928,15 @@ public class DataTypePersistenceImpl
 			finderArgs = new Object[] {status, start, end, orderByComparator};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((status != dataType.getStatus())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((status != dataType.getStatus())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -3020,19 +3379,22 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_U(long,long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByG_U(
 		long groupId, long userId, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByG_U(groupId, userId, start, end, orderByComparator, true);
+		return findByG_U(groupId, userId, start, end, orderByComparator);
 	}
 
 	/**
@@ -3047,14 +3409,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByG_U(
 		long groupId, long userId, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3074,21 +3434,17 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((groupId != dataType.getGroupId()) ||
+					(userId != dataType.getUserId())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((groupId != dataType.getGroupId()) ||
-						(userId != dataType.getUserId())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -3444,6 +3800,345 @@ public class DataTypePersistenceImpl
 	}
 
 	/**
+	 * Returns all the data types that the user has permission to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @return the matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByG_U(long groupId, long userId) {
+		return filterFindByG_U(
+			groupId, userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data types that the user has permission to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @return the range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByG_U(
+		long groupId, long userId, int start, int end) {
+
+		return filterFindByG_U(groupId, userId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data types that the user has permissions to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByG_U(
+		long groupId, long userId, int start, int end,
+		OrderByComparator<DataType> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByG_U(groupId, userId, start, end, orderByComparator);
+		}
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_G_U_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_G_U_USERID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(userId);
+
+			return (List<DataType>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the data types before and after the current data type in the ordered set of data types that the user has permission to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * @param dataTypeId the primary key of the current data type
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data type
+	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
+	 */
+	@Override
+	public DataType[] filterFindByG_U_PrevAndNext(
+			long dataTypeId, long groupId, long userId,
+			OrderByComparator<DataType> orderByComparator)
+		throws NoSuchDataTypeException {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByG_U_PrevAndNext(
+				dataTypeId, groupId, userId, orderByComparator);
+		}
+
+		DataType dataType = findByPrimaryKey(dataTypeId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataType[] array = new DataTypeImpl[3];
+
+			array[0] = filterGetByG_U_PrevAndNext(
+				session, dataType, groupId, userId, orderByComparator, true);
+
+			array[1] = dataType;
+
+			array[2] = filterGetByG_U_PrevAndNext(
+				session, dataType, groupId, userId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataType filterGetByG_U_PrevAndNext(
+		Session session, DataType dataType, long groupId, long userId,
+		OrderByComparator<DataType> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_G_U_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_G_U_USERID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(userId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataType)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataType> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the data types where groupId = &#63; and userId = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -3516,6 +4211,59 @@ public class DataTypePersistenceImpl
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of data types that the user has permission to view where groupId = &#63; and userId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @return the number of matching data types that the user has permission to view
+	 */
+	@Override
+	public int filterCountByG_U(long groupId, long userId) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByG_U(groupId, userId);
+		}
+
+		StringBundler query = new StringBundler(3);
+
+		query.append(_FILTER_SQL_COUNT_DATATYPE_WHERE);
+
+		query.append(_FINDER_COLUMN_G_U_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_G_U_USERID_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(userId);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
 	private static final String _FINDER_COLUMN_G_U_GROUPID_2 =
 		"dataType.groupId = ? AND ";
 
@@ -3566,19 +4314,22 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_S(long,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByG_S(
 		long groupId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByG_S(groupId, status, start, end, orderByComparator, true);
+		return findByG_S(groupId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -3593,14 +4344,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByG_S(
 		long groupId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3620,21 +4369,17 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((groupId != dataType.getGroupId()) ||
+					(status != dataType.getStatus())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((groupId != dataType.getGroupId()) ||
-						(status != dataType.getStatus())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -3990,6 +4735,345 @@ public class DataTypePersistenceImpl
 	}
 
 	/**
+	 * Returns all the data types that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByG_S(long groupId, int status) {
+		return filterFindByG_S(
+			groupId, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data types that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @return the range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByG_S(
+		long groupId, int status, int start, int end) {
+
+		return filterFindByG_S(groupId, status, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data types that the user has permissions to view where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByG_S(
+		long groupId, int status, int start, int end,
+		OrderByComparator<DataType> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByG_S(groupId, status, start, end, orderByComparator);
+		}
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_G_S_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_G_S_STATUS_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(status);
+
+			return (List<DataType>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the data types before and after the current data type in the ordered set of data types that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * @param dataTypeId the primary key of the current data type
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data type
+	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
+	 */
+	@Override
+	public DataType[] filterFindByG_S_PrevAndNext(
+			long dataTypeId, long groupId, int status,
+			OrderByComparator<DataType> orderByComparator)
+		throws NoSuchDataTypeException {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByG_S_PrevAndNext(
+				dataTypeId, groupId, status, orderByComparator);
+		}
+
+		DataType dataType = findByPrimaryKey(dataTypeId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataType[] array = new DataTypeImpl[3];
+
+			array[0] = filterGetByG_S_PrevAndNext(
+				session, dataType, groupId, status, orderByComparator, true);
+
+			array[1] = dataType;
+
+			array[2] = filterGetByG_S_PrevAndNext(
+				session, dataType, groupId, status, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataType filterGetByG_S_PrevAndNext(
+		Session session, DataType dataType, long groupId, int status,
+		OrderByComparator<DataType> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_G_S_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_G_S_STATUS_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(status);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataType)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataType> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the data types where groupId = &#63; and status = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -4062,6 +5146,59 @@ public class DataTypePersistenceImpl
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of data types that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the number of matching data types that the user has permission to view
+	 */
+	@Override
+	public int filterCountByG_S(long groupId, int status) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByG_S(groupId, status);
+		}
+
+		StringBundler query = new StringBundler(3);
+
+		query.append(_FILTER_SQL_COUNT_DATATYPE_WHERE);
+
+		query.append(_FINDER_COLUMN_G_S_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_G_S_STATUS_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(status);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
 	private static final String _FINDER_COLUMN_G_S_GROUPID_2 =
 		"dataType.groupId = ? AND ";
 
@@ -4112,19 +5249,22 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByU_S(long,int, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByU_S(
 		long userId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByU_S(userId, status, start, end, orderByComparator, true);
+		return findByU_S(userId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -4139,14 +5279,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByU_S(
 		long userId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -4166,21 +5304,17 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((userId != dataType.getUserId()) ||
+					(status != dataType.getStatus())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((userId != dataType.getUserId()) ||
-						(status != dataType.getStatus())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -4660,21 +5794,24 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_U_S(long,long,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByG_U_S(
 		long groupId, long userId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return findByG_U_S(
-			groupId, userId, status, start, end, orderByComparator, true);
+			groupId, userId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -4690,14 +5827,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByG_U_S(
 		long groupId, long userId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -4717,22 +5852,18 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((groupId != dataType.getGroupId()) ||
+					(userId != dataType.getUserId()) ||
+					(status != dataType.getStatus())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((groupId != dataType.getGroupId()) ||
-						(userId != dataType.getUserId()) ||
-						(status != dataType.getStatus())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -5111,6 +6242,364 @@ public class DataTypePersistenceImpl
 	}
 
 	/**
+	 * Returns all the data types that the user has permission to view where groupId = &#63; and userId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param status the status
+	 * @return the matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByG_U_S(
+		long groupId, long userId, int status) {
+
+		return filterFindByG_U_S(
+			groupId, userId, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			null);
+	}
+
+	/**
+	 * Returns a range of all the data types that the user has permission to view where groupId = &#63; and userId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param status the status
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @return the range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByG_U_S(
+		long groupId, long userId, int status, int start, int end) {
+
+		return filterFindByG_U_S(groupId, userId, status, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data types that the user has permissions to view where groupId = &#63; and userId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param status the status
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByG_U_S(
+		long groupId, long userId, int status, int start, int end,
+		OrderByComparator<DataType> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByG_U_S(
+				groupId, userId, status, start, end, orderByComparator);
+		}
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(6);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_G_U_S_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_G_U_S_USERID_2);
+
+		query.append(_FINDER_COLUMN_G_U_S_STATUS_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(userId);
+
+			qPos.add(status);
+
+			return (List<DataType>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the data types before and after the current data type in the ordered set of data types that the user has permission to view where groupId = &#63; and userId = &#63; and status = &#63;.
+	 *
+	 * @param dataTypeId the primary key of the current data type
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data type
+	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
+	 */
+	@Override
+	public DataType[] filterFindByG_U_S_PrevAndNext(
+			long dataTypeId, long groupId, long userId, int status,
+			OrderByComparator<DataType> orderByComparator)
+		throws NoSuchDataTypeException {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByG_U_S_PrevAndNext(
+				dataTypeId, groupId, userId, status, orderByComparator);
+		}
+
+		DataType dataType = findByPrimaryKey(dataTypeId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataType[] array = new DataTypeImpl[3];
+
+			array[0] = filterGetByG_U_S_PrevAndNext(
+				session, dataType, groupId, userId, status, orderByComparator,
+				true);
+
+			array[1] = dataType;
+
+			array[2] = filterGetByG_U_S_PrevAndNext(
+				session, dataType, groupId, userId, status, orderByComparator,
+				false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataType filterGetByG_U_S_PrevAndNext(
+		Session session, DataType dataType, long groupId, long userId,
+		int status, OrderByComparator<DataType> orderByComparator,
+		boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				7 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(6);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_G_U_S_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_G_U_S_USERID_2);
+
+		query.append(_FINDER_COLUMN_G_U_S_STATUS_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(userId);
+
+		qPos.add(status);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataType)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataType> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the data types where groupId = &#63; and userId = &#63; and status = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -5189,6 +6678,64 @@ public class DataTypePersistenceImpl
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of data types that the user has permission to view where groupId = &#63; and userId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param status the status
+	 * @return the number of matching data types that the user has permission to view
+	 */
+	@Override
+	public int filterCountByG_U_S(long groupId, long userId, int status) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByG_U_S(groupId, userId, status);
+		}
+
+		StringBundler query = new StringBundler(4);
+
+		query.append(_FILTER_SQL_COUNT_DATATYPE_WHERE);
+
+		query.append(_FINDER_COLUMN_G_U_S_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_G_U_S_USERID_2);
+
+		query.append(_FINDER_COLUMN_G_U_S_STATUS_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(userId);
+
+			qPos.add(status);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
 	private static final String _FINDER_COLUMN_G_U_S_GROUPID_2 =
 		"dataType.groupId = ? AND ";
 
@@ -5237,18 +6784,21 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName(String, int, int, OrderByComparator)}
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByName(name, start, end, orderByComparator, true);
+		return findByName(name, start, end, orderByComparator);
 	}
 
 	/**
@@ -5262,14 +6812,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		name = Objects.toString(name, "");
 
@@ -5289,19 +6837,15 @@ public class DataTypePersistenceImpl
 			finderArgs = new Object[] {name, start, end, orderByComparator};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if (!name.equals(dataType.getName())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if (!name.equals(dataType.getName())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -5783,19 +7327,22 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G(long,String, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByName_G(
 		long groupId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByName_G(groupId, name, start, end, orderByComparator, true);
+		return findByName_G(groupId, name, start, end, orderByComparator);
 	}
 
 	/**
@@ -5810,14 +7357,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByName_G(
 		long groupId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		name = Objects.toString(name, "");
 
@@ -5839,21 +7384,17 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((groupId != dataType.getGroupId()) ||
+					!name.equals(dataType.getName())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((groupId != dataType.getGroupId()) ||
-						!name.equals(dataType.getName())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -6234,6 +7775,371 @@ public class DataTypePersistenceImpl
 	}
 
 	/**
+	 * Returns all the data types that the user has permission to view where groupId = &#63; and name = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @return the matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G(long groupId, String name) {
+		return filterFindByName_G(
+			groupId, name, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data types that the user has permission to view where groupId = &#63; and name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @return the range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G(
+		long groupId, String name, int start, int end) {
+
+		return filterFindByName_G(groupId, name, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data types that the user has permissions to view where groupId = &#63; and name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G(
+		long groupId, String name, int start, int end,
+		OrderByComparator<DataType> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByName_G(groupId, name, start, end, orderByComparator);
+		}
+
+		name = Objects.toString(name, "");
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_GROUPID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_NAME_2);
+		}
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			if (bindName) {
+				qPos.add(name);
+			}
+
+			return (List<DataType>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the data types before and after the current data type in the ordered set of data types that the user has permission to view where groupId = &#63; and name = &#63;.
+	 *
+	 * @param dataTypeId the primary key of the current data type
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data type
+	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
+	 */
+	@Override
+	public DataType[] filterFindByName_G_PrevAndNext(
+			long dataTypeId, long groupId, String name,
+			OrderByComparator<DataType> orderByComparator)
+		throws NoSuchDataTypeException {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByName_G_PrevAndNext(
+				dataTypeId, groupId, name, orderByComparator);
+		}
+
+		name = Objects.toString(name, "");
+
+		DataType dataType = findByPrimaryKey(dataTypeId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataType[] array = new DataTypeImpl[3];
+
+			array[0] = filterGetByName_G_PrevAndNext(
+				session, dataType, groupId, name, orderByComparator, true);
+
+			array[1] = dataType;
+
+			array[2] = filterGetByName_G_PrevAndNext(
+				session, dataType, groupId, name, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataType filterGetByName_G_PrevAndNext(
+		Session session, DataType dataType, long groupId, String name,
+		OrderByComparator<DataType> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_GROUPID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_NAME_2);
+		}
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		if (bindName) {
+			qPos.add(name);
+		}
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataType)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataType> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the data types where groupId = &#63; and name = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -6319,6 +8225,72 @@ public class DataTypePersistenceImpl
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of data types that the user has permission to view where groupId = &#63; and name = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @return the number of matching data types that the user has permission to view
+	 */
+	@Override
+	public int filterCountByName_G(long groupId, String name) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByName_G(groupId, name);
+		}
+
+		name = Objects.toString(name, "");
+
+		StringBundler query = new StringBundler(3);
+
+		query.append(_FILTER_SQL_COUNT_DATATYPE_WHERE);
+
+		query.append(_FINDER_COLUMN_NAME_G_GROUPID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_NAME_2);
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			if (bindName) {
+				qPos.add(name);
+			}
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
 	private static final String _FINDER_COLUMN_NAME_G_GROUPID_2 =
 		"dataType.groupId = ? AND ";
 
@@ -6372,19 +8344,22 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_U(long,String, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByName_U(
 		long userId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByName_U(userId, name, start, end, orderByComparator, true);
+		return findByName_U(userId, name, start, end, orderByComparator);
 	}
 
 	/**
@@ -6399,14 +8374,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByName_U(
 		long userId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		name = Objects.toString(name, "");
 
@@ -6428,21 +8401,17 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((userId != dataType.getUserId()) ||
+					!name.equals(dataType.getName())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((userId != dataType.getUserId()) ||
-						!name.equals(dataType.getName())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -6959,19 +8928,22 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_S(String,int, int, int, OrderByComparator)}
 	 * @param name the name
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByName_S(
 		String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return findByName_S(name, status, start, end, orderByComparator, true);
+		return findByName_S(name, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -6986,14 +8958,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByName_S(
 		String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		name = Objects.toString(name, "");
 
@@ -7015,21 +8985,17 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if (!name.equals(dataType.getName()) ||
+					(status != dataType.getStatus())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if (!name.equals(dataType.getName()) ||
-						(status != dataType.getStatus())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -7550,21 +9516,24 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G_U(long,long,String, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByName_G_U(
 		long groupId, long userId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return findByName_G_U(
-			groupId, userId, name, start, end, orderByComparator, true);
+			groupId, userId, name, start, end, orderByComparator);
 	}
 
 	/**
@@ -7580,14 +9549,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByName_G_U(
 		long groupId, long userId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		name = Objects.toString(name, "");
 
@@ -7609,22 +9576,18 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((groupId != dataType.getGroupId()) ||
+					(userId != dataType.getUserId()) ||
+					!name.equals(dataType.getName())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((groupId != dataType.getGroupId()) ||
-						(userId != dataType.getUserId()) ||
-						!name.equals(dataType.getName())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -8027,6 +9990,389 @@ public class DataTypePersistenceImpl
 	}
 
 	/**
+	 * Returns all the data types that the user has permission to view where groupId = &#63; and userId = &#63; and name = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param name the name
+	 * @return the matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G_U(
+		long groupId, long userId, String name) {
+
+		return filterFindByName_G_U(
+			groupId, userId, name, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data types that the user has permission to view where groupId = &#63; and userId = &#63; and name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param name the name
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @return the range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G_U(
+		long groupId, long userId, String name, int start, int end) {
+
+		return filterFindByName_G_U(groupId, userId, name, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data types that the user has permissions to view where groupId = &#63; and userId = &#63; and name = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param name the name
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G_U(
+		long groupId, long userId, String name, int start, int end,
+		OrderByComparator<DataType> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByName_G_U(
+				groupId, userId, name, start, end, orderByComparator);
+		}
+
+		name = Objects.toString(name, "");
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(6);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_U_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_NAME_G_U_USERID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_U_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_U_NAME_2);
+		}
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(userId);
+
+			if (bindName) {
+				qPos.add(name);
+			}
+
+			return (List<DataType>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the data types before and after the current data type in the ordered set of data types that the user has permission to view where groupId = &#63; and userId = &#63; and name = &#63;.
+	 *
+	 * @param dataTypeId the primary key of the current data type
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param name the name
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data type
+	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
+	 */
+	@Override
+	public DataType[] filterFindByName_G_U_PrevAndNext(
+			long dataTypeId, long groupId, long userId, String name,
+			OrderByComparator<DataType> orderByComparator)
+		throws NoSuchDataTypeException {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByName_G_U_PrevAndNext(
+				dataTypeId, groupId, userId, name, orderByComparator);
+		}
+
+		name = Objects.toString(name, "");
+
+		DataType dataType = findByPrimaryKey(dataTypeId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataType[] array = new DataTypeImpl[3];
+
+			array[0] = filterGetByName_G_U_PrevAndNext(
+				session, dataType, groupId, userId, name, orderByComparator,
+				true);
+
+			array[1] = dataType;
+
+			array[2] = filterGetByName_G_U_PrevAndNext(
+				session, dataType, groupId, userId, name, orderByComparator,
+				false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataType filterGetByName_G_U_PrevAndNext(
+		Session session, DataType dataType, long groupId, long userId,
+		String name, OrderByComparator<DataType> orderByComparator,
+		boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				7 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(6);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_U_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_NAME_G_U_USERID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_U_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_U_NAME_2);
+		}
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(userId);
+
+		if (bindName) {
+			qPos.add(name);
+		}
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataType)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataType> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the data types where groupId = &#63; and userId = &#63; and name = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -8118,6 +10464,77 @@ public class DataTypePersistenceImpl
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of data types that the user has permission to view where groupId = &#63; and userId = &#63; and name = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param name the name
+	 * @return the number of matching data types that the user has permission to view
+	 */
+	@Override
+	public int filterCountByName_G_U(long groupId, long userId, String name) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByName_G_U(groupId, userId, name);
+		}
+
+		name = Objects.toString(name, "");
+
+		StringBundler query = new StringBundler(4);
+
+		query.append(_FILTER_SQL_COUNT_DATATYPE_WHERE);
+
+		query.append(_FINDER_COLUMN_NAME_G_U_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_NAME_G_U_USERID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_U_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_U_NAME_2);
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(userId);
+
+			if (bindName) {
+				qPos.add(name);
+			}
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
 	private static final String _FINDER_COLUMN_NAME_G_U_GROUPID_2 =
 		"dataType.groupId = ? AND ";
 
@@ -8178,21 +10595,24 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G_S(long,String,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param name the name
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByName_G_S(
 		long groupId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return findByName_G_S(
-			groupId, name, status, start, end, orderByComparator, true);
+			groupId, name, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -8208,14 +10628,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByName_G_S(
 		long groupId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		name = Objects.toString(name, "");
 
@@ -8237,22 +10655,18 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((groupId != dataType.getGroupId()) ||
+					!name.equals(dataType.getName()) ||
+					(status != dataType.getStatus())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((groupId != dataType.getGroupId()) ||
-						!name.equals(dataType.getName()) ||
-						(status != dataType.getStatus())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -8655,6 +11069,389 @@ public class DataTypePersistenceImpl
 	}
 
 	/**
+	 * Returns all the data types that the user has permission to view where groupId = &#63; and name = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param status the status
+	 * @return the matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G_S(
+		long groupId, String name, int status) {
+
+		return filterFindByName_G_S(
+			groupId, name, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data types that the user has permission to view where groupId = &#63; and name = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param status the status
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @return the range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G_S(
+		long groupId, String name, int status, int start, int end) {
+
+		return filterFindByName_G_S(groupId, name, status, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data types that the user has permissions to view where groupId = &#63; and name = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param status the status
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G_S(
+		long groupId, String name, int status, int start, int end,
+		OrderByComparator<DataType> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByName_G_S(
+				groupId, name, status, start, end, orderByComparator);
+		}
+
+		name = Objects.toString(name, "");
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(6);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_S_GROUPID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_S_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_S_NAME_2);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_S_STATUS_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			if (bindName) {
+				qPos.add(name);
+			}
+
+			qPos.add(status);
+
+			return (List<DataType>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the data types before and after the current data type in the ordered set of data types that the user has permission to view where groupId = &#63; and name = &#63; and status = &#63;.
+	 *
+	 * @param dataTypeId the primary key of the current data type
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data type
+	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
+	 */
+	@Override
+	public DataType[] filterFindByName_G_S_PrevAndNext(
+			long dataTypeId, long groupId, String name, int status,
+			OrderByComparator<DataType> orderByComparator)
+		throws NoSuchDataTypeException {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByName_G_S_PrevAndNext(
+				dataTypeId, groupId, name, status, orderByComparator);
+		}
+
+		name = Objects.toString(name, "");
+
+		DataType dataType = findByPrimaryKey(dataTypeId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataType[] array = new DataTypeImpl[3];
+
+			array[0] = filterGetByName_G_S_PrevAndNext(
+				session, dataType, groupId, name, status, orderByComparator,
+				true);
+
+			array[1] = dataType;
+
+			array[2] = filterGetByName_G_S_PrevAndNext(
+				session, dataType, groupId, name, status, orderByComparator,
+				false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataType filterGetByName_G_S_PrevAndNext(
+		Session session, DataType dataType, long groupId, String name,
+		int status, OrderByComparator<DataType> orderByComparator,
+		boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				7 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(6);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_S_GROUPID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_S_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_S_NAME_2);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_S_STATUS_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		if (bindName) {
+			qPos.add(name);
+		}
+
+		qPos.add(status);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataType)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataType> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the data types where groupId = &#63; and name = &#63; and status = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -8746,6 +11543,77 @@ public class DataTypePersistenceImpl
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of data types that the user has permission to view where groupId = &#63; and name = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param name the name
+	 * @param status the status
+	 * @return the number of matching data types that the user has permission to view
+	 */
+	@Override
+	public int filterCountByName_G_S(long groupId, String name, int status) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByName_G_S(groupId, name, status);
+		}
+
+		name = Objects.toString(name, "");
+
+		StringBundler query = new StringBundler(4);
+
+		query.append(_FILTER_SQL_COUNT_DATATYPE_WHERE);
+
+		query.append(_FINDER_COLUMN_NAME_G_S_GROUPID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_S_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_S_NAME_2);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_S_STATUS_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			if (bindName) {
+				qPos.add(name);
+			}
+
+			qPos.add(status);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
 	private static final String _FINDER_COLUMN_NAME_G_S_GROUPID_2 =
 		"dataType.groupId = ? AND ";
 
@@ -8804,21 +11672,24 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_U_S(long,String,int, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param name the name
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByName_U_S(
 		long userId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return findByName_U_S(
-			userId, name, status, start, end, orderByComparator, true);
+			userId, name, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -8834,14 +11705,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByName_U_S(
 		long userId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		name = Objects.toString(name, "");
 
@@ -8863,22 +11732,18 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((userId != dataType.getUserId()) ||
+					!name.equals(dataType.getName()) ||
+					(status != dataType.getStatus())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((userId != dataType.getUserId()) ||
-						!name.equals(dataType.getName()) ||
-						(status != dataType.getStatus())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -9437,6 +12302,7 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G_U_S(long,long,String,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param name the name
@@ -9444,15 +12310,17 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findByName_G_U_S(
 		long groupId, long userId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return findByName_G_U_S(
-			groupId, userId, name, status, start, end, orderByComparator, true);
+			groupId, userId, name, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -9469,14 +12337,12 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	@Override
 	public List<DataType> findByName_G_U_S(
 		long groupId, long userId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		name = Objects.toString(name, "");
 
@@ -9498,23 +12364,19 @@ public class DataTypePersistenceImpl
 			};
 		}
 
-		List<DataType> list = null;
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataType dataType : list) {
+				if ((groupId != dataType.getGroupId()) ||
+					(userId != dataType.getUserId()) ||
+					!name.equals(dataType.getName()) ||
+					(status != dataType.getStatus())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataType dataType : list) {
-					if ((groupId != dataType.getGroupId()) ||
-						(userId != dataType.getUserId()) ||
-						!name.equals(dataType.getName()) ||
-						(status != dataType.getStatus())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -9936,6 +12798,404 @@ public class DataTypePersistenceImpl
 	}
 
 	/**
+	 * Returns all the data types that the user has permission to view where groupId = &#63; and userId = &#63; and name = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param name the name
+	 * @param status the status
+	 * @return the matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G_U_S(
+		long groupId, long userId, String name, int status) {
+
+		return filterFindByName_G_U_S(
+			groupId, userId, name, status, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+			null);
+	}
+
+	/**
+	 * Returns a range of all the data types that the user has permission to view where groupId = &#63; and userId = &#63; and name = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param name the name
+	 * @param status the status
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @return the range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G_U_S(
+		long groupId, long userId, String name, int status, int start,
+		int end) {
+
+		return filterFindByName_G_U_S(
+			groupId, userId, name, status, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data types that the user has permissions to view where groupId = &#63; and userId = &#63; and name = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param name the name
+	 * @param status the status
+	 * @param start the lower bound of the range of data types
+	 * @param end the upper bound of the range of data types (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data types that the user has permission to view
+	 */
+	@Override
+	public List<DataType> filterFindByName_G_U_S(
+		long groupId, long userId, String name, int status, int start, int end,
+		OrderByComparator<DataType> orderByComparator) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByName_G_U_S(
+				groupId, userId, name, status, start, end, orderByComparator);
+		}
+
+		name = Objects.toString(name, "");
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				6 + (orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(7);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_U_S_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_NAME_G_U_S_USERID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_U_S_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_U_S_NAME_2);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_U_S_STATUS_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_TABLE, orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(userId);
+
+			if (bindName) {
+				qPos.add(name);
+			}
+
+			qPos.add(status);
+
+			return (List<DataType>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the data types before and after the current data type in the ordered set of data types that the user has permission to view where groupId = &#63; and userId = &#63; and name = &#63; and status = &#63;.
+	 *
+	 * @param dataTypeId the primary key of the current data type
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param name the name
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data type
+	 * @throws NoSuchDataTypeException if a data type with the primary key could not be found
+	 */
+	@Override
+	public DataType[] filterFindByName_G_U_S_PrevAndNext(
+			long dataTypeId, long groupId, long userId, String name, int status,
+			OrderByComparator<DataType> orderByComparator)
+		throws NoSuchDataTypeException {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByName_G_U_S_PrevAndNext(
+				dataTypeId, groupId, userId, name, status, orderByComparator);
+		}
+
+		name = Objects.toString(name, "");
+
+		DataType dataType = findByPrimaryKey(dataTypeId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataType[] array = new DataTypeImpl[3];
+
+			array[0] = filterGetByName_G_U_S_PrevAndNext(
+				session, dataType, groupId, userId, name, status,
+				orderByComparator, true);
+
+			array[1] = dataType;
+
+			array[2] = filterGetByName_G_U_S_PrevAndNext(
+				session, dataType, groupId, userId, name, status,
+				orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataType filterGetByName_G_U_S_PrevAndNext(
+		Session session, DataType dataType, long groupId, long userId,
+		String name, int status, OrderByComparator<DataType> orderByComparator,
+		boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				8 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(7);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_DATATYPE_WHERE);
+		}
+		else {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_U_S_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_NAME_G_U_S_USERID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_U_S_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_U_S_NAME_2);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_U_S_STATUS_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(
+				_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByConditionFields[i],
+							true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByConditionFields[i],
+							true));
+				}
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_ALIAS, orderByFields[i], true));
+				}
+				else {
+					query.append(
+						getColumnName(
+							_ORDER_BY_ENTITY_TABLE, orderByFields[i], true));
+				}
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(DataTypeModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(DataTypeModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, DataTypeImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, DataTypeImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(userId);
+
+		if (bindName) {
+			qPos.add(name);
+		}
+
+		qPos.add(status);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataType)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataType> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Removes all the data types where groupId = &#63; and userId = &#63; and name = &#63; and status = &#63; from the database.
 	 *
 	 * @param groupId the group ID
@@ -10037,6 +13297,84 @@ public class DataTypePersistenceImpl
 		return count.intValue();
 	}
 
+	/**
+	 * Returns the number of data types that the user has permission to view where groupId = &#63; and userId = &#63; and name = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param userId the user ID
+	 * @param name the name
+	 * @param status the status
+	 * @return the number of matching data types that the user has permission to view
+	 */
+	@Override
+	public int filterCountByName_G_U_S(
+		long groupId, long userId, String name, int status) {
+
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByName_G_U_S(groupId, userId, name, status);
+		}
+
+		name = Objects.toString(name, "");
+
+		StringBundler query = new StringBundler(5);
+
+		query.append(_FILTER_SQL_COUNT_DATATYPE_WHERE);
+
+		query.append(_FINDER_COLUMN_NAME_G_U_S_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_NAME_G_U_S_USERID_2);
+
+		boolean bindName = false;
+
+		if (name.isEmpty()) {
+			query.append(_FINDER_COLUMN_NAME_G_U_S_NAME_3);
+		}
+		else {
+			bindName = true;
+
+			query.append(_FINDER_COLUMN_NAME_G_U_S_NAME_2);
+		}
+
+		query.append(_FINDER_COLUMN_NAME_G_U_S_STATUS_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(
+			query.toString(), DataType.class.getName(),
+			_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(
+				COUNT_COLUMN_NAME, com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(userId);
+
+			if (bindName) {
+				qPos.add(name);
+			}
+
+			qPos.add(status);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
 	private static final String _FINDER_COLUMN_NAME_G_U_S_GROUPID_2 =
 		"dataType.groupId = ? AND ";
 
@@ -10093,15 +13431,20 @@ public class DataTypePersistenceImpl
 	}
 
 	/**
-	 * Returns the data type where name = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data type where name = &#63; and version = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByNameVersion(String,String)}
 	 * @param name the name
 	 * @param version the version
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
+	@Deprecated
 	@Override
-	public DataType fetchByNameVersion(String name, String version) {
-		return fetchByNameVersion(name, version, true);
+	public DataType fetchByNameVersion(
+		String name, String version, boolean useFinderCache) {
+
+		return fetchByNameVersion(name, version);
 	}
 
 	/**
@@ -10109,24 +13452,18 @@ public class DataTypePersistenceImpl
 	 *
 	 * @param name the name
 	 * @param version the version
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
 	@Override
-	public DataType fetchByNameVersion(
-		String name, String version, boolean retrieveFromCache) {
-
+	public DataType fetchByNameVersion(String name, String version) {
 		name = Objects.toString(name, "");
 		version = Objects.toString(version, "");
 
 		Object[] finderArgs = new Object[] {name, version};
 
-		Object result = null;
-
-		if (retrieveFromCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByNameVersion, finderArgs, this);
-		}
+		Object result = finderCache.getResult(
+			_finderPathFetchByNameVersion, finderArgs, this);
 
 		if (result instanceof DataType) {
 			DataType dataType = (DataType)result;
@@ -10525,7 +13862,7 @@ public class DataTypePersistenceImpl
 
 		dataType.setUuid(uuid);
 
-		dataType.setCompanyId(companyProvider.getCompanyId());
+		dataType.setCompanyId(CompanyThreadLocal.getCompanyId());
 
 		return dataType;
 	}
@@ -11297,16 +14634,20 @@ public class DataTypePersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data types
 	 */
+	@Deprecated
 	@Override
 	public List<DataType> findAll(
-		int start, int end, OrderByComparator<DataType> orderByComparator) {
+		int start, int end, OrderByComparator<DataType> orderByComparator,
+		boolean useFinderCache) {
 
-		return findAll(start, end, orderByComparator, true);
+		return findAll(start, end, orderByComparator);
 	}
 
 	/**
@@ -11319,13 +14660,11 @@ public class DataTypePersistenceImpl
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data types
 	 */
 	@Override
 	public List<DataType> findAll(
-		int start, int end, OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		int start, int end, OrderByComparator<DataType> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -11343,12 +14682,8 @@ public class DataTypePersistenceImpl
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
-		List<DataType> list = null;
-
-		if (retrieveFromCache) {
-			list = (List<DataType>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
+		List<DataType> list = (List<DataType>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
 		if (list == null) {
 			StringBundler query = null;
@@ -11956,9 +15291,6 @@ public class DataTypePersistenceImpl
 
 	private boolean _columnBitmaskEnabled;
 
-	@Reference(service = CompanyProviderWrapper.class)
-	protected CompanyProvider companyProvider;
-
 	@Reference
 	protected EntityCache entityCache;
 
@@ -11977,7 +15309,30 @@ public class DataTypePersistenceImpl
 	private static final String _SQL_COUNT_DATATYPE_WHERE =
 		"SELECT COUNT(dataType) FROM DataType dataType WHERE ";
 
+	private static final String _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN =
+		"dataType.dataTypeId";
+
+	private static final String _FILTER_SQL_SELECT_DATATYPE_WHERE =
+		"SELECT DISTINCT {dataType.*} FROM ICECAP_DataType dataType WHERE ";
+
+	private static final String
+		_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_1 =
+			"SELECT {ICECAP_DataType.*} FROM (SELECT DISTINCT dataType.dataTypeId FROM ICECAP_DataType dataType WHERE ";
+
+	private static final String
+		_FILTER_SQL_SELECT_DATATYPE_NO_INLINE_DISTINCT_WHERE_2 =
+			") TEMP_TABLE INNER JOIN ICECAP_DataType ON TEMP_TABLE.dataTypeId = ICECAP_DataType.dataTypeId";
+
+	private static final String _FILTER_SQL_COUNT_DATATYPE_WHERE =
+		"SELECT COUNT(DISTINCT dataType.dataTypeId) AS COUNT_VALUE FROM ICECAP_DataType dataType WHERE ";
+
+	private static final String _FILTER_ENTITY_ALIAS = "dataType";
+
+	private static final String _FILTER_ENTITY_TABLE = "ICECAP_DataType";
+
 	private static final String _ORDER_BY_ENTITY_ALIAS = "dataType.";
+
+	private static final String _ORDER_BY_ENTITY_TABLE = "ICECAP_DataType.";
 
 	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
 		"No DataType exists with the primary key ";
@@ -11990,5 +15345,14 @@ public class DataTypePersistenceImpl
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
+
+	static {
+		try {
+			Class.forName(ICECAPPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
 
 }

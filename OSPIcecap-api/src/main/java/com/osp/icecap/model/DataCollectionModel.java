@@ -366,27 +366,6 @@ public interface DataCollectionModel
 	public void setHasMetaData(boolean hasMetaData);
 
 	/**
-	 * Returns the has layout of this data collection.
-	 *
-	 * @return the has layout of this data collection
-	 */
-	public boolean getHasLayout();
-
-	/**
-	 * Returns <code>true</code> if this data collection is has layout.
-	 *
-	 * @return <code>true</code> if this data collection is has layout; <code>false</code> otherwise
-	 */
-	public boolean isHasLayout();
-
-	/**
-	 * Sets whether this data collection is has layout.
-	 *
-	 * @param hasLayout the has layout of this data collection
-	 */
-	public void setHasLayout(boolean hasLayout);
-
-	/**
 	 * Returns <code>true</code> if this data collection is approved.
 	 *
 	 * @return <code>true</code> if this data collection is approved; <code>false</code> otherwise

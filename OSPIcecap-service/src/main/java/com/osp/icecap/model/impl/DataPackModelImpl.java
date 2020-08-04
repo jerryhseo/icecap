@@ -88,8 +88,7 @@ public class DataPackModelImpl
 		{"dataCollectionId", Types.BIGINT}, {"dataSetId", Types.BIGINT},
 		{"dataSectionId", Types.BIGINT}, {"name", Types.VARCHAR},
 		{"version", Types.VARCHAR}, {"component", Types.VARCHAR},
-		{"copiedFrom", Types.BIGINT}, {"hasMetaData", Types.BOOLEAN},
-		{"hasLayout", Types.BOOLEAN}
+		{"copiedFrom", Types.BIGINT}, {"hasMetaData", Types.BOOLEAN}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -116,11 +115,10 @@ public class DataPackModelImpl
 		TABLE_COLUMNS_MAP.put("component", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("copiedFrom", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("hasMetaData", Types.BOOLEAN);
-		TABLE_COLUMNS_MAP.put("hasLayout", Types.BOOLEAN);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataPack (uuid_ VARCHAR(75) null,dataPackId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,dataCollectionId LONG,dataSetId LONG,dataSectionId LONG,name VARCHAR(75) null,version VARCHAR(75) null,component VARCHAR(75) null,copiedFrom LONG,hasMetaData BOOLEAN,hasLayout BOOLEAN)";
+		"create table ICECAP_DataPack (uuid_ VARCHAR(75) null,dataPackId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,dataCollectionId LONG,dataSetId LONG,dataSectionId LONG,name VARCHAR(75) null,version VARCHAR(75) null,component VARCHAR(75) null,copiedFrom LONG,hasMetaData BOOLEAN)";
 
 	public static final String TABLE_SQL_DROP = "drop table ICECAP_DataPack";
 
@@ -199,7 +197,6 @@ public class DataPackModelImpl
 		model.setComponent(soapModel.getComponent());
 		model.setCopiedFrom(soapModel.getCopiedFrom());
 		model.setHasMetaData(soapModel.isHasMetaData());
-		model.setHasLayout(soapModel.isHasLayout());
 
 		return model;
 	}
@@ -418,9 +415,6 @@ public class DataPackModelImpl
 		attributeSetterBiConsumers.put(
 			"hasMetaData",
 			(BiConsumer<DataPack, Boolean>)DataPack::setHasMetaData);
-		attributeGetterFunctions.put("hasLayout", DataPack::getHasLayout);
-		attributeSetterBiConsumers.put(
-			"hasLayout", (BiConsumer<DataPack, Boolean>)DataPack::setHasLayout);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -838,23 +832,6 @@ public class DataPackModelImpl
 		_hasMetaData = hasMetaData;
 	}
 
-	@JSON
-	@Override
-	public boolean getHasLayout() {
-		return _hasLayout;
-	}
-
-	@JSON
-	@Override
-	public boolean isHasLayout() {
-		return _hasLayout;
-	}
-
-	@Override
-	public void setHasLayout(boolean hasLayout) {
-		_hasLayout = hasLayout;
-	}
-
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(
@@ -961,7 +938,12 @@ public class DataPackModelImpl
 	@Override
 	public DataPack toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, DataPack>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -992,7 +974,6 @@ public class DataPackModelImpl
 		dataPackImpl.setComponent(getComponent());
 		dataPackImpl.setCopiedFrom(getCopiedFrom());
 		dataPackImpl.setHasMetaData(isHasMetaData());
-		dataPackImpl.setHasLayout(isHasLayout());
 
 		dataPackImpl.resetOriginalValues();
 
@@ -1199,8 +1180,6 @@ public class DataPackModelImpl
 
 		dataPackCacheModel.hasMetaData = isHasMetaData();
 
-		dataPackCacheModel.hasLayout = isHasLayout();
-
 		return dataPackCacheModel;
 	}
 
@@ -1267,8 +1246,13 @@ public class DataPackModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, DataPack>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, DataPack>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
+
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 
@@ -1311,7 +1295,6 @@ public class DataPackModelImpl
 	private long _originalCopiedFrom;
 	private boolean _setOriginalCopiedFrom;
 	private boolean _hasMetaData;
-	private boolean _hasLayout;
 	private long _columnBitmask;
 	private DataPack _escapedModel;
 

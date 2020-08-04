@@ -88,7 +88,7 @@ public class DataCollectionModelImpl
 		{"statusByUserName", Types.VARCHAR}, {"statusDate", Types.TIMESTAMP},
 		{"name", Types.VARCHAR}, {"version", Types.VARCHAR},
 		{"copiedFrom", Types.BIGINT}, {"organizationId", Types.BIGINT},
-		{"hasMetaData", Types.BOOLEAN}, {"hasLayout", Types.BOOLEAN}
+		{"hasMetaData", Types.BOOLEAN}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -112,11 +112,10 @@ public class DataCollectionModelImpl
 		TABLE_COLUMNS_MAP.put("copiedFrom", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("organizationId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("hasMetaData", Types.BOOLEAN);
-		TABLE_COLUMNS_MAP.put("hasLayout", Types.BOOLEAN);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataCollection (uuid_ VARCHAR(75) null,dataCollectionId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,name VARCHAR(75) null,version VARCHAR(75) null,copiedFrom LONG,organizationId LONG,hasMetaData BOOLEAN,hasLayout BOOLEAN)";
+		"create table ICECAP_DataCollection (uuid_ VARCHAR(75) null,dataCollectionId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null,name VARCHAR(75) null,version VARCHAR(75) null,copiedFrom LONG,organizationId LONG,hasMetaData BOOLEAN)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table ICECAP_DataCollection";
@@ -191,7 +190,6 @@ public class DataCollectionModelImpl
 		model.setCopiedFrom(soapModel.getCopiedFrom());
 		model.setOrganizationId(soapModel.getOrganizationId());
 		model.setHasMetaData(soapModel.isHasMetaData());
-		model.setHasLayout(soapModel.isHasLayout());
 
 		return model;
 	}
@@ -426,10 +424,6 @@ public class DataCollectionModelImpl
 			"hasMetaData",
 			(BiConsumer<DataCollection, Boolean>)
 				DataCollection::setHasMetaData);
-		attributeGetterFunctions.put("hasLayout", DataCollection::getHasLayout);
-		attributeSetterBiConsumers.put(
-			"hasLayout",
-			(BiConsumer<DataCollection, Boolean>)DataCollection::setHasLayout);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -797,23 +791,6 @@ public class DataCollectionModelImpl
 		_hasMetaData = hasMetaData;
 	}
 
-	@JSON
-	@Override
-	public boolean getHasLayout() {
-		return _hasLayout;
-	}
-
-	@JSON
-	@Override
-	public boolean isHasLayout() {
-		return _hasLayout;
-	}
-
-	@Override
-	public void setHasLayout(boolean hasLayout) {
-		_hasLayout = hasLayout;
-	}
-
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(
@@ -920,7 +897,12 @@ public class DataCollectionModelImpl
 	@Override
 	public DataCollection toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, DataCollection>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -948,7 +930,6 @@ public class DataCollectionModelImpl
 		dataCollectionImpl.setCopiedFrom(getCopiedFrom());
 		dataCollectionImpl.setOrganizationId(getOrganizationId());
 		dataCollectionImpl.setHasMetaData(isHasMetaData());
-		dataCollectionImpl.setHasLayout(isHasLayout());
 
 		dataCollectionImpl.resetOriginalValues();
 
@@ -1142,8 +1123,6 @@ public class DataCollectionModelImpl
 
 		dataCollectionCacheModel.hasMetaData = isHasMetaData();
 
-		dataCollectionCacheModel.hasLayout = isHasLayout();
-
 		return dataCollectionCacheModel;
 	}
 
@@ -1210,8 +1189,13 @@ public class DataCollectionModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, DataCollection>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, DataCollection>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
+
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 
@@ -1248,7 +1232,6 @@ public class DataCollectionModelImpl
 	private long _originalOrganizationId;
 	private boolean _setOriginalOrganizationId;
 	private boolean _hasMetaData;
-	private boolean _hasLayout;
 	private long _columnBitmask;
 	private DataCollection _escapedModel;
 

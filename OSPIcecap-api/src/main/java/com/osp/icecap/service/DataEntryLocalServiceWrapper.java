@@ -359,6 +359,35 @@ public class DataEntryLocalServiceWrapper
 	}
 
 	@Override
+	public void removeDataEntriesByDataCollectionId(long dataCollectionId)
+		throws com.osp.icecap.exception.NoSuchMetaDataException {
+
+		_dataEntryLocalService.removeDataEntriesByDataCollectionId(
+			dataCollectionId);
+	}
+
+	@Override
+	public void removeDataEntriesByDataPackId(long dataPackId)
+		throws com.osp.icecap.exception.NoSuchMetaDataException {
+
+		_dataEntryLocalService.removeDataEntriesByDataPackId(dataPackId);
+	}
+
+	@Override
+	public void removeDataEntriesByDataSectionId(long dataSectionId)
+		throws com.osp.icecap.exception.NoSuchMetaDataException {
+
+		_dataEntryLocalService.removeDataEntriesByDataSectionId(dataSectionId);
+	}
+
+	@Override
+	public void removeDataEntriesByDataSetId(long dataSetId)
+		throws com.osp.icecap.exception.NoSuchMetaDataException {
+
+		_dataEntryLocalService.removeDataEntriesByDataSetId(dataSetId);
+	}
+
+	@Override
 	public com.osp.icecap.model.DataEntry removeDataEntry(long dataEntryId)
 		throws com.osp.icecap.exception.NoSuchDataEntryException,
 			   com.osp.icecap.exception.NoSuchMetaDataException {

@@ -21,9 +21,6 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
-import com.osp.icecap.exception.NoSuchDataTypeException;
-import com.osp.icecap.exception.NoSuchDataTypeStructureException;
 import com.osp.icecap.model.DataType;
 import com.osp.icecap.service.base.DataTypeLocalServiceBaseImpl;
 

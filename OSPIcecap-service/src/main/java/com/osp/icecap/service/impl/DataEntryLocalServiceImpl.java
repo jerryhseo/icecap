@@ -15,6 +15,7 @@
 package com.osp.icecap.service.impl;
 
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
@@ -25,11 +26,16 @@ import com.osp.icecap.exception.NoSuchMetaDataException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.model.MetaData;
+import com.osp.icecap.service.DataAnalysisLayoutLocalService;
+import com.osp.icecap.service.DataEntryLocalService;
+import com.osp.icecap.service.DataPackLocalService;
+import com.osp.icecap.service.DataSectionLocalService;
+import com.osp.icecap.service.DataTypeLocalService;
+import com.osp.icecap.service.MetaDataLocalService;
 import com.osp.icecap.service.base.DataEntryLocalServiceBaseImpl;
 
 import java.util.Date;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -93,9 +99,43 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 	
 	public DataEntry removeDataEntry( long dataEntryId ) throws NoSuchDataEntryException, NoSuchMetaDataException {
 		DataEntry dataEntry = super.dataEntryPersistence.findByPrimaryKey(dataEntryId);
-		super.metaDataPersistence.remove(dataEntry.getUuid());
 		
-		return super.dataEntryPersistence.remove( dataEntryId );
+		return this.removeDataEntry( dataEntry );
+	}
+	
+	private DataEntry removeDataEntry( DataEntry dataEntry ) throws NoSuchMetaDataException {
+		if( dataEntry.getHasMetaData() ) {
+			this.metaDataLocalService.removeMetaData(dataEntry.getUuid());
+		}
+		
+		super.dataEntryPersistence.remove(dataEntry);
+		return dataEntry;
+	}
+	
+	private void removeDataEntryList( List<DataEntry> dataEntryLIST ) throws NoSuchMetaDataException {
+		for( DataEntry dataEntry : dataEntryLIST) {
+			this.removeDataEntry(dataEntry);
+		}
+	}
+	
+	public void removeDataEntriesByDataCollectionId( long dataCollectionId ) throws NoSuchMetaDataException {
+		List<DataEntry> dataEntryLIST = super.dataEntryPersistence.findByDataCollectionId(dataCollectionId);
+		this.removeDataEntryList(dataEntryLIST);
+	}
+	
+	public void removeDataEntriesByDataSetId( long dataSetId ) throws NoSuchMetaDataException {
+		List<DataEntry> dataEntryLIST = super.dataEntryPersistence.findByDataSetId(dataSetId);
+		this.removeDataEntryList(dataEntryLIST);
+	}
+	
+	public void removeDataEntriesByDataSectionId( long dataSectionId ) throws NoSuchMetaDataException {
+		List<DataEntry> dataEntryLIST = super.dataEntryPersistence.findByDataSetId(dataSectionId);
+		this.removeDataEntryList(dataEntryLIST);
+	}
+	
+	public void removeDataEntriesByDataPackId( long dataPackId ) throws NoSuchMetaDataException {
+		List<DataEntry> dataEntryLIST = super.dataEntryPersistence.findByDataPackId(dataPackId);
+		this.removeDataEntryList(dataEntryLIST);
 	}
 	
 	public DataEntry updateDataEntry(
@@ -166,4 +206,22 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 		
 		return dataEntry;
 	}
+	
+	@BeanReference
+	private volatile DataTypeLocalService dataTypeLocalService;
+	
+	@BeanReference
+	private volatile MetaDataLocalService metaDataLocalService;
+	
+	@BeanReference
+	private volatile DataAnalysisLayoutLocalService dataAnalysisLayoutLocalService;
+	
+	@BeanReference
+	private volatile DataSectionLocalService dataSectionLocalService;
+	
+	@BeanReference
+	private volatile DataPackLocalService dataPackLocalService;
+	
+	@BeanReference
+	private volatile DataEntryLocalService dataEntryLocalService;
 }

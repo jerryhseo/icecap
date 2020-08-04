@@ -66,7 +66,7 @@ public class DataCollectionCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(37);
+		StringBundler sb = new StringBundler(35);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -102,8 +102,6 @@ public class DataCollectionCacheModel
 		sb.append(organizationId);
 		sb.append(", hasMetaData=");
 		sb.append(hasMetaData);
-		sb.append(", hasLayout=");
-		sb.append(hasLayout);
 		sb.append("}");
 
 		return sb.toString();
@@ -180,7 +178,6 @@ public class DataCollectionCacheModel
 		dataCollectionImpl.setCopiedFrom(copiedFrom);
 		dataCollectionImpl.setOrganizationId(organizationId);
 		dataCollectionImpl.setHasMetaData(hasMetaData);
-		dataCollectionImpl.setHasLayout(hasLayout);
 
 		dataCollectionImpl.resetOriginalValues();
 
@@ -215,8 +212,6 @@ public class DataCollectionCacheModel
 		organizationId = objectInput.readLong();
 
 		hasMetaData = objectInput.readBoolean();
-
-		hasLayout = objectInput.readBoolean();
 	}
 
 	@Override
@@ -278,8 +273,6 @@ public class DataCollectionCacheModel
 		objectOutput.writeLong(organizationId);
 
 		objectOutput.writeBoolean(hasMetaData);
-
-		objectOutput.writeBoolean(hasLayout);
 	}
 
 	public String uuid;
@@ -299,6 +292,5 @@ public class DataCollectionCacheModel
 	public long copiedFrom;
 	public long organizationId;
 	public boolean hasMetaData;
-	public boolean hasLayout;
 
 }

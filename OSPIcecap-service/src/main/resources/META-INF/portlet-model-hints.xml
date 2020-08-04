@@ -27,7 +27,6 @@
 		<field name="copiedFrom" type="long" />
 		<field name="organizationId" type="long" />
 		<field name="hasMetaData" type="boolean" />
-		<field name="hasLayout" type="boolean" />
 	</model>
 	<model name="com.osp.icecap.model.DataEntry">
 		<field name="uuid" type="String" />
@@ -74,7 +73,6 @@
 		<field name="component" type="String" />
 		<field name="copiedFrom" type="long" />
 		<field name="hasMetaData" type="boolean" />
-		<field name="hasLayout" type="boolean" />
 	</model>
 	<model name="com.osp.icecap.model.DataSection">
 		<field name="uuid" type="String" />
@@ -96,7 +94,6 @@
 		<field name="version" type="String" />
 		<field name="copiedFrom" type="long" />
 		<field name="hasMetaData" type="boolean" />
-		<field name="hasLayout" type="boolean" />
 	</model>
 	<model name="com.osp.icecap.model.DataSet">
 		<field name="uuid" type="String" />
@@ -117,7 +114,6 @@
 		<field name="version" type="String" />
 		<field name="copiedFrom" type="long" />
 		<field name="hasMetaData" type="boolean" />
-		<field name="hasLayout" type="boolean" />
 	</model>
 	<model name="com.osp.icecap.model.DataType">
 		<field name="uuid" type="String" />

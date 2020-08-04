@@ -14,8 +14,8 @@
 
 package com.osp.icecap.service.impl;
 
-import com.liferay.asset.kernel.service.AssetCategoryLocalServiceUtil;
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
@@ -23,18 +23,22 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
 import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
 import com.osp.icecap.exception.NoSuchDataPackException;
+import com.osp.icecap.exception.NoSuchMetaDataException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataAnalysisLayout;
 import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.model.DataPack;
-import com.osp.icecap.model.DataSection;
 import com.osp.icecap.model.MetaData;
+import com.osp.icecap.service.DataAnalysisLayoutLocalService;
+import com.osp.icecap.service.DataEntryLocalService;
+import com.osp.icecap.service.DataPackLocalService;
+import com.osp.icecap.service.DataSectionLocalService;
+import com.osp.icecap.service.DataTypeLocalService;
+import com.osp.icecap.service.MetaDataLocalService;
 import com.osp.icecap.service.base.DataPackLocalServiceBaseImpl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -94,14 +98,41 @@ public class DataPackLocalServiceImpl extends DataPackLocalServiceBaseImpl {
 		return super.dataPackPersistence.update(dataPack, sc);
 	}
 	
-	public DataPack removeDataPack( long dataPackId ) throws NoSuchDataPackException {
-		super.dataEntryPersistence.removeByDataPackId(dataPackId);
-		super.metaDataPersistence.removeByDataPackId(dataPackId);
-		super.dataAnalysisLayoutPersistence.removeByDataPackId(dataPackId);
-		
-		return super.dataPackPersistence.remove(dataPackId);
+	public DataPack removeDataPack( long dataPackId ) throws NoSuchDataPackException, NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+		DataPack dataPack = super.dataPackPersistence.findByPrimaryKey(dataPackId);
+		return this.removeDataPack(dataPack);
 	}
 	
+	private DataPack removeDataPack( DataPack dataPack ) throws NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+		this.metaDataLocalService.removeMetaData(dataPack.getUuid());
+		this.dataAnalysisLayoutLocalService.removeDataAnalysisLayout(dataPack.getUuid());
+		this.dataEntryLocalService.removeDataEntriesByDataPackId(dataPack.getDataPackId());
+		super.dataPackPersistence.remove(dataPack);
+		
+		return dataPack;
+	}
+	
+	private void removeDataPackList( List<DataPack> dataPackLIST ) throws NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+		for( DataPack dataPack : dataPackLIST ) {
+			this.removeDataPack(dataPack);
+		}
+	}
+	
+	public void removeDataPacksByDataCollectionId( long dataCollectionId ) throws NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+		List<DataPack> dataPackLIST = super.dataPackPersistence.findByDataCollectionId(dataCollectionId);
+		this.removeDataPackList(dataPackLIST);
+	}
+	
+	public void removeDataPacksByDataSetId( long dataSetId ) throws NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+		List<DataPack> dataPackLIST = super.dataPackPersistence.findByDataSetId(dataSetId);
+		this.removeDataPackList(dataPackLIST);
+	}
+
+	public void removeDataPacksByDataSectionId( long dataSectionId ) throws NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+		List<DataPack> dataPackLIST = super.dataPackPersistence.findByDataSectionId(dataSectionId);
+		this.removeDataPackList(dataPackLIST);
+	}
+
 	public DataPack updateDataPack(
 			long dataPackId,
 			long dataCollectionId,
@@ -176,15 +207,28 @@ public class DataPackLocalServiceImpl extends DataPackLocalServiceBaseImpl {
 			dataPack.setHasMetaData(false);
 		}
 		
-		if(Validator.isBlank(layout) ) {
-			dataPack.setHasLayout(false);
-		}
-		else {
-			DataAnalysisLayout dataAnalysisLayout = super.dataAnalysisLayoutPersistence.create(dataPack.getUuid());
-			dataAnalysisLayout.setLayout(layout);
-			super.dataAnalysisLayoutPersistence.update(dataAnalysisLayout);
-		}
+		DataAnalysisLayout dataAnalysisLayout = super.dataAnalysisLayoutPersistence.create(dataPack.getUuid());
+		dataAnalysisLayout.setLayout(layout);
+		super.dataAnalysisLayoutPersistence.update(dataAnalysisLayout);
 		
 		return dataPack;
 	}
+	
+	@BeanReference
+	private volatile DataTypeLocalService dataTypeLocalService;
+	
+	@BeanReference
+	private volatile MetaDataLocalService metaDataLocalService;
+	
+	@BeanReference
+	private volatile DataAnalysisLayoutLocalService dataAnalysisLayoutLocalService;
+	
+	@BeanReference
+	private volatile DataSectionLocalService dataSectionLocalService;
+	
+	@BeanReference
+	private volatile DataPackLocalService dataPackLocalService;
+	
+	@BeanReference
+	private volatile DataEntryLocalService dataEntryLocalService;
 }
