@@ -533,6 +533,7 @@
     </entity>
     <exceptions>
         <exception>NoSuchMetaDataField</exception>
+        <exception>DispermittedFunctionCall</exception>
     </exceptions>
 
 </service-builder>

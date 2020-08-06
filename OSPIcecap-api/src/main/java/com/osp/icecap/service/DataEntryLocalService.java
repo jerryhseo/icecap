@@ -34,9 +34,6 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
-import com.osp.icecap.exception.NoSuchDataEntryException;
-import com.osp.icecap.exception.NoSuchMetaDataException;
-import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataEntry;
 
 import java.io.Serializable;
@@ -292,19 +289,18 @@ public interface DataEntryLocalService
 		throws PortalException;
 
 	public void removeDataEntriesByDataCollectionId(long dataCollectionId)
-		throws NoSuchMetaDataException;
+		throws PortalException;
 
 	public void removeDataEntriesByDataPackId(long dataPackId)
-		throws NoSuchMetaDataException;
+		throws PortalException;
 
 	public void removeDataEntriesByDataSectionId(long dataSectionId)
-		throws NoSuchMetaDataException;
+		throws PortalException;
 
 	public void removeDataEntriesByDataSetId(long dataSetId)
-		throws NoSuchMetaDataException;
+		throws PortalException;
 
-	public DataEntry removeDataEntry(long dataEntryId)
-		throws NoSuchDataEntryException, NoSuchMetaDataException;
+	public DataEntry removeDataEntry(long dataEntryId) throws PortalException;
 
 	/**
 	 * Updates the data entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
@@ -320,6 +316,6 @@ public interface DataEntryLocalService
 			long dataSectionId, long dataPackId, long dataTypeId,
 			String accessURL, String sequenceId, String accessType,
 			long copiedFrom, JSONObject metaDataJSON, ServiceContext sc)
-		throws NoSuchMetaDataFieldException;
+		throws PortalException;
 
 }

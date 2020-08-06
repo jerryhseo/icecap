@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<custom-sql>
+    <sql id="com.osp.icecap.service.persistence.DataCollectionRemover.removeDataCollectionsByDataCollectionName">
+    	<![CDATA[
+    		DELETE FROM ICECAP_DataCollection
+    		WHERE name= ?
+    	]]>
+    </sql>
+    
+    <sql id="com.osp.icecap.service.persistence.DataCollectionRemover.removeDataSetsByDataCollectionId">
+    	<![CDATA[
+    		DELETE FROM ICECAP_DataSet
+    		WHERE dataCollectionId = ?
+    	]]>
+    </sql>
+
+    <sql id="com.osp.icecap.service.persistence.DataCollectionRemover.removeDataSectionsByDataCollectionId">
+    	<![CDATA[
+    		DELETE FROM ICECAP_DataSection
+    		WHERE dataCollectionId = ?
+    	]]>
+    </sql>
+
+    <sql id="com.osp.icecap.service.persistence.DataCollectionRemover.removeDataSectionsByDataSetId">
+    	<![CDATA[
+    		DELETE FROM ICECAP_DataSection
+    		WHERE dataSetId = ?
+    	]]>
+    </sql>
+    	
+    <sql id="com.osp.icecap.service.persistence.DataCollectionRemover.removeDataPacksByCollectionId">
+    	<![CDATA[
+    		DELETE FROM ICECAP_DataPack
+    		WHERE dataCollectionId = ?
+    	]]>
+    </sql>
+
+    <sql id="com.osp.icecap.service.persistence.DataCollectionRemover.removeDataPacksByDataSetId">
+    	<![CDATA[
+    		DELETE FROM ICECAP_DataPack
+    		WHERE dataSetId = ?
+    	]]>
+    </sql>
+
+    <sql id="com.osp.icecap.service.persistence.DataCollectionRemover.removeDataPacksByDataSectionId">
+    	<![CDATA[
+    		DELETE FROM ICECAP_DataPack
+    		WHERE dataSectionId = ?
+    	]]>
+    </sql>
+    
+    <sql id="com.osp.icecap.service.persistence.DataCollectionRemover.removeDataEntriesByCollectionId">
+    	<![CDATA[
+    		DELETE FROM ICECAP_DataEntry
+    		WHERE dataCollectionId = ?
+    	]]>
+    </sql>
+
+    <sql id="com.osp.icecap.service.persistence.DataCollectionRemover.removeDataEntriesByDataSetId">
+    	<![CDATA[
+    		DELETE FROM ICECAP_DataEntry
+    		WHERE dataSetId = ?
+    	]]>
+    </sql>
+
+    <sql id="com.osp.icecap.service.persistence.DataCollectionRemover.removeDataEntriesByDataSectionId">
+    	<![CDATA[
+    		DELETE FROM ICECAP_DataEntry
+    		WHERE dataSectionId = ?
+    	]]>
+    </sql>
+
+    <sql id="com.osp.icecap.service.persistence.DataCollectionRemover.removeDataEntriesByDataPackId">
+    	<![CDATA[
+    		DELETE FROM ICECAP_DataEntry
+    		WHERE dataPackId = ?
+    	]]>
+    </sql>
+    
+</custom-sql>

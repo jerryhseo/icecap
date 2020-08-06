@@ -34,10 +34,6 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
-import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
-import com.osp.icecap.exception.NoSuchDataPackException;
-import com.osp.icecap.exception.NoSuchMetaDataException;
-import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.model.DataPack;
 
@@ -312,18 +308,16 @@ public interface DataPackLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	public DataPack removeDataPack(long dataPackId)
-		throws NoSuchDataAnalysisLayoutException, NoSuchDataPackException,
-			   NoSuchMetaDataException;
+	public DataPack removeDataPack(long dataPackId) throws PortalException;
 
 	public void removeDataPacksByDataCollectionId(long dataCollectionId)
-		throws NoSuchDataAnalysisLayoutException, NoSuchMetaDataException;
+		throws PortalException;
 
 	public void removeDataPacksByDataSectionId(long dataSectionId)
-		throws NoSuchDataAnalysisLayoutException, NoSuchMetaDataException;
+		throws PortalException;
 
 	public void removeDataPacksByDataSetId(long dataSetId)
-		throws NoSuchDataAnalysisLayoutException, NoSuchMetaDataException;
+		throws PortalException;
 
 	/**
 	 * Updates the data pack in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
@@ -338,6 +332,6 @@ public interface DataPackLocalService
 			long dataPackId, long dataCollectionId, long dataSetId,
 			long dataSectionId, String name, String version, long copiedFrom,
 			JSONObject metaDataJSON, String layout, ServiceContext sc)
-		throws NoSuchDataPackException, NoSuchMetaDataFieldException;
+		throws PortalException;
 
 }

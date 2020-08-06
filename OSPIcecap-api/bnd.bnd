@@ -6,6 +6,7 @@ Export-Package: \
 	com.osp.icecap.model,\
 	com.osp.icecap.service,\
 	com.osp.icecap.service.persistence,\
-	com.osp.icecap.constants
+	com.osp.icecap.constants,\
+	com.osp.icecap.permissions
 -check: EXPORTS
 -includeresource: META-INF/service.xml=../OSPIcecap-service/service.xml

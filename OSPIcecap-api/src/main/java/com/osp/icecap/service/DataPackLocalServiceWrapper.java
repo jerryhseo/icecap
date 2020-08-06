@@ -400,17 +400,14 @@ public class DataPackLocalServiceWrapper
 
 	@Override
 	public com.osp.icecap.model.DataPack removeDataPack(long dataPackId)
-		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
-			   com.osp.icecap.exception.NoSuchDataPackException,
-			   com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataPackLocalService.removeDataPack(dataPackId);
 	}
 
 	@Override
 	public void removeDataPacksByDataCollectionId(long dataCollectionId)
-		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
-			   com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_dataPackLocalService.removeDataPacksByDataCollectionId(
 			dataCollectionId);
@@ -418,16 +415,14 @@ public class DataPackLocalServiceWrapper
 
 	@Override
 	public void removeDataPacksByDataSectionId(long dataSectionId)
-		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
-			   com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_dataPackLocalService.removeDataPacksByDataSectionId(dataSectionId);
 	}
 
 	@Override
 	public void removeDataPacksByDataSetId(long dataSetId)
-		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
-			   com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_dataPackLocalService.removeDataPacksByDataSetId(dataSetId);
 	}
@@ -451,8 +446,7 @@ public class DataPackLocalServiceWrapper
 			long dataSectionId, String name, String version, long copiedFrom,
 			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
 			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
-		throws com.osp.icecap.exception.NoSuchDataPackException,
-			   com.osp.icecap.exception.NoSuchMetaDataFieldException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataPackLocalService.updateDataPack(
 			dataPackId, dataCollectionId, dataSetId, dataSectionId, name,

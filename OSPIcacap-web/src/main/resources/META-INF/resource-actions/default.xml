@@ -3,7 +3,7 @@
 
 <resource-action-mapping>
 	<portlet-resource>
-	    <portlet-name>com_osp_icecap_web_datatype_definer_OSPDataTypeDefinerPortlet</portlet-name>
+	    <portlet-name>com_osp_icecap_web_datatype_admin_portlet_OSPDataTypeAdminPortlet</portlet-name>
 	    <permissions>
 	        <supports>
 	            <action-key>ACCESS_IN_CONTROL_PANEL</action-key>

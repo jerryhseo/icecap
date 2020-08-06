@@ -344,33 +344,32 @@ public class DataEntryLocalServiceUtil {
 
 	public static void removeDataEntriesByDataCollectionId(
 			long dataCollectionId)
-		throws com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		getService().removeDataEntriesByDataCollectionId(dataCollectionId);
 	}
 
 	public static void removeDataEntriesByDataPackId(long dataPackId)
-		throws com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		getService().removeDataEntriesByDataPackId(dataPackId);
 	}
 
 	public static void removeDataEntriesByDataSectionId(long dataSectionId)
-		throws com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		getService().removeDataEntriesByDataSectionId(dataSectionId);
 	}
 
 	public static void removeDataEntriesByDataSetId(long dataSetId)
-		throws com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		getService().removeDataEntriesByDataSetId(dataSetId);
 	}
 
 	public static com.osp.icecap.model.DataEntry removeDataEntry(
 			long dataEntryId)
-		throws com.osp.icecap.exception.NoSuchDataEntryException,
-			   com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().removeDataEntry(dataEntryId);
 	}
@@ -394,7 +393,7 @@ public class DataEntryLocalServiceUtil {
 			long copiedFrom,
 			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
 			com.liferay.portal.kernel.service.ServiceContext sc)
-		throws com.osp.icecap.exception.NoSuchMetaDataFieldException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().updateDataEntry(
 			dataEntryId, dataCollectionId, dataSetId, dataSectionId, dataPackId,

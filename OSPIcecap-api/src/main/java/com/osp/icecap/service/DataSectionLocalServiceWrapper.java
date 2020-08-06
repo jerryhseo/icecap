@@ -431,17 +431,14 @@ public class DataSectionLocalServiceWrapper
 	@Override
 	public com.osp.icecap.model.DataSection removeDataSection(
 			long dataSectionId)
-		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
-			   com.osp.icecap.exception.NoSuchDataSectionException,
-			   com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataSectionLocalService.removeDataSection(dataSectionId);
 	}
 
 	@Override
 	public void removeDataSectionsByDataCollectionId(long dataCollectionId)
-		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
-			   com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_dataSectionLocalService.removeDataSectionsByDataCollectionId(
 			dataCollectionId);
@@ -449,8 +446,7 @@ public class DataSectionLocalServiceWrapper
 
 	@Override
 	public void removeDataSectionsByDataSetId(long dataSetId)
-		throws com.osp.icecap.exception.NoSuchDataAnalysisLayoutException,
-			   com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_dataSectionLocalService.removeDataSectionsByDataSetId(dataSetId);
 	}
@@ -474,8 +470,7 @@ public class DataSectionLocalServiceWrapper
 			String name, String version, long copiedFrom,
 			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
 			String layout, com.liferay.portal.kernel.service.ServiceContext sc)
-		throws com.osp.icecap.exception.NoSuchDataSectionException,
-			   com.osp.icecap.exception.NoSuchMetaDataFieldException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataSectionLocalService.updateDataSection(
 			dataSectionId, dataCollectionId, dataSetId, name, version,

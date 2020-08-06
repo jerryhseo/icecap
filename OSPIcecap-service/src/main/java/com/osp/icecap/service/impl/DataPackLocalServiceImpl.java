@@ -18,12 +18,10 @@ import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
-import com.osp.icecap.exception.NoSuchDataPackException;
-import com.osp.icecap.exception.NoSuchMetaDataException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataAnalysisLayout;
 import com.osp.icecap.model.DataEntry;
@@ -95,40 +93,58 @@ public class DataPackLocalServiceImpl extends DataPackLocalServiceBaseImpl {
 						metaDataJSON, 
 						layout);
 		
-		return super.dataPackPersistence.update(dataPack, sc);
+		// Add resource to the database to control permissions
+		super.resourceLocalService.addResources(
+										user.getCompanyId(), 
+										user.getGroupId(), 
+										user.getUserId(),
+									    DataPack.class.getName(), 
+									    dataPack.getPrimaryKey(), 
+									    false, true, true);
+
+		super.dataPackPersistence.update(dataPack, sc);
+		
+		return dataPack;
 	}
 	
-	public DataPack removeDataPack( long dataPackId ) throws NoSuchDataPackException, NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+	public DataPack removeDataPack( long dataPackId ) throws PortalException {
 		DataPack dataPack = super.dataPackPersistence.findByPrimaryKey(dataPackId);
 		return this.removeDataPack(dataPack);
 	}
 	
-	private DataPack removeDataPack( DataPack dataPack ) throws NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+	private DataPack removeDataPack( DataPack dataPack ) throws PortalException {
 		this.metaDataLocalService.removeMetaData(dataPack.getUuid());
 		this.dataAnalysisLayoutLocalService.removeDataAnalysisLayout(dataPack.getUuid());
 		this.dataEntryLocalService.removeDataEntriesByDataPackId(dataPack.getDataPackId());
 		super.dataPackPersistence.remove(dataPack);
 		
+		//Remove resources for conrolling permissions. Other
+		super.resourceLocalService.deleteResource(
+										dataPack.getCompanyId(),
+										DataPack.class.getName(), 
+									    ResourceConstants.SCOPE_INDIVIDUAL,
+									    dataPack.getPrimaryKey() );
+		
 		return dataPack;
 	}
 	
-	private void removeDataPackList( List<DataPack> dataPackLIST ) throws NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+	private void removeDataPackList( List<DataPack> dataPackLIST ) throws PortalException {
 		for( DataPack dataPack : dataPackLIST ) {
 			this.removeDataPack(dataPack);
 		}
 	}
 	
-	public void removeDataPacksByDataCollectionId( long dataCollectionId ) throws NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+	public void removeDataPacksByDataCollectionId( long dataCollectionId ) throws PortalException {
 		List<DataPack> dataPackLIST = super.dataPackPersistence.findByDataCollectionId(dataCollectionId);
 		this.removeDataPackList(dataPackLIST);
 	}
 	
-	public void removeDataPacksByDataSetId( long dataSetId ) throws NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+	public void removeDataPacksByDataSetId( long dataSetId ) throws PortalException {
 		List<DataPack> dataPackLIST = super.dataPackPersistence.findByDataSetId(dataSetId);
 		this.removeDataPackList(dataPackLIST);
 	}
 
-	public void removeDataPacksByDataSectionId( long dataSectionId ) throws NoSuchMetaDataException, NoSuchDataAnalysisLayoutException {
+	public void removeDataPacksByDataSectionId( long dataSectionId ) throws PortalException {
 		List<DataPack> dataPackLIST = super.dataPackPersistence.findByDataSectionId(dataSectionId);
 		this.removeDataPackList(dataPackLIST);
 	}
@@ -143,7 +159,7 @@ public class DataPackLocalServiceImpl extends DataPackLocalServiceBaseImpl {
 			long copiedFrom,
 			JSONObject metaDataJSON,
 			String layout,
-			ServiceContext sc) throws NoSuchDataPackException, NoSuchMetaDataFieldException {
+			ServiceContext sc) throws PortalException {
 		DataPack dataPack = super.dataPackPersistence.findByPrimaryKey(dataPackId);
 		
 		dataPack = this.assignDataPackAttributes(
@@ -158,7 +174,17 @@ public class DataPackLocalServiceImpl extends DataPackLocalServiceBaseImpl {
 				layout);
 		dataPack.setModifiedDate(sc.getModifiedDate());
 		
-		return super.dataPackPersistence.update(dataPack, sc);
+		super.dataPackPersistence.update(dataPack, sc);
+		
+		// Update resource to the database to control permissions
+		super.resourceLocalService.updateResources(
+												dataPack.getCompanyId(), 
+												dataPack.getGroupId(), 
+											    DataPack.class.getName(), 
+											    dataPack.getPrimaryKey(), 
+											    sc.getModelPermissions());
+				
+		return dataPack;
 	}
 	
 	public List<DataPack> getDataPacksByDataSectionId( long dataSectionId ){

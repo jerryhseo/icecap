@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.osp.icecap.model.DataAnalysisLayout">
+		<field name="dataUuid" type="String" />
+		<field name="dataCollectionId" type="long" />
+		<field name="dataSetId" type="long" />
+		<field name="dataSectionId" type="long" />
+		<field name="dataPackId" type="long" />
+		<field name="layout" type="String" />
+	</model>
+	<model name="com.osp.icecap.model.DataCollection">
+		<field name="uuid" type="String" />
+		<field name="dataCollectionId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="statusByUserId" type="long" />
+		<field name="statusByUserName" type="String" />
+		<field name="statusDate" type="Date" />
+		<field name="name" type="String" />
+		<field name="version" type="String" />
+		<field name="copiedFrom" type="long" />
+		<field name="organizationId" type="long" />
+		<field name="hasMetaData" type="boolean" />
+	</model>
+	<model name="com.osp.icecap.model.DataEntry">
+		<field name="uuid" type="String" />
+		<field name="dataEntryId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="statusByUserId" type="long" />
+		<field name="statusByUserName" type="String" />
+		<field name="statusDate" type="Date" />
+		<field name="dataTypeId" type="long" />
+		<field name="dataPackId" type="long" />
+		<field name="dataSectionId" type="long" />
+		<field name="dataSetId" type="long" />
+		<field name="dataCollectionId" type="long" />
+		<field name="accessURL" type="String" />
+		<field name="sequenceId" type="String" />
+		<field name="accessType" type="String" />
+		<field name="copiedFrom" type="long" />
+		<field name="hasMetaData" type="boolean" />
+	</model>
+	<model name="com.osp.icecap.model.DataPack">
+		<field name="uuid" type="String" />
+		<field name="dataPackId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="statusByUserId" type="long" />
+		<field name="statusByUserName" type="String" />
+		<field name="statusDate" type="Date" />
+		<field name="dataCollectionId" type="long" />
+		<field name="dataSetId" type="long" />
+		<field name="dataSectionId" type="long" />
+		<field name="name" type="String" />
+		<field name="version" type="String" />
+		<field name="component" type="String" />
+		<field name="copiedFrom" type="long" />
+		<field name="hasMetaData" type="boolean" />
+	</model>
+	<model name="com.osp.icecap.model.DataSection">
+		<field name="uuid" type="String" />
+		<field name="dataSectionId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="statusByUserId" type="long" />
+		<field name="statusByUserName" type="String" />
+		<field name="statusDate" type="Date" />
+		<field name="dataCollectionId" type="long" />
+		<field name="dataSetId" type="long" />
+		<field name="dataTypeId" type="long" />
+		<field name="name" type="String" />
+		<field name="version" type="String" />
+		<field name="copiedFrom" type="long" />
+		<field name="hasMetaData" type="boolean" />
+	</model>
+	<model name="com.osp.icecap.model.DataSet">
+		<field name="uuid" type="String" />
+		<field name="dataSetId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="statusByUserId" type="long" />
+		<field name="statusByUserName" type="String" />
+		<field name="statusDate" type="Date" />
+		<field name="dataCollectionId" type="long" />
+		<field name="dataTypeId" type="long" />
+		<field name="name" type="String" />
+		<field name="version" type="String" />
+		<field name="copiedFrom" type="long" />
+		<field name="hasMetaData" type="boolean" />
+	</model>
+	<model name="com.osp.icecap.model.DataType">
+		<field name="uuid" type="String" />
+		<field name="dataTypeId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="status" type="int" />
+		<field name="name" type="String" />
+		<field name="version" type="String" />
+		<field name="samplePath" type="String" />
+		<field localized="true" name="description" type="String" />
+	</model>
+	<model name="com.osp.icecap.model.DataTypeStructure">
+		<field name="dataTypeId" type="long" />
+		<field name="structure" type="String" />
+	</model>
+	<model name="com.osp.icecap.model.DataTypeVisualizerLink">
+		<field name="dataTypeVisualizerLinkId" type="long" />
+		<field name="dataTypeId" type="long" />
+		<field name="visualizerName" type="String" />
+		<field name="visualizerVersion" type="String" />
+		<field name="defaultVisualizer" type="boolean" />
+		<field name="editable" type="boolean" />
+	</model>
+	<model name="com.osp.icecap.model.MetaData">
+		<field name="dataUuid" type="String" />
+		<field name="creator" type="String" />
+		<field name="created" type="String" />
+		<field localized="true" name="title" type="String" />
+		<field localized="true" name="description" type="String" />
+		<field localized="true" name="summary" type="String" />
+		<field name="doi" type="String" />
+		<field name="dateAccepted" type="String" />
+		<field name="dateCopyrighted" type="String" />
+		<field name="dateSubmitted" type="String" />
+		<field name="format" type="String" />
+		<field name="version" type="String" />
+		<field name="issued" type="String" />
+		<field name="license" type="String" />
+		<field name="datePattern" type="String" />
+		<field name="dataCollectionId" type="long" />
+		<field name="dataSetId" type="long" />
+		<field name="dataSectionId" type="long" />
+		<field name="dataPackId" type="long" />
+	</model>
+</model-hints>

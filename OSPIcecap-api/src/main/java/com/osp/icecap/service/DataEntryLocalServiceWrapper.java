@@ -360,7 +360,7 @@ public class DataEntryLocalServiceWrapper
 
 	@Override
 	public void removeDataEntriesByDataCollectionId(long dataCollectionId)
-		throws com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_dataEntryLocalService.removeDataEntriesByDataCollectionId(
 			dataCollectionId);
@@ -368,29 +368,28 @@ public class DataEntryLocalServiceWrapper
 
 	@Override
 	public void removeDataEntriesByDataPackId(long dataPackId)
-		throws com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_dataEntryLocalService.removeDataEntriesByDataPackId(dataPackId);
 	}
 
 	@Override
 	public void removeDataEntriesByDataSectionId(long dataSectionId)
-		throws com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_dataEntryLocalService.removeDataEntriesByDataSectionId(dataSectionId);
 	}
 
 	@Override
 	public void removeDataEntriesByDataSetId(long dataSetId)
-		throws com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		_dataEntryLocalService.removeDataEntriesByDataSetId(dataSetId);
 	}
 
 	@Override
 	public com.osp.icecap.model.DataEntry removeDataEntry(long dataEntryId)
-		throws com.osp.icecap.exception.NoSuchDataEntryException,
-			   com.osp.icecap.exception.NoSuchMetaDataException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataEntryLocalService.removeDataEntry(dataEntryId);
 	}
@@ -416,7 +415,7 @@ public class DataEntryLocalServiceWrapper
 			long copiedFrom,
 			com.liferay.portal.kernel.json.JSONObject metaDataJSON,
 			com.liferay.portal.kernel.service.ServiceContext sc)
-		throws com.osp.icecap.exception.NoSuchMetaDataFieldException {
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _dataEntryLocalService.updateDataEntry(
 			dataEntryId, dataCollectionId, dataSetId, dataSectionId, dataPackId,

@@ -22,15 +22,11 @@ import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
-import com.osp.icecap.exception.NoSuchDataSectionException;
-import com.osp.icecap.exception.NoSuchMetaDataException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataAnalysisLayout;
 import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.model.DataPack;
 import com.osp.icecap.model.DataSection;
-import com.osp.icecap.model.DataSet;
 import com.osp.icecap.model.MetaData;
 import com.osp.icecap.service.DataAnalysisLayoutLocalService;
 import com.osp.icecap.service.DataEntryLocalService;
@@ -160,7 +156,7 @@ public class DataSectionLocalServiceImpl
 			long copiedFrom,
 			JSONObject metaDataJSON,
 			String layout,
-			ServiceContext sc) throws NoSuchDataSectionException, NoSuchMetaDataFieldException {
+			ServiceContext sc) throws PortalException {
 		
 		DataSection dataSection = super.dataSectionPersistence.findByPrimaryKey(dataSectionId);
 		dataSection.setModifiedDate(sc.getModifiedDate());
@@ -182,7 +178,7 @@ public class DataSectionLocalServiceImpl
 										dataSection.getCompanyId(), 
 										dataSection.getGroupId(), 
 									    DataSection.class.getName(), 
-									    dataSet.getDataSetId(), 
+									    dataSection.getDataSectionId(), 
 									    sc.getModelPermissions());
 		
 		return dataSection;

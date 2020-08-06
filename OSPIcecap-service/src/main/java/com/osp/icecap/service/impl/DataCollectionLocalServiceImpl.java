@@ -20,8 +20,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.repository.capabilities.BulkOperationCapability.Field.CreateDate;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
+import com.osp.icecap.exception.DispermittedFunctionCallException;
 import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
 import com.osp.icecap.exception.NoSuchDataCollectionException;
 import com.osp.icecap.exception.NoSuchMetaDataException;
@@ -262,6 +264,8 @@ public class DataCollectionLocalServiceImpl
 		return dataCollection;
 	}
 	
+	//Disable default CRUD functions
+
 	@BeanReference
 	private volatile DataTypeLocalService dataTypeLocalService;
 	

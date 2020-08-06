@@ -18,13 +18,13 @@ import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.osp.icecap.exception.NoSuchDataEntryException;
-import com.osp.icecap.exception.NoSuchMetaDataException;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataEntry;
+import com.osp.icecap.model.DataPack;
 import com.osp.icecap.model.MetaData;
 import com.osp.icecap.service.DataAnalysisLayoutLocalService;
 import com.osp.icecap.service.DataEntryLocalService;
@@ -94,46 +94,62 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 		
 		super.dataEntryPersistence.update(dataEntry);
 		
+		// Add resource to the database to control permissions
+		super.resourceLocalService.addResources(
+												user.getCompanyId(), 
+												user.getGroupId(), 
+												user.getUserId(),
+											    DataEntry.class.getName(), 
+											    dataEntry.getPrimaryKey(), 
+											    false, true, true);
+		
 		return dataEntry;
 	}
 	
-	public DataEntry removeDataEntry( long dataEntryId ) throws NoSuchDataEntryException, NoSuchMetaDataException {
+	public DataEntry removeDataEntry( long dataEntryId ) throws PortalException {
 		DataEntry dataEntry = super.dataEntryPersistence.findByPrimaryKey(dataEntryId);
 		
 		return this.removeDataEntry( dataEntry );
 	}
 	
-	private DataEntry removeDataEntry( DataEntry dataEntry ) throws NoSuchMetaDataException {
+	private DataEntry removeDataEntry( DataEntry dataEntry ) throws PortalException {
 		if( dataEntry.getHasMetaData() ) {
 			this.metaDataLocalService.removeMetaData(dataEntry.getUuid());
 		}
 		
 		super.dataEntryPersistence.remove(dataEntry);
+		
+		//Remove resources for conrolling permissions. Other
+		super.resourceLocalService.deleteResource(
+												dataEntry.getCompanyId(),
+												DataPack.class.getName(), 
+											    ResourceConstants.SCOPE_INDIVIDUAL,
+											    dataEntry.getPrimaryKey() );
 		return dataEntry;
 	}
 	
-	private void removeDataEntryList( List<DataEntry> dataEntryLIST ) throws NoSuchMetaDataException {
+	private void removeDataEntryList( List<DataEntry> dataEntryLIST ) throws PortalException {
 		for( DataEntry dataEntry : dataEntryLIST) {
 			this.removeDataEntry(dataEntry);
 		}
 	}
 	
-	public void removeDataEntriesByDataCollectionId( long dataCollectionId ) throws NoSuchMetaDataException {
+	public void removeDataEntriesByDataCollectionId( long dataCollectionId ) throws PortalException {
 		List<DataEntry> dataEntryLIST = super.dataEntryPersistence.findByDataCollectionId(dataCollectionId);
 		this.removeDataEntryList(dataEntryLIST);
 	}
 	
-	public void removeDataEntriesByDataSetId( long dataSetId ) throws NoSuchMetaDataException {
+	public void removeDataEntriesByDataSetId( long dataSetId ) throws PortalException {
 		List<DataEntry> dataEntryLIST = super.dataEntryPersistence.findByDataSetId(dataSetId);
 		this.removeDataEntryList(dataEntryLIST);
 	}
 	
-	public void removeDataEntriesByDataSectionId( long dataSectionId ) throws NoSuchMetaDataException {
+	public void removeDataEntriesByDataSectionId( long dataSectionId ) throws PortalException {
 		List<DataEntry> dataEntryLIST = super.dataEntryPersistence.findByDataSetId(dataSectionId);
 		this.removeDataEntryList(dataEntryLIST);
 	}
 	
-	public void removeDataEntriesByDataPackId( long dataPackId ) throws NoSuchMetaDataException {
+	public void removeDataEntriesByDataPackId( long dataPackId ) throws PortalException {
 		List<DataEntry> dataEntryLIST = super.dataEntryPersistence.findByDataPackId(dataPackId);
 		this.removeDataEntryList(dataEntryLIST);
 	}
@@ -150,7 +166,7 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 			String accessType,
 			long copiedFrom,
 			JSONObject metaDataJSON,
-			ServiceContext sc ) throws NoSuchMetaDataFieldException {
+			ServiceContext sc ) throws PortalException {
 		DataEntry dataEntry = super.dataEntryPersistence.fetchByPrimaryKey(dataEntryId);
 
 		dataEntry = this.assignDataEntryAttributes(
@@ -168,7 +184,17 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 		
 		dataEntry.setModifiedDate(sc.getModifiedDate());
 		
-		return super.dataEntryPersistence.update(dataEntry);
+		super.dataEntryPersistence.update(dataEntry);
+		
+		// Update resource to the database to control permissions
+		super.resourceLocalService.updateResources(
+														dataEntry.getCompanyId(), 
+														dataEntry.getGroupId(), 
+													    DataEntry.class.getName(), 
+													    dataEntry.getPrimaryKey(), 
+													    sc.getModelPermissions());
+		
+		return dataEntry;
 	}
 
 	private DataEntry assignDataEntryAttributes(

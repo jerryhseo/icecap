@@ -34,10 +34,6 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
-import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
-import com.osp.icecap.exception.NoSuchDataSectionException;
-import com.osp.icecap.exception.NoSuchMetaDataException;
-import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.model.DataPack;
 import com.osp.icecap.model.DataSection;
@@ -327,14 +323,13 @@ public interface DataSectionLocalService
 		throws PortalException;
 
 	public DataSection removeDataSection(long dataSectionId)
-		throws NoSuchDataAnalysisLayoutException, NoSuchDataSectionException,
-			   NoSuchMetaDataException;
+		throws PortalException;
 
 	public void removeDataSectionsByDataCollectionId(long dataCollectionId)
-		throws NoSuchDataAnalysisLayoutException, NoSuchMetaDataException;
+		throws PortalException;
 
 	public void removeDataSectionsByDataSetId(long dataSetId)
-		throws NoSuchDataAnalysisLayoutException, NoSuchMetaDataException;
+		throws PortalException;
 
 	/**
 	 * Updates the data section in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
@@ -349,6 +344,6 @@ public interface DataSectionLocalService
 			long dataSectionId, long dataCollectionId, long dataSetId,
 			String name, String version, long copiedFrom,
 			JSONObject metaDataJSON, String layout, ServiceContext sc)
-		throws NoSuchDataSectionException, NoSuchMetaDataFieldException;
+		throws PortalException;
 
 }
