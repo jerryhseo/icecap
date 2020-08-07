@@ -76,6 +76,7 @@ public interface DataPackLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataPack addDataPack(DataPack dataPack);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataPack addDataPack(
 			long dataCollectionId, long dataSetId, long dataSectionId,
 			String name, String version, long copiedFrom,
@@ -328,6 +329,7 @@ public interface DataPackLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataPack updateDataPack(DataPack dataPack);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataPack updateDataPack(
 			long dataPackId, long dataCollectionId, long dataSetId,
 			long dataSectionId, String name, String version, long copiedFrom,

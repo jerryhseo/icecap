@@ -292,14 +292,12 @@ public interface DataTypeLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	public DataType removeDataType(DataType dataType) throws PortalException;
-
-	@Indexable(type = IndexableType.DELETE)
 	public DataType removeDataType(long dataTypeId) throws PortalException;
 
-	public int removeDataType(String dataTypeName) throws PortalException;
+	public int removeDataTypeByName(String dataTypeName) throws PortalException;
 
-	public DataType removeDataType(String dataTypeName, String dataTypeVersion)
+	public DataType removeDataTypeByNameVersion(
+			String dataTypeName, String dataTypeVersion)
 		throws PortalException;
 
 	/**
@@ -313,8 +311,9 @@ public interface DataTypeLocalService
 
 	@Indexable(type = IndexableType.REINDEX)
 	public DataType updateDataType(
-		long dataTypeId, String dataTypeName, String dataTypeVersion,
-		Map<Locale, String> descriptionMap, String samplePath,
-		ServiceContext sc);
+			long dataTypeId, String dataTypeName, String dataTypeVersion,
+			Map<Locale, String> descriptionMap, String samplePath,
+			ServiceContext sc)
+		throws PortalException;
 
 }

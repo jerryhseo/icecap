@@ -75,6 +75,7 @@ public interface DataEntryLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataEntry addDataEntry(DataEntry dataEntry);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataEntry addDataEntry(
 			long dataCollectionId, long dataSetId, long dataSectionId,
 			long dataPackId, long dataTypeId, String accessURL,
@@ -311,6 +312,7 @@ public interface DataEntryLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataEntry updateDataEntry(DataEntry dataEntry);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataEntry updateDataEntry(
 			long dataEntryId, long dataCollectionId, long dataSetId,
 			long dataSectionId, long dataPackId, long dataTypeId,

@@ -77,6 +77,7 @@ public interface DataSectionLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataSection addDataSection(DataSection dataSection);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataSection addDataSection(
 			long dataCollectionId, long dataSetId, String name, String version,
 			long copiedFrom, JSONObject metaDataJSON, String layout,
@@ -340,6 +341,7 @@ public interface DataSectionLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataSection updateDataSection(DataSection dataSection);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataSection updateDataSection(
 			long dataSectionId, long dataCollectionId, long dataSetId,
 			String name, String version, long copiedFrom,

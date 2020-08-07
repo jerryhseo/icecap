@@ -14,16 +14,19 @@
 
 package com.osp.icecap.service.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.repository.capabilities.BulkOperationCapability.Field.CreateDate;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
-import com.osp.icecap.exception.DispermittedFunctionCallException;
 import com.osp.icecap.exception.NoSuchDataAnalysisLayoutException;
 import com.osp.icecap.exception.NoSuchDataCollectionException;
 import com.osp.icecap.exception.NoSuchMetaDataException;
@@ -66,6 +69,7 @@ import org.osgi.service.component.annotations.Component;
 public class DataCollectionLocalServiceImpl
 	extends DataCollectionLocalServiceBaseImpl {
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataCollection addDataCollection( 
 			String name, 
 			String version,
@@ -73,20 +77,20 @@ public class DataCollectionLocalServiceImpl
 			JSONObject metaDataJSON,
 			String layout,
 			ServiceContext sc ) throws PortalException {
-		long collectionId = super.counterLocalService.increment();
+		long dataCollectionId = super.counterLocalService.increment();
 		
-		DataCollection collection = super.dataCollectionPersistence.create(collectionId);
+		DataCollection dataCollection = super.dataCollectionPersistence.create(dataCollectionId);
 		
-		collection.setCompanyId(sc.getCompanyId());
-		collection.setGroupId(sc.getScopeGroupId());
-		collection.setUserId(sc.getUserId());
+		dataCollection.setCompanyId(sc.getCompanyId());
+		dataCollection.setGroupId(sc.getScopeGroupId());
+		dataCollection.setUserId(sc.getUserId());
 		
 		User user = super.userLocalService.getUser(sc.getUserId());
-		collection.setUserName(user.getFullName());
-		collection.setCreateDate(new Date());
+		dataCollection.setUserName(user.getFullName());
+		dataCollection.setCreateDate(new Date());
 		
-		collection = this.assignDataCollectionAttributes(collection, name, version, organizationId, metaDataJSON, layout);
-		collection = super.dataCollectionPersistence.update(collection, sc);
+		dataCollection = this.assignDataCollectionAttributes(dataCollection, name, version, organizationId, metaDataJSON, layout);
+		dataCollection = super.dataCollectionPersistence.update(dataCollection, sc);
 		
 		// Add resource to the database to control permissions
 		super.resourceLocalService.addResources(
@@ -94,10 +98,33 @@ public class DataCollectionLocalServiceImpl
 				user.getGroupId(), 
 				user.getUserId(),
 			    DataCollection.class.getName(), 
-			    collection.getDataCollectionId(), 
+			    dataCollection.getDataCollectionId(), 
 			    false, true, true);
 		
-		return collection;
+		//Register the data collection as an asset
+		AssetEntry assetEntry = super.assetEntryLocalService.updateEntry(
+				dataCollection.getUserId(), 
+				dataCollection.getGroupId(), 
+				dataCollection.getCreateDate(),
+				dataCollection.getModifiedDate(), 
+				DataCollection.class.getName(),
+				dataCollection.getPrimaryKey(), 
+				dataCollection.getUuid(), 
+				0,
+			    sc.getAssetCategoryIds(), 
+			    sc.getAssetTagNames(), 
+			    true, true, null, null, null, null, 
+			    ContentTypes.TEXT_HTML,
+			    dataCollection.getName(), 
+			    null, null, null, null, 0, 0, null);
+		
+		super.assetLinkLocalService.updateLinks(
+				user.getPrimaryKey(), 
+				assetEntry.getEntryId(),
+                sc.getAssetLinkEntryIds(),
+                AssetLinkConstants.TYPE_RELATED);
+		
+		return dataCollection;
 	}
 	
 	/**
@@ -113,6 +140,7 @@ public class DataCollectionLocalServiceImpl
 		return this.removeDataCollection( dataCollection );
 	}
 	
+	@Indexable(type = IndexableType.DELETE)
 	private DataCollection removeDataCollection( DataCollection dataCollection ) throws PortalException {
 		if( dataCollection.getHasMetaData() ) {
 			this.metaDataLocalService.removeMetaData(dataCollection.getUuid());
@@ -126,10 +154,19 @@ public class DataCollectionLocalServiceImpl
 					    DataCollection.class.getName(), 
 					    ResourceConstants.SCOPE_INDIVIDUAL,
 					    dataCollection.getDataCollectionId());
-				
+		
+		//Unregister the data collection from asset framework
+		AssetEntry assetEntry = assetEntryLocalService.fetchEntry(
+				DataCollection.class.getName(), dataCollection.getPrimaryKey());
+
+		assetLinkLocalService.deleteLinks(assetEntry.getEntryId());
+		assetEntryLocalService.deleteEntry(assetEntry);
+			
+		//Delete the data collection from the database
 		return super.dataCollectionPersistence.remove(dataCollection);
 	}
 	
+	@Indexable(type = IndexableType.REINDEX)
 	public DataCollection updateDataCollection(
 			long dataCollectionId,
 			String name, 
@@ -154,7 +191,29 @@ public class DataCollectionLocalServiceImpl
 					    dataCollection.getDataCollectionId(), 
 					    sc.getModelPermissions());
 		
-		/* indexes for the collection updated here. */
+		//Update asset information of the data collection
+		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
+				dataCollection.getUserId(),
+				dataCollection.getGroupId(), 
+				dataCollection.getCreateDate(),
+				dataCollection.getModifiedDate(), 
+				DataCollection.class.getName(),
+				dataCollectionId, 
+				dataCollection.getUuid(), 
+				0,
+                sc.getAssetCategoryIds(),
+                sc.getAssetTagNames(), 
+                true, true, 
+                dataCollection.getCreateDate(), 
+                null, null, null, 
+                ContentTypes.TEXT_HTML, 
+                dataCollection.getName(), 
+                null, null, null, null, 0, 0, 
+                sc.getAssetPriority());
+
+		assetLinkLocalService.updateLinks(sc.getUserId(),
+                assetEntry.getEntryId(), sc.getAssetLinkEntryIds(),
+                AssetLinkConstants.TYPE_RELATED);
 
 		return dataCollection;
 	}

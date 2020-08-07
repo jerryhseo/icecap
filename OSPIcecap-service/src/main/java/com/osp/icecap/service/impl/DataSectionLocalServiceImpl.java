@@ -14,13 +14,18 @@
 
 package com.osp.icecap.service.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataAnalysisLayout;
@@ -29,10 +34,7 @@ import com.osp.icecap.model.DataPack;
 import com.osp.icecap.model.DataSection;
 import com.osp.icecap.model.MetaData;
 import com.osp.icecap.service.DataAnalysisLayoutLocalService;
-import com.osp.icecap.service.DataEntryLocalService;
 import com.osp.icecap.service.DataPackLocalService;
-import com.osp.icecap.service.DataSectionLocalService;
-import com.osp.icecap.service.DataTypeLocalService;
 import com.osp.icecap.service.MetaDataLocalService;
 import com.osp.icecap.service.base.DataSectionLocalServiceBaseImpl;
 
@@ -61,6 +63,7 @@ import org.osgi.service.component.annotations.Component;
 public class DataSectionLocalServiceImpl
 	extends DataSectionLocalServiceBaseImpl {
 	
+	@Indexable(type = IndexableType.REINDEX)
 	public DataSection addDataSection(
 			long dataCollectionId, 
 			long dataSetId, 
@@ -105,6 +108,29 @@ public class DataSectionLocalServiceImpl
 							    dataSection.getDataSectionId(), 
 							    false, true, true);
 		
+		//Register the data section as an asset
+		AssetEntry assetEntry = super.assetEntryLocalService.updateEntry(
+				dataSection.getUserId(), 
+				dataSection.getGroupId(), 
+				dataSection.getCreateDate(),
+				dataSection.getModifiedDate(), 
+				DataSection.class.getName(),
+				dataSection.getPrimaryKey(), 
+				dataSection.getUuid(), 
+				0,
+			    sc.getAssetCategoryIds(), 
+			    sc.getAssetTagNames(), 
+			    true, true, null, null, null, null, 
+			    ContentTypes.TEXT_HTML,
+			    dataSection.getName(), 
+			    null, null, null, null, 0, 0, null);
+		
+		super.assetLinkLocalService.updateLinks(
+				user.getPrimaryKey(), 
+				assetEntry.getEntryId(),
+                sc.getAssetLinkEntryIds(),
+                AssetLinkConstants.TYPE_RELATED);
+		
 		return dataSection;
 	}
 	
@@ -114,6 +140,7 @@ public class DataSectionLocalServiceImpl
 		return this.removeDataSection(dataSection);
 	}
 	
+	@Indexable(type = IndexableType.DELETE)
 	private DataSection removeDataSection( DataSection dataSection ) throws PortalException {
 		this.metaDataLocalService.removeMetaData(dataSection.getUuid());
 		this.dataAnalysisLayoutLocalService.removeDataAnalysisLayout(dataSection.getUuid());
@@ -127,6 +154,13 @@ public class DataSectionLocalServiceImpl
 								DataSection.class.getName(), 
 							    ResourceConstants.SCOPE_INDIVIDUAL,
 							    dataSection.getDataSectionId());
+		
+		//Unregister the data section from asset framework
+		AssetEntry assetEntry = assetEntryLocalService.fetchEntry(
+				DataSection.class.getName(), dataSection.getPrimaryKey());
+
+		assetLinkLocalService.deleteLinks(assetEntry.getEntryId());
+		assetEntryLocalService.deleteEntry(assetEntry);
 		
 		return dataSection;
 	}
@@ -147,6 +181,7 @@ public class DataSectionLocalServiceImpl
 		this.removeDataSectionList(dataSectionLIST);
 	}
 	
+	@Indexable(type = IndexableType.REINDEX)
 	public DataSection updateDataSection(
 			long dataSectionId,
 			long dataCollectionId, 
@@ -180,6 +215,30 @@ public class DataSectionLocalServiceImpl
 									    DataSection.class.getName(), 
 									    dataSection.getDataSectionId(), 
 									    sc.getModelPermissions());
+		
+		//Update asset information of the data section
+		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
+				dataSection.getUserId(),
+				dataSection.getGroupId(), 
+				dataSection.getCreateDate(),
+				dataSection.getModifiedDate(), 
+				DataSection.class.getName(),
+				dataSectionId, 
+				dataSection.getUuid(), 
+				0,
+                sc.getAssetCategoryIds(),
+                sc.getAssetTagNames(), 
+                true, true, 
+                dataSection.getCreateDate(), 
+                null, null, null, 
+                ContentTypes.TEXT_HTML, 
+                dataSection.getName(), 
+                null, null, null, null, 0, 0, 
+                sc.getAssetPriority());
+
+		assetLinkLocalService.updateLinks(sc.getUserId(),
+                assetEntry.getEntryId(), sc.getAssetLinkEntryIds(),
+                AssetLinkConstants.TYPE_RELATED);
 		
 		return dataSection;
 	}
@@ -218,7 +277,7 @@ public class DataSectionLocalServiceImpl
 	private DataSection assignDataSectionAttributes(
 			DataSection dataSection,
 			long dataCollectionId,
-			long dataSetid,
+			long dataSetId,
 			String name, 
 			String version,
 			long copiedFrom,
@@ -226,6 +285,7 @@ public class DataSectionLocalServiceImpl
 			String layout ) throws NoSuchMetaDataFieldException {
 		
 		dataSection.setDataCollectionId(dataCollectionId);
+		dataSection.setDataSetId(dataSetId);
 		dataSection.setName(name);
 		dataSection.setVersion(version);
 		dataSection.setCopiedFrom(copiedFrom);
@@ -248,20 +308,12 @@ public class DataSectionLocalServiceImpl
 	}
 	
 	@BeanReference
-	private volatile DataTypeLocalService dataTypeLocalService;
-	
-	@BeanReference
 	private volatile MetaDataLocalService metaDataLocalService;
 	
 	@BeanReference
 	private volatile DataAnalysisLayoutLocalService dataAnalysisLayoutLocalService;
 	
 	@BeanReference
-	private volatile DataSectionLocalService dataSectionLocalService;
-	
-	@BeanReference
 	private volatile DataPackLocalService dataPackLocalService;
 	
-	@BeanReference
-	private volatile DataEntryLocalService dataEntryLocalService;
 }

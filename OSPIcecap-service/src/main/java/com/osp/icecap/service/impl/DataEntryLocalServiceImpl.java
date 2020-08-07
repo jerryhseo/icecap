@@ -14,23 +14,24 @@
 
 package com.osp.icecap.service.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
+import com.osp.icecap.constants.MetaDataKeys;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
 import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.model.DataPack;
 import com.osp.icecap.model.MetaData;
-import com.osp.icecap.service.DataAnalysisLayoutLocalService;
-import com.osp.icecap.service.DataEntryLocalService;
-import com.osp.icecap.service.DataPackLocalService;
-import com.osp.icecap.service.DataSectionLocalService;
-import com.osp.icecap.service.DataTypeLocalService;
 import com.osp.icecap.service.MetaDataLocalService;
 import com.osp.icecap.service.base.DataEntryLocalServiceBaseImpl;
 
@@ -58,6 +59,7 @@ import org.osgi.service.component.annotations.Component;
 )
 public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataEntry addDataEntry( 
 			long dataCollectionId, 
 			long dataSetId, 
@@ -92,7 +94,7 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 						copiedFrom, 
 						metaDataJSON);
 		
-		super.dataEntryPersistence.update(dataEntry);
+		super.dataEntryPersistence.update(dataEntry, sc);
 		
 		// Add resource to the database to control permissions
 		super.resourceLocalService.addResources(
@@ -103,6 +105,34 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 											    dataEntry.getPrimaryKey(), 
 											    false, true, true);
 		
+		//Register the data entry as an asset
+		String dataEntryTitle = "";
+		if( Validator.isNotNull(metaDataJSON) ) {
+			dataEntryTitle =  metaDataJSON.getString(MetaDataKeys.TITLE);
+		}
+		
+		AssetEntry assetEntry = super.assetEntryLocalService.updateEntry(
+				dataEntry.getUserId(), 
+				dataEntry.getGroupId(), 
+				dataEntry.getCreateDate(),
+				dataEntry.getModifiedDate(), 
+				DataEntry.class.getName(),
+				dataEntry.getPrimaryKey(), 
+				dataEntry.getUuid(), 
+				0,
+			    sc.getAssetCategoryIds(), 
+			    sc.getAssetTagNames(), 
+			    true, true, null, null, null, null, 
+			    ContentTypes.TEXT_HTML,
+			    dataEntryTitle, 
+			    null, null, null, null, 0, 0, null);
+		
+		super.assetLinkLocalService.updateLinks(
+				user.getPrimaryKey(), 
+				assetEntry.getEntryId(),
+                sc.getAssetLinkEntryIds(),
+                AssetLinkConstants.TYPE_RELATED);
+		
 		return dataEntry;
 	}
 	
@@ -112,6 +142,7 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 		return this.removeDataEntry( dataEntry );
 	}
 	
+	@Indexable(type = IndexableType.DELETE)
 	private DataEntry removeDataEntry( DataEntry dataEntry ) throws PortalException {
 		if( dataEntry.getHasMetaData() ) {
 			this.metaDataLocalService.removeMetaData(dataEntry.getUuid());
@@ -125,6 +156,14 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 												DataPack.class.getName(), 
 											    ResourceConstants.SCOPE_INDIVIDUAL,
 											    dataEntry.getPrimaryKey() );
+		
+		//Unregister the data entry from asset framework
+		AssetEntry assetEntry = assetEntryLocalService.fetchEntry(
+				DataEntry.class.getName(), dataEntry.getPrimaryKey());
+
+		assetLinkLocalService.deleteLinks(assetEntry.getEntryId());
+		assetEntryLocalService.deleteEntry(assetEntry);
+		
 		return dataEntry;
 	}
 	
@@ -154,6 +193,7 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 		this.removeDataEntryList(dataEntryLIST);
 	}
 	
+	@Indexable(type = IndexableType.REINDEX)
 	public DataEntry updateDataEntry(
 			long dataEntryId,
 			long dataCollectionId, 
@@ -184,7 +224,7 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 		
 		dataEntry.setModifiedDate(sc.getModifiedDate());
 		
-		super.dataEntryPersistence.update(dataEntry);
+		super.dataEntryPersistence.update(dataEntry, sc);
 		
 		// Update resource to the database to control permissions
 		super.resourceLocalService.updateResources(
@@ -194,6 +234,35 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 													    dataEntry.getPrimaryKey(), 
 													    sc.getModelPermissions());
 		
+		//Update asset information of the data entry
+		String dataEntryTitle = "";
+		if( Validator.isNotNull(metaDataJSON) ) {
+			dataEntryTitle =  metaDataJSON.getString(MetaDataKeys.TITLE);
+		}
+		
+		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
+				dataEntry.getUserId(),
+				dataEntry.getGroupId(), 
+				dataEntry.getCreateDate(),
+				dataEntry.getModifiedDate(), 
+				DataEntry.class.getName(),
+				dataEntryId, 
+				dataEntry.getUuid(), 
+				0,
+                sc.getAssetCategoryIds(),
+                sc.getAssetTagNames(), 
+                true, true, 
+                dataEntry.getCreateDate(), 
+                null, null, null, 
+                ContentTypes.TEXT_HTML, 
+               dataEntryTitle, 
+                null, null, null, null, 0, 0, 
+                sc.getAssetPriority());
+
+		assetLinkLocalService.updateLinks(sc.getUserId(),
+                assetEntry.getEntryId(), sc.getAssetLinkEntryIds(),
+                AssetLinkConstants.TYPE_RELATED);
+				
 		return dataEntry;
 	}
 
@@ -234,20 +303,5 @@ public class DataEntryLocalServiceImpl extends DataEntryLocalServiceBaseImpl {
 	}
 	
 	@BeanReference
-	private volatile DataTypeLocalService dataTypeLocalService;
-	
-	@BeanReference
 	private volatile MetaDataLocalService metaDataLocalService;
-	
-	@BeanReference
-	private volatile DataAnalysisLayoutLocalService dataAnalysisLayoutLocalService;
-	
-	@BeanReference
-	private volatile DataSectionLocalService dataSectionLocalService;
-	
-	@BeanReference
-	private volatile DataPackLocalService dataPackLocalService;
-	
-	@BeanReference
-	private volatile DataEntryLocalService dataEntryLocalService;
 }

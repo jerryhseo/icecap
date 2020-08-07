@@ -80,6 +80,7 @@ public interface DataCollectionLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataCollection addDataCollection(DataCollection dataCollection);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataCollection addDataCollection(
 			String name, String version, long organizationId,
 			JSONObject metaDataJSON, String layout, ServiceContext sc)
@@ -388,6 +389,7 @@ public interface DataCollectionLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataCollection updateDataCollection(DataCollection dataCollection);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataCollection updateDataCollection(
 			long dataCollectionId, String name, String version,
 			long organizationId, JSONObject metaDataJSON, String layout,

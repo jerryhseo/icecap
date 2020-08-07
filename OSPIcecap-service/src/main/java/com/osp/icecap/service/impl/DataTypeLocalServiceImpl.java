@@ -14,14 +14,19 @@
 
 package com.osp.icecap.service.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.osp.icecap.model.DataType;
+import com.osp.icecap.service.DataTypeStructureLocalService;
 import com.osp.icecap.service.base.DataTypeLocalServiceBaseImpl;
 
 import java.util.Date;
@@ -87,22 +92,31 @@ public class DataTypeLocalServiceImpl extends DataTypeLocalServiceBaseImpl {
 		dataType.setStatusDate(now);
 		*/
 
-		super.addDataType(dataType);
+		super.dataTypePersistence.update(dataType, sc);
+
+		//Register the data type as an asset
+		AssetEntry assetEntry = super.assetEntryLocalService.updateEntry(
+				dataType.getUserId(), 
+				dataType.getGroupId(), 
+				dataType.getCreateDate(),
+				dataType.getModifiedDate(), 
+				DataType.class.getName(),
+				dataType.getPrimaryKey(), 
+				dataType.getUuid(), 
+				0,
+			    sc.getAssetCategoryIds(), 
+			    sc.getAssetTagNames(), 
+			    true, true, null, null, null, null, 
+			    ContentTypes.TEXT_HTML,
+			    dataType.getName(), 
+			    null, null, null, null, 0, 0, null);
+		super.assetLinkLocalService.updateLinks(
+				user.getPrimaryKey(), 
+				assetEntry.getEntryId(),
+                sc.getAssetLinkEntryIds(),
+                AssetLinkConstants.TYPE_RELATED);
 
 		/*
-		super.assetEntryLocalService.updateEntry(
-				dataType.getUserId(), dataType.getGroupId(), dataType.getCreateDate(),
-				dataType.getModifiedDate(), DataType.class.getName(),
-				dataType.getPrimaryKey(), dataType.getUuid(), 0,
-			    assetCategoryIds, assetTagNames, true, true, null, null,
-			    page.getCreateDate(), null, ContentTypes.TEXT_HTML,
-			    page.getTitle(), null, null, null, null, 0, 0, null);
-
-			Indexer<JournalArticle> indexer = IndexerRegistryUtil.nullSafeGetIndexer(
-			    WikiPage.class);
-
-		indexer.reindex(page);
-		
 		WorkflowHandlerRegistryUtil.startWorkflowInstance(
 				dataType.getCompanyId(),
 				dataType.getGroupId(), 
@@ -115,29 +129,37 @@ public class DataTypeLocalServiceImpl extends DataTypeLocalServiceBaseImpl {
 		return dataType;
 	}
 	
-	public DataType removeDataType( DataType dataType ) throws PortalException {
-		return this.removeDataType(dataType.getDataTypeId());
+	public DataType removeDataType( long dataTypeId ) throws PortalException {
+		DataType dataType = super.dataTypePersistence.findByPrimaryKey(dataTypeId);
+		
+		this.removeDataType(dataType);
+		return dataType;
 	}
 	
 	@Indexable(type = IndexableType.DELETE)
-	public DataType removeDataType( long dataTypeId ) throws PortalException {
-		DataType dataType = super.dataTypePersistence.remove(dataTypeId);
+	private DataType removeDataType( DataType dataType ) throws PortalException {
+		this.dataTypeStructureLocalService.removeDataTypeStructure(dataType.getPrimaryKey());
 		
-		return dataType;
+		//Unregister the data type from asset framework
+		AssetEntry assetEntry = assetEntryLocalService.fetchEntry(
+				DataType.class.getName(), dataType.getPrimaryKey());
+
+		assetLinkLocalService.deleteLinks(assetEntry.getEntryId());
+		assetEntryLocalService.deleteEntry(assetEntry);
+		
+		return super.deleteDataType(dataType);
 	}
 	
-	public DataType removeDataType( String dataTypeName, String dataTypeVersion ) throws PortalException {
+	public DataType removeDataTypeByNameVersion( String dataTypeName, String dataTypeVersion ) throws PortalException {
 		DataType dataType = super.dataTypePersistence.fetchByNameVersion(dataTypeName, dataTypeVersion);
-		this.removeDataType( dataType.getDataTypeId() );
-		
-		return dataType;
+		return this.removeDataType( dataType );
 	}
 	
-	public int removeDataType( String dataTypeName ) throws PortalException {
+	public int removeDataTypeByName( String dataTypeName ) throws PortalException {
 		List<DataType> dataTypes = super.dataTypePersistence.findByName(dataTypeName);
 		
 		for( DataType dataType : dataTypes ) {
-			this.removeDataType(dataType.getDataTypeId());
+			this.removeDataType(dataType);
 		}
 		
 		return dataTypes.size();
@@ -150,7 +172,7 @@ public class DataTypeLocalServiceImpl extends DataTypeLocalServiceBaseImpl {
 			String dataTypeVersion,
 			Map<Locale, String> descriptionMap,
 			String samplePath,
-			ServiceContext sc ) {
+			ServiceContext sc ) throws PortalException {
 		DataType dataType = super.fetchDataType(dataTypeId);
 		dataType.setName(dataTypeName);
 		dataType.setVersion(dataTypeVersion);
@@ -159,7 +181,31 @@ public class DataTypeLocalServiceImpl extends DataTypeLocalServiceBaseImpl {
 		
 		dataType.setModifiedDate(new Date());;
 		
-		super.updateDataType(dataType);
+		super.dataTypePersistence.update(dataType, sc);
+		
+		//Update asset information of the data type
+		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
+				dataType.getUserId(),
+				dataType.getGroupId(), 
+				dataType.getCreateDate(),
+				dataType.getModifiedDate(), 
+				DataType.class.getName(),
+				dataTypeId, 
+				dataType.getUuid(), 
+				0,
+                sc.getAssetCategoryIds(),
+                sc.getAssetTagNames(), 
+                true, true, 
+                dataType.getCreateDate(), 
+                null, null, null, 
+                ContentTypes.TEXT_HTML, 
+                dataType.getName(), 
+                null, null, null, null, 0, 0, 
+                sc.getAssetPriority());
+
+		assetLinkLocalService.updateLinks(sc.getUserId(),
+                assetEntry.getEntryId(), sc.getAssetLinkEntryIds(),
+                AssetLinkConstants.TYPE_RELATED);
 		
 		return dataType;
 	}
@@ -184,4 +230,7 @@ public class DataTypeLocalServiceImpl extends DataTypeLocalServiceBaseImpl {
 		
 		return copiedDataType;
 	}
+	
+	@BeanReference
+	private volatile DataTypeStructureLocalService dataTypeStructureLocalService;
 }

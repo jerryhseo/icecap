@@ -14,13 +14,18 @@
 
 package com.osp.icecap.service.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.osp.icecap.exception.NoSuchMetaDataFieldException;
@@ -29,10 +34,7 @@ import com.osp.icecap.model.DataSection;
 import com.osp.icecap.model.DataSet;
 import com.osp.icecap.model.MetaData;
 import com.osp.icecap.service.DataAnalysisLayoutLocalService;
-import com.osp.icecap.service.DataEntryLocalService;
-import com.osp.icecap.service.DataPackLocalService;
 import com.osp.icecap.service.DataSectionLocalService;
-import com.osp.icecap.service.DataTypeLocalService;
 import com.osp.icecap.service.MetaDataLocalService;
 import com.osp.icecap.service.base.DataSetLocalServiceBaseImpl;
 
@@ -59,6 +61,7 @@ import org.osgi.service.component.annotations.Component;
 	service = AopService.class
 )
 public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
+	@Indexable(type = IndexableType.REINDEX)
 	public DataSet addDataSet( 
 			long dataCollectionId, 
 			String name,
@@ -101,6 +104,27 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 					    dataSet.getDataSetId(), 
 					    false, true, true);
 		
+		//Register the data set as an asset
+		AssetEntry assetEntry = super.assetEntryLocalService.updateEntry(
+				dataSet.getUserId(), 
+				dataSet.getGroupId(), 
+				dataSet.getCreateDate(),
+				dataSet.getModifiedDate(), 
+				DataSet.class.getName(),
+				dataSet.getPrimaryKey(), 
+				dataSet.getUuid(), 
+				0,
+			    sc.getAssetCategoryIds(), 
+			    sc.getAssetTagNames(), 
+			    true, true, null, null, null, null, 
+			    ContentTypes.TEXT_HTML,
+			    dataSet.getName(), 
+			    null, null, null, null, 0, 0, null);
+		super.assetLinkLocalService.updateLinks(
+				user.getPrimaryKey(), 
+				assetEntry.getEntryId(),
+                sc.getAssetLinkEntryIds(),
+                AssetLinkConstants.TYPE_RELATED);
 		return dataSet;
 	}
 	
@@ -112,6 +136,7 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 		return dataSet;
 	}
 	
+	@Indexable(type = IndexableType.DELETE)
 	private DataSet removeDataSet( DataSet dataSet ) throws PortalException {
 		this.metaDataLocalService.removeMetaData(dataSet.getUuid());
 		this.dataSectionLocalService.removeDataSectionsByDataSetId(dataSet.getDataSetId());
@@ -123,7 +148,14 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 					    DataSet.class.getName(), 
 					    ResourceConstants.SCOPE_INDIVIDUAL,
 					    dataSet.getDataSetId());
-				
+
+		//Unregister the data set from asset framework
+		AssetEntry assetEntry = assetEntryLocalService.fetchEntry(
+				DataSet.class.getName(), dataSet.getPrimaryKey());
+
+		assetLinkLocalService.deleteLinks(assetEntry.getEntryId());
+		assetEntryLocalService.deleteEntry(assetEntry);
+		
 		return super.dataSetPersistence.remove(dataSet);
 	}
 	
@@ -134,6 +166,7 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 		}
 	}
 	
+	@Indexable(type = IndexableType.REINDEX)
 	public DataSet updateDataSet( 
 			long dataSetId, 
 			long dataCollectionId, 
@@ -148,6 +181,8 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 		dataSet = this.assignDataSetAttributes(dataSet, dataCollectionId, name, version, copiedFrom, metaDataJSON, layout);
 		dataSet.setModifiedDate(sc.getModifiedDate());
 		
+		super.dataSetPersistence.update(dataSet, sc);
+		
 		// Update resource to the database to control permissions
 		super.resourceLocalService.updateResources(
 								dataSet.getCompanyId(), 
@@ -156,7 +191,31 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 							    dataSet.getDataSetId(), 
 							    sc.getModelPermissions());
 
-		return super.dataSetPersistence.update(dataSet, sc);
+		//Update asset information of the data set
+		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
+				dataSet.getUserId(),
+				dataSet.getGroupId(), 
+				dataSet.getCreateDate(),
+				dataSet.getModifiedDate(), 
+				DataSet.class.getName(),
+				dataSetId, 
+				dataSet.getUuid(), 
+				0,
+                sc.getAssetCategoryIds(),
+                sc.getAssetTagNames(), 
+                true, true, 
+                dataSet.getCreateDate(), 
+                null, null, null, 
+                ContentTypes.TEXT_HTML, 
+                dataSet.getName(), 
+                null, null, null, null, 0, 0, 
+                sc.getAssetPriority());
+
+		assetLinkLocalService.updateLinks(sc.getUserId(),
+                assetEntry.getEntryId(), sc.getAssetLinkEntryIds(),
+                AssetLinkConstants.TYPE_RELATED);
+		
+		return dataSet;
 	}
 	
 	public List<DataSet> getDataSetVariants( long dataSetId ){
@@ -221,9 +280,6 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 	}
 	
 	@BeanReference
-	private volatile DataTypeLocalService dataTypeLocalService;
-	
-	@BeanReference
 	private volatile MetaDataLocalService metaDataLocalService;
 	
 	@BeanReference
@@ -232,9 +288,4 @@ public class DataSetLocalServiceImpl extends DataSetLocalServiceBaseImpl {
 	@BeanReference
 	private volatile DataSectionLocalService dataSectionLocalService;
 	
-	@BeanReference
-	private volatile DataPackLocalService dataPackLocalService;
-	
-	@BeanReference
-	private volatile DataEntryLocalService dataEntryLocalService;
 }

@@ -76,6 +76,7 @@ public interface DataSetLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataSet addDataSet(DataSet dataSet);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataSet addDataSet(
 			long dataCollectionId, String name, String version, long copiedFrom,
 			JSONObject metaDataJSON, String layout, ServiceContext sc)
@@ -331,6 +332,7 @@ public interface DataSetLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public DataSet updateDataSet(DataSet dataSet);
 
+	@Indexable(type = IndexableType.REINDEX)
 	public DataSet updateDataSet(
 			long dataSetId, long dataCollectionId, String name, String version,
 			long copiedFrom, JSONObject metaDataJSON, String layout,
