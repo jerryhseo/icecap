@@ -1,7 +1,6 @@
 <%@page import="com.osp.icecap.model.DataType"%>
 <%@ include file="../../init.jsp" %>
 
-
 <%
 %>
 
