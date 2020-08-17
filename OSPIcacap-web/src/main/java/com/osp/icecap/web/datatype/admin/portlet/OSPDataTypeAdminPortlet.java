@@ -14,15 +14,19 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.display-category=category.osp",
+		"com.liferay.portlet.display-category=category.hidden",
+        "com.liferay.portlet.scopeable=true",
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
-		"com.liferay.portlet.instanceable=false",
-		"javax.portlet.display-name=Data Type Admin",
+		"javax.portlet.display-name=Data Type Administration",
+		"javax.portlet.expiration-cache=0",
+        "javax.portlet.init-param.portlet-title-based-navigation=true",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/DataType/admin/view.jsp",
 		"javax.portlet.name=" + OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY,
 		"javax.portlet.resource-bundle=content.Language",
-		"javax.portlet.security-role-ref=power-user,user"
+		"javax.portlet.security-role-ref=administrator",
+		"javax.portlet.supports.mime-type=text/html",
+        "com.liferay.portlet.add-default-resource=true"
 	},
 	service = Portlet.class
 )

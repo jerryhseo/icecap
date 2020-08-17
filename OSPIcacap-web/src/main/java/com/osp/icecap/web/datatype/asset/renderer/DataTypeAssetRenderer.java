@@ -1,4 +1,4 @@
-package com.osp.icecap.web.datatype.renderer;
+package com.osp.icecap.web.datatype.asset.renderer;
 
 import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
 import com.liferay.portal.kernel.exception.PortalException;

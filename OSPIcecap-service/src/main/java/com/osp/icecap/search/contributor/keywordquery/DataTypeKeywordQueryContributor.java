@@ -22,13 +22,9 @@ public class DataTypeKeywordQueryContributor implements KeywordQueryContributor 
 			KeywordQueryContributorHelper keywordQueryContributorHelper) {
 		 SearchContext searchContext =
 				    keywordQueryContributorHelper.getSearchContext();
-
-				        queryHelper.addSearchLocalizedTerm(
-				    booleanQuery, searchContext, Field.TITLE, false);
-				        queryHelper.addSearchLocalizedTerm(
-				    booleanQuery, searchContext, Field.CONTENT, false);
-				        queryHelper.addSearchLocalizedTerm(
-				    booleanQuery, searchContext, "entryEmail", false);
+		 queryHelper.addSearchTerm(booleanQuery, searchContext, Field.NAME, true);
+		 queryHelper.addSearchLocalizedTerm(
+				    booleanQuery, searchContext, Field.DESCRIPTION, true);
 	}
 
 	@Reference

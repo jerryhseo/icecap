@@ -7,7 +7,7 @@ import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.indexer.IndexerDocumentBuilder;
 import com.liferay.portal.search.indexer.IndexerWriter;
 import com.osp.icecap.model.DataType;
-import com.osp.icecap.search.reindexer.api.DataTypeBatchReindexer;
+import com.osp.icecap.search.reindexer.DataTypeBatchReindexer;
 
 import org.osgi.service.component.annotations.Reference;
 

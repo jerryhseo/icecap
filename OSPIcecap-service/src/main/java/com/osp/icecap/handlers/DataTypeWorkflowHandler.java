@@ -9,7 +9,6 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.osp.icecap.model.DataType;
 import com.osp.icecap.service.DataTypeLocalService;
-import com.osp.icecap.service.DataTypeLocalServiceUtil;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -18,7 +17,9 @@ import java.util.Map;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-@Component(immediate = true, service = WorkflowHandler.class)
+@Component(
+		immediate = true, 
+		service = WorkflowHandler.class)
 public class DataTypeWorkflowHandler extends BaseWorkflowHandler<DataType> {
 	
 	@Reference

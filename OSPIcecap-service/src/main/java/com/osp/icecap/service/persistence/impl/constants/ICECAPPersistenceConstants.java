@@ -17,13 +17,16 @@ package com.osp.icecap.service.persistence.impl.constants;
 import com.liferay.petra.string.StringBundler;
 
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
-import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Jerry H. Seo
  * @generated
  */
+@Component(immediate = true, service = {})
 public class ICECAPPersistenceConstants {
 
 	public static final String BUNDLE_SYMBOLIC_NAME = "com.osp.icecap.service";
@@ -31,9 +34,9 @@ public class ICECAPPersistenceConstants {
 	public static final String ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER =
 		"(origin.bundle.symbolic.name=" + BUNDLE_SYMBOLIC_NAME + ")";
 
-	static {
-		Bundle bundle = FrameworkUtil.getBundle(
-			ICECAPPersistenceConstants.class);
+	@Activate
+	protected void activate(BundleContext bundleContext) {
+		Bundle bundle = bundleContext.getBundle();
 
 		if (!BUNDLE_SYMBOLIC_NAME.equals(bundle.getSymbolicName())) {
 			throw new IllegalStateException(
