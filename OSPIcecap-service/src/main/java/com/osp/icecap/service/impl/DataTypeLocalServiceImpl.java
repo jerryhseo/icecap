@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.osp.icecap.exception.NoSuchDataTypeException;
 import com.osp.icecap.model.DataType;
 import com.osp.icecap.service.DataTypeStructureLocalService;
 import com.osp.icecap.service.base.DataTypeLocalServiceBaseImpl;
@@ -229,6 +230,20 @@ public class DataTypeLocalServiceImpl extends DataTypeLocalServiceBaseImpl {
 		DataType copiedDataType = this.addDataType(dataType.getName(), "", dataType.getDescriptionMap(), dataType.getSamplePath(), sc);
 		
 		return copiedDataType;
+	}
+	
+	public List<DataType> getDataTypesByName( String name ){
+		return super.dataTypePersistence.findByName(name);
+	}
+	public List<DataType> getDataTypesByName( String name, int start, int end ){
+		return super.dataTypePersistence.findByName(name, start, end);
+	}
+	public int countDataTypesByName( String name ) {
+		return super.dataTypePersistence.countByName(name);
+	}
+	
+	public DataType getDataType( String name, String version) throws NoSuchDataTypeException {
+		return super.dataTypePersistence.findByNameVersion(name, version);
 	}
 	
 	@BeanReference

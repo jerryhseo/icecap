@@ -15,6 +15,7 @@
 package com.osp.icecap.service.persistence;
 
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
+import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchMetaDataException;
 import com.osp.icecap.model.MetaData;
@@ -72,16 +73,18 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
 	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
+	@Deprecated
 	public java.util.List<MetaData> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		OrderByComparator<MetaData> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the meta datas where dataCollectionId = &#63;.
@@ -94,14 +97,11 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
 	public java.util.List<MetaData> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the first meta data in the ordered set where dataCollectionId = &#63;.
@@ -113,8 +113,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 */
 	public MetaData findByDataCollectionId_First(
 			long dataCollectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -125,9 +124,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @return the first matching meta data, or <code>null</code> if a matching meta data could not be found
 	 */
 	public MetaData fetchByDataCollectionId_First(
-		long dataCollectionId,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		long dataCollectionId, OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the last meta data in the ordered set where dataCollectionId = &#63;.
@@ -139,8 +136,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 */
 	public MetaData findByDataCollectionId_Last(
 			long dataCollectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -151,9 +147,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @return the last matching meta data, or <code>null</code> if a matching meta data could not be found
 	 */
 	public MetaData fetchByDataCollectionId_Last(
-		long dataCollectionId,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		long dataCollectionId, OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the meta datas before and after the current meta data in the ordered set where dataCollectionId = &#63;.
@@ -166,8 +160,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 */
 	public MetaData[] findByDataCollectionId_PrevAndNext(
 			String dataUuid, long dataCollectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -215,16 +208,18 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSetId(long, int, int, OrderByComparator)}
 	 * @param dataSetId the data set ID
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
+	@Deprecated
 	public java.util.List<MetaData> findByDataSetId(
 		long dataSetId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		OrderByComparator<MetaData> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the meta datas where dataSetId = &#63;.
@@ -237,14 +232,11 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
 	public java.util.List<MetaData> findByDataSetId(
 		long dataSetId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the first meta data in the ordered set where dataSetId = &#63;.
@@ -255,9 +247,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @throws NoSuchMetaDataException if a matching meta data could not be found
 	 */
 	public MetaData findByDataSetId_First(
-			long dataSetId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			long dataSetId, OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -268,9 +258,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @return the first matching meta data, or <code>null</code> if a matching meta data could not be found
 	 */
 	public MetaData fetchByDataSetId_First(
-		long dataSetId,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		long dataSetId, OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the last meta data in the ordered set where dataSetId = &#63;.
@@ -281,9 +269,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @throws NoSuchMetaDataException if a matching meta data could not be found
 	 */
 	public MetaData findByDataSetId_Last(
-			long dataSetId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			long dataSetId, OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -294,9 +280,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @return the last matching meta data, or <code>null</code> if a matching meta data could not be found
 	 */
 	public MetaData fetchByDataSetId_Last(
-		long dataSetId,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		long dataSetId, OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the meta datas before and after the current meta data in the ordered set where dataSetId = &#63;.
@@ -309,8 +293,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 */
 	public MetaData[] findByDataSetId_PrevAndNext(
 			String dataUuid, long dataSetId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -358,16 +341,18 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSectionId(long, int, int, OrderByComparator)}
 	 * @param dataSectionId the data section ID
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
+	@Deprecated
 	public java.util.List<MetaData> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		OrderByComparator<MetaData> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the meta datas where dataSectionId = &#63;.
@@ -380,14 +365,11 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
 	public java.util.List<MetaData> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the first meta data in the ordered set where dataSectionId = &#63;.
@@ -398,9 +380,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @throws NoSuchMetaDataException if a matching meta data could not be found
 	 */
 	public MetaData findByDataSectionId_First(
-			long dataSectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			long dataSectionId, OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -411,9 +391,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @return the first matching meta data, or <code>null</code> if a matching meta data could not be found
 	 */
 	public MetaData fetchByDataSectionId_First(
-		long dataSectionId,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		long dataSectionId, OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the last meta data in the ordered set where dataSectionId = &#63;.
@@ -424,9 +402,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @throws NoSuchMetaDataException if a matching meta data could not be found
 	 */
 	public MetaData findByDataSectionId_Last(
-			long dataSectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			long dataSectionId, OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -437,9 +413,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @return the last matching meta data, or <code>null</code> if a matching meta data could not be found
 	 */
 	public MetaData fetchByDataSectionId_Last(
-		long dataSectionId,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		long dataSectionId, OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the meta datas before and after the current meta data in the ordered set where dataSectionId = &#63;.
@@ -452,8 +426,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 */
 	public MetaData[] findByDataSectionId_PrevAndNext(
 			String dataUuid, long dataSectionId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -501,16 +474,18 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataPackId(long, int, int, OrderByComparator)}
 	 * @param dataPackId the data pack ID
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
+	@Deprecated
 	public java.util.List<MetaData> findByDataPackId(
 		long dataPackId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		OrderByComparator<MetaData> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the meta datas where dataPackId = &#63;.
@@ -523,14 +498,11 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
 	public java.util.List<MetaData> findByDataPackId(
 		long dataPackId, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the first meta data in the ordered set where dataPackId = &#63;.
@@ -541,9 +513,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @throws NoSuchMetaDataException if a matching meta data could not be found
 	 */
 	public MetaData findByDataPackId_First(
-			long dataPackId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			long dataPackId, OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -554,9 +524,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @return the first matching meta data, or <code>null</code> if a matching meta data could not be found
 	 */
 	public MetaData fetchByDataPackId_First(
-		long dataPackId,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		long dataPackId, OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the last meta data in the ordered set where dataPackId = &#63;.
@@ -567,9 +535,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @throws NoSuchMetaDataException if a matching meta data could not be found
 	 */
 	public MetaData findByDataPackId_Last(
-			long dataPackId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			long dataPackId, OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -580,9 +546,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @return the last matching meta data, or <code>null</code> if a matching meta data could not be found
 	 */
 	public MetaData fetchByDataPackId_Last(
-		long dataPackId,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		long dataPackId, OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the meta datas before and after the current meta data in the ordered set where dataPackId = &#63;.
@@ -595,8 +559,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 */
 	public MetaData[] findByDataPackId_PrevAndNext(
 			String dataUuid, long dataPackId,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -644,16 +607,18 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByCreator(String, int, int, OrderByComparator)}
 	 * @param creator the creator
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
+	@Deprecated
 	public java.util.List<MetaData> findByCreator(
 		String creator, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		OrderByComparator<MetaData> orderByComparator, boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the meta datas where creator = &#63;.
@@ -666,14 +631,11 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
 	public java.util.List<MetaData> findByCreator(
 		String creator, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator,
-		boolean retrieveFromCache);
+		OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the first meta data in the ordered set where creator = &#63;.
@@ -684,9 +646,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @throws NoSuchMetaDataException if a matching meta data could not be found
 	 */
 	public MetaData findByCreator_First(
-			String creator,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			String creator, OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -697,9 +657,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @return the first matching meta data, or <code>null</code> if a matching meta data could not be found
 	 */
 	public MetaData fetchByCreator_First(
-		String creator,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		String creator, OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the last meta data in the ordered set where creator = &#63;.
@@ -710,9 +668,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @throws NoSuchMetaDataException if a matching meta data could not be found
 	 */
 	public MetaData findByCreator_Last(
-			String creator,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			String creator, OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -723,9 +679,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @return the last matching meta data, or <code>null</code> if a matching meta data could not be found
 	 */
 	public MetaData fetchByCreator_Last(
-		String creator,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		String creator, OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Returns the meta datas before and after the current meta data in the ordered set where creator = &#63;.
@@ -738,8 +692,7 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 */
 	public MetaData[] findByCreator_PrevAndNext(
 			String dataUuid, String creator,
-			com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-				orderByComparator)
+			OrderByComparator<MetaData> orderByComparator)
 		throws NoSuchMetaDataException;
 
 	/**
@@ -835,15 +788,17 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of meta datas
 	 */
+	@Deprecated
 	public java.util.List<MetaData> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator);
+		int start, int end, OrderByComparator<MetaData> orderByComparator,
+		boolean useFinderCache);
 
 	/**
 	 * Returns an ordered range of all the meta datas.
@@ -855,14 +810,10 @@ public interface MetaDataPersistence extends BasePersistence<MetaData> {
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of meta datas
 	 */
 	public java.util.List<MetaData> findAll(
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator<MetaData>
-			orderByComparator,
-		boolean retrieveFromCache);
+		int start, int end, OrderByComparator<MetaData> orderByComparator);
 
 	/**
 	 * Removes all the meta datas from the database.

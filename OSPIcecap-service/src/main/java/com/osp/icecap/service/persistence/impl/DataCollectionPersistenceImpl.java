@@ -27,11 +27,10 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.service.persistence.CompanyProvider;
-import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -140,18 +139,22 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid(String, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByUuid(uuid, start, end, orderByComparator, true);
+		return findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
@@ -165,14 +168,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data collections
 	 */
 	@Override
 	public List<DataCollection> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -192,19 +193,15 @@ public class DataCollectionPersistenceImpl
 			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
-		List<DataCollection> list = null;
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataCollection dataCollection : list) {
+				if (!uuid.equals(dataCollection.getUuid())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataCollection dataCollection : list) {
-					if (!uuid.equals(dataCollection.getUuid())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -686,15 +683,20 @@ public class DataCollectionPersistenceImpl
 	}
 
 	/**
-	 * Returns the data collection where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data collection where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByUUID_G(String,long)}
 	 * @param uuid the uuid
 	 * @param groupId the group ID
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data collection, or <code>null</code> if a matching data collection could not be found
 	 */
+	@Deprecated
 	@Override
-	public DataCollection fetchByUUID_G(String uuid, long groupId) {
-		return fetchByUUID_G(uuid, groupId, true);
+	public DataCollection fetchByUUID_G(
+		String uuid, long groupId, boolean useFinderCache) {
+
+		return fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
@@ -702,23 +704,17 @@ public class DataCollectionPersistenceImpl
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data collection, or <code>null</code> if a matching data collection could not be found
 	 */
 	@Override
-	public DataCollection fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache) {
-
+	public DataCollection fetchByUUID_G(String uuid, long groupId) {
 		uuid = Objects.toString(uuid, "");
 
 		Object[] finderArgs = new Object[] {uuid, groupId};
 
-		Object result = null;
-
-		if (retrieveFromCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByUUID_G, finderArgs, this);
-		}
+		Object result = finderCache.getResult(
+			_finderPathFetchByUUID_G, finderArgs, this);
 
 		if (result instanceof DataCollection) {
 			DataCollection dataCollection = (DataCollection)result;
@@ -935,20 +931,23 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid_C(String,long, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, true);
+		return findByUuid_C(uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
@@ -963,14 +962,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data collections
 	 */
 	@Override
 	public List<DataCollection> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -992,21 +989,17 @@ public class DataCollectionPersistenceImpl
 			};
 		}
 
-		List<DataCollection> list = null;
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataCollection dataCollection : list) {
+				if (!uuid.equals(dataCollection.getUuid()) ||
+					(companyId != dataCollection.getCompanyId())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataCollection dataCollection : list) {
-					if (!uuid.equals(dataCollection.getUuid()) ||
-						(companyId != dataCollection.getCompanyId())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -1527,18 +1520,22 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByGroupId(long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByGroupId(groupId, start, end, orderByComparator, true);
+		return findByGroupId(groupId, start, end, orderByComparator);
 	}
 
 	/**
@@ -1552,14 +1549,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data collections
 	 */
 	@Override
 	public List<DataCollection> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1577,19 +1572,15 @@ public class DataCollectionPersistenceImpl
 			finderArgs = new Object[] {groupId, start, end, orderByComparator};
 		}
 
-		List<DataCollection> list = null;
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataCollection dataCollection : list) {
+				if ((groupId != dataCollection.getGroupId())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataCollection dataCollection : list) {
-					if ((groupId != dataCollection.getGroupId())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -2408,18 +2399,22 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUserId(long, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByUserId(userId, start, end, orderByComparator, true);
+		return findByUserId(userId, start, end, orderByComparator);
 	}
 
 	/**
@@ -2433,14 +2428,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data collections
 	 */
 	@Override
 	public List<DataCollection> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2458,19 +2451,15 @@ public class DataCollectionPersistenceImpl
 			finderArgs = new Object[] {userId, start, end, orderByComparator};
 		}
 
-		List<DataCollection> list = null;
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataCollection dataCollection : list) {
+				if ((userId != dataCollection.getUserId())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataCollection dataCollection : list) {
-					if ((userId != dataCollection.getUserId())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -2912,18 +2901,22 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByStatus(int, int, int, OrderByComparator)}
 	 * @param status the status
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByStatus(status, start, end, orderByComparator, true);
+		return findByStatus(status, start, end, orderByComparator);
 	}
 
 	/**
@@ -2937,14 +2930,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data collections
 	 */
 	@Override
 	public List<DataCollection> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2962,19 +2953,15 @@ public class DataCollectionPersistenceImpl
 			finderArgs = new Object[] {status, start, end, orderByComparator};
 		}
 
-		List<DataCollection> list = null;
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataCollection dataCollection : list) {
+				if ((status != dataCollection.getStatus())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataCollection dataCollection : list) {
-					if ((status != dataCollection.getStatus())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -3421,19 +3408,23 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_U(long,long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findByG_U(
 		long groupId, long userId, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByG_U(groupId, userId, start, end, orderByComparator, true);
+		return findByG_U(groupId, userId, start, end, orderByComparator);
 	}
 
 	/**
@@ -3448,14 +3439,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data collections
 	 */
 	@Override
 	public List<DataCollection> findByG_U(
 		long groupId, long userId, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3475,21 +3464,17 @@ public class DataCollectionPersistenceImpl
 			};
 		}
 
-		List<DataCollection> list = null;
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataCollection dataCollection : list) {
+				if ((groupId != dataCollection.getGroupId()) ||
+					(userId != dataCollection.getUserId())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataCollection dataCollection : list) {
-					if ((groupId != dataCollection.getGroupId()) ||
-						(userId != dataCollection.getUserId())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -4369,19 +4354,23 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_S(long,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findByG_S(
 		long groupId, int status, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByG_S(groupId, status, start, end, orderByComparator, true);
+		return findByG_S(groupId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -4396,14 +4385,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data collections
 	 */
 	@Override
 	public List<DataCollection> findByG_S(
 		long groupId, int status, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -4423,21 +4410,17 @@ public class DataCollectionPersistenceImpl
 			};
 		}
 
-		List<DataCollection> list = null;
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataCollection dataCollection : list) {
+				if ((groupId != dataCollection.getGroupId()) ||
+					(status != dataCollection.getStatus())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataCollection dataCollection : list) {
-					if ((groupId != dataCollection.getGroupId()) ||
-						(status != dataCollection.getStatus())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -5317,19 +5300,23 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByU_S(long,int, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findByU_S(
 		long userId, int status, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByU_S(userId, status, start, end, orderByComparator, true);
+		return findByU_S(userId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -5344,14 +5331,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data collections
 	 */
 	@Override
 	public List<DataCollection> findByU_S(
 		long userId, int status, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -5371,21 +5356,17 @@ public class DataCollectionPersistenceImpl
 			};
 		}
 
-		List<DataCollection> list = null;
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataCollection dataCollection : list) {
+				if ((userId != dataCollection.getUserId()) ||
+					(status != dataCollection.getStatus())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataCollection dataCollection : list) {
-					if ((userId != dataCollection.getUserId()) ||
-						(status != dataCollection.getStatus())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -5872,21 +5853,25 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_U_S(long,long,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findByG_U_S(
 		long groupId, long userId, int status, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
 		return findByG_U_S(
-			groupId, userId, status, start, end, orderByComparator, true);
+			groupId, userId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -5902,14 +5887,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data collections
 	 */
 	@Override
 	public List<DataCollection> findByG_U_S(
 		long groupId, long userId, int status, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -5929,22 +5912,18 @@ public class DataCollectionPersistenceImpl
 			};
 		}
 
-		List<DataCollection> list = null;
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataCollection dataCollection : list) {
+				if ((groupId != dataCollection.getGroupId()) ||
+					(userId != dataCollection.getUserId()) ||
+					(status != dataCollection.getStatus())) {
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataCollection dataCollection : list) {
-					if ((groupId != dataCollection.getGroupId()) ||
-						(userId != dataCollection.getUserId()) ||
-						(status != dataCollection.getStatus())) {
+					list = null;
 
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -6868,18 +6847,22 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName(String, int, int, OrderByComparator)}
 	 * @param name the name
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByName(name, start, end, orderByComparator, true);
+		return findByName(name, start, end, orderByComparator);
 	}
 
 	/**
@@ -6893,14 +6876,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data collections
 	 */
 	@Override
 	public List<DataCollection> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		name = Objects.toString(name, "");
 
@@ -6920,19 +6901,15 @@ public class DataCollectionPersistenceImpl
 			finderArgs = new Object[] {name, start, end, orderByComparator};
 		}
 
-		List<DataCollection> list = null;
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataCollection dataCollection : list) {
+				if (!name.equals(dataCollection.getName())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataCollection dataCollection : list) {
-					if (!name.equals(dataCollection.getName())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -7410,35 +7387,34 @@ public class DataCollectionPersistenceImpl
 	}
 
 	/**
-	 * Returns the data collection where organizationId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data collection where organizationId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByOrganizationId(long)}
 	 * @param organizationId the organization ID
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data collection, or <code>null</code> if a matching data collection could not be found
 	 */
+	@Deprecated
 	@Override
-	public DataCollection fetchByOrganizationId(long organizationId) {
-		return fetchByOrganizationId(organizationId, true);
+	public DataCollection fetchByOrganizationId(
+		long organizationId, boolean useFinderCache) {
+
+		return fetchByOrganizationId(organizationId);
 	}
 
 	/**
 	 * Returns the data collection where organizationId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param organizationId the organization ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data collection, or <code>null</code> if a matching data collection could not be found
 	 */
 	@Override
-	public DataCollection fetchByOrganizationId(
-		long organizationId, boolean retrieveFromCache) {
-
+	public DataCollection fetchByOrganizationId(long organizationId) {
 		Object[] finderArgs = new Object[] {organizationId};
 
-		Object result = null;
-
-		if (retrieveFromCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByOrganizationId, finderArgs, this);
-		}
+		Object result = finderCache.getResult(
+			_finderPathFetchByOrganizationId, finderArgs, this);
 
 		if (result instanceof DataCollection) {
 			DataCollection dataCollection = (DataCollection)result;
@@ -7622,15 +7598,20 @@ public class DataCollectionPersistenceImpl
 	}
 
 	/**
-	 * Returns the data collection where name = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data collection where name = &#63; and version = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByNameVersion(String,String)}
 	 * @param name the name
 	 * @param version the version
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data collection, or <code>null</code> if a matching data collection could not be found
 	 */
+	@Deprecated
 	@Override
-	public DataCollection fetchByNameVersion(String name, String version) {
-		return fetchByNameVersion(name, version, true);
+	public DataCollection fetchByNameVersion(
+		String name, String version, boolean useFinderCache) {
+
+		return fetchByNameVersion(name, version);
 	}
 
 	/**
@@ -7638,24 +7619,18 @@ public class DataCollectionPersistenceImpl
 	 *
 	 * @param name the name
 	 * @param version the version
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data collection, or <code>null</code> if a matching data collection could not be found
 	 */
 	@Override
-	public DataCollection fetchByNameVersion(
-		String name, String version, boolean retrieveFromCache) {
-
+	public DataCollection fetchByNameVersion(String name, String version) {
 		name = Objects.toString(name, "");
 		version = Objects.toString(version, "");
 
 		Object[] finderArgs = new Object[] {name, version};
 
-		Object result = null;
-
-		if (retrieveFromCache) {
-			result = finderCache.getResult(
-				_finderPathFetchByNameVersion, finderArgs, this);
-		}
+		Object result = finderCache.getResult(
+			_finderPathFetchByNameVersion, finderArgs, this);
 
 		if (result instanceof DataCollection) {
 			DataCollection dataCollection = (DataCollection)result;
@@ -7908,18 +7883,22 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByVariants(long, int, int, OrderByComparator)}
 	 * @param copiedFrom the copied from
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findByVariants(
 		long copiedFrom, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findByVariants(copiedFrom, start, end, orderByComparator, true);
+		return findByVariants(copiedFrom, start, end, orderByComparator);
 	}
 
 	/**
@@ -7933,14 +7912,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data collections
 	 */
 	@Override
 	public List<DataCollection> findByVariants(
 		long copiedFrom, int start, int end,
-		OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -7960,19 +7937,15 @@ public class DataCollectionPersistenceImpl
 			};
 		}
 
-		List<DataCollection> list = null;
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
+		if ((list != null) && !list.isEmpty()) {
+			for (DataCollection dataCollection : list) {
+				if ((copiedFrom != dataCollection.getCopiedFrom())) {
+					list = null;
 
-			if ((list != null) && !list.isEmpty()) {
-				for (DataCollection dataCollection : list) {
-					if ((copiedFrom != dataCollection.getCopiedFrom())) {
-						list = null;
-
-						break;
-					}
+					break;
 				}
 			}
 		}
@@ -8610,7 +8583,7 @@ public class DataCollectionPersistenceImpl
 
 		dataCollection.setUuid(uuid);
 
-		dataCollection.setCompanyId(companyProvider.getCompanyId());
+		dataCollection.setCompanyId(CompanyThreadLocal.getCompanyId());
 
 		return dataCollection;
 	}
@@ -9196,17 +9169,20 @@ public class DataCollectionPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataCollectionModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data collections
 	 */
+	@Deprecated
 	@Override
 	public List<DataCollection> findAll(
-		int start, int end,
-		OrderByComparator<DataCollection> orderByComparator) {
+		int start, int end, OrderByComparator<DataCollection> orderByComparator,
+		boolean useFinderCache) {
 
-		return findAll(start, end, orderByComparator, true);
+		return findAll(start, end, orderByComparator);
 	}
 
 	/**
@@ -9219,13 +9195,12 @@ public class DataCollectionPersistenceImpl
 	 * @param start the lower bound of the range of data collections
 	 * @param end the upper bound of the range of data collections (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data collections
 	 */
 	@Override
 	public List<DataCollection> findAll(
-		int start, int end, OrderByComparator<DataCollection> orderByComparator,
-		boolean retrieveFromCache) {
+		int start, int end,
+		OrderByComparator<DataCollection> orderByComparator) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -9243,12 +9218,8 @@ public class DataCollectionPersistenceImpl
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
-		List<DataCollection> list = null;
-
-		if (retrieveFromCache) {
-			list = (List<DataCollection>)finderCache.getResult(
-				finderPath, finderArgs, this);
-		}
+		List<DataCollection> list = (List<DataCollection>)finderCache.getResult(
+			finderPath, finderArgs, this);
 
 		if (list == null) {
 			StringBundler query = null;
@@ -9720,9 +9691,6 @@ public class DataCollectionPersistenceImpl
 
 	private boolean _columnBitmaskEnabled;
 
-	@Reference(service = CompanyProviderWrapper.class)
-	protected CompanyProvider companyProvider;
-
 	@Reference
 	protected EntityCache entityCache;
 
@@ -9778,5 +9746,14 @@ public class DataCollectionPersistenceImpl
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
+
+	static {
+		try {
+			Class.forName(ICECAPPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
 
 }

@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.osp.icecap.exception.NoSuchDataTypeException;
 import com.osp.icecap.model.DataType;
 
 import java.io.Serializable;
@@ -85,6 +86,8 @@ public interface DataTypeLocalService
 
 	public DataType copyDataType(long dataTypeId, ServiceContext sc)
 		throws PortalException;
+
+	public int countDataTypesByName(String name);
 
 	/**
 	 * Creates a new data type with the primary key. Does not add the data type to the database.
@@ -213,6 +216,10 @@ public interface DataTypeLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DataType getDataType(long dataTypeId) throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public DataType getDataType(String name, String version)
+		throws NoSuchDataTypeException;
+
 	/**
 	 * Returns the data type matching the UUID and group.
 	 *
@@ -238,6 +245,12 @@ public interface DataTypeLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DataType> getDataTypes(int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataType> getDataTypesByName(String name);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DataType> getDataTypesByName(String name, int start, int end);
 
 	/**
 	 * Returns all the data types matching the UUID and company.

@@ -69,6 +69,11 @@ public class DataTypeLocalServiceWrapper
 		return _dataTypeLocalService.copyDataType(dataTypeId, sc);
 	}
 
+	@Override
+	public int countDataTypesByName(String name) {
+		return _dataTypeLocalService.countDataTypesByName(name);
+	}
+
 	/**
 	 * Creates a new data type with the primary key. Does not add the data type to the database.
 	 *
@@ -249,6 +254,14 @@ public class DataTypeLocalServiceWrapper
 		return _dataTypeLocalService.getDataType(dataTypeId);
 	}
 
+	@Override
+	public com.osp.icecap.model.DataType getDataType(
+			String name, String version)
+		throws com.osp.icecap.exception.NoSuchDataTypeException {
+
+		return _dataTypeLocalService.getDataType(name, version);
+	}
+
 	/**
 	 * Returns the data type matching the UUID and group.
 	 *
@@ -281,6 +294,20 @@ public class DataTypeLocalServiceWrapper
 		int start, int end) {
 
 		return _dataTypeLocalService.getDataTypes(start, end);
+	}
+
+	@Override
+	public java.util.List<com.osp.icecap.model.DataType> getDataTypesByName(
+		String name) {
+
+		return _dataTypeLocalService.getDataTypesByName(name);
+	}
+
+	@Override
+	public java.util.List<com.osp.icecap.model.DataType> getDataTypesByName(
+		String name, int start, int end) {
+
+		return _dataTypeLocalService.getDataTypesByName(name, start, end);
 	}
 
 	/**

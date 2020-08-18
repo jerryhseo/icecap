@@ -159,17 +159,21 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid(String, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
+		return getPersistence().findByUuid(
+			uuid, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -183,16 +187,13 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
-		return getPersistence().findByUuid(
-			uuid, start, end, orderByComparator, retrieveFromCache);
+		return getPersistence().findByUuid(uuid, start, end, orderByComparator);
 	}
 
 	/**
@@ -303,14 +304,19 @@ public class DataTypeUtil {
 	}
 
 	/**
-	 * Returns the data type where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data type where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByUUID_G(String,long)}
 	 * @param uuid the uuid
 	 * @param groupId the group ID
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public static DataType fetchByUUID_G(String uuid, long groupId) {
-		return getPersistence().fetchByUUID_G(uuid, groupId);
+	@Deprecated
+	public static DataType fetchByUUID_G(
+		String uuid, long groupId, boolean useFinderCache) {
+
+		return getPersistence().fetchByUUID_G(uuid, groupId, useFinderCache);
 	}
 
 	/**
@@ -318,13 +324,11 @@ public class DataTypeUtil {
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public static DataType fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache) {
-
-		return getPersistence().fetchByUUID_G(uuid, groupId, retrieveFromCache);
+	public static DataType fetchByUUID_G(String uuid, long groupId) {
+		return getPersistence().fetchByUUID_G(uuid, groupId);
 	}
 
 	/**
@@ -388,19 +392,22 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid_C(String,long, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator);
+			uuid, companyId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -415,16 +422,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, retrieveFromCache);
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
@@ -570,18 +575,21 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByGroupId(long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByGroupId(
-			groupId, start, end, orderByComparator);
+			groupId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -595,16 +603,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByGroupId(
-			groupId, start, end, orderByComparator, retrieveFromCache);
+			groupId, start, end, orderByComparator);
 	}
 
 	/**
@@ -811,18 +817,21 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUserId(long, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByUserId(
-			userId, start, end, orderByComparator);
+			userId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -836,16 +845,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByUserId(
-			userId, start, end, orderByComparator, retrieveFromCache);
+			userId, start, end, orderByComparator);
 	}
 
 	/**
@@ -974,18 +981,21 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByStatus(int, int, int, OrderByComparator)}
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByStatus(
-			status, start, end, orderByComparator);
+			status, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -999,16 +1009,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByStatus(
-			status, start, end, orderByComparator, retrieveFromCache);
+			status, start, end, orderByComparator);
 	}
 
 	/**
@@ -1141,19 +1149,22 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_U(long,long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByG_U(
 		long groupId, long userId, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByG_U(
-			groupId, userId, start, end, orderByComparator);
+			groupId, userId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1168,16 +1179,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByG_U(
 		long groupId, long userId, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByG_U(
-			groupId, userId, start, end, orderByComparator, retrieveFromCache);
+			groupId, userId, start, end, orderByComparator);
 	}
 
 	/**
@@ -1407,19 +1416,22 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_S(long,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByG_S(
 		long groupId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByG_S(
-			groupId, status, start, end, orderByComparator);
+			groupId, status, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1434,16 +1446,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByG_S(
 		long groupId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByG_S(
-			groupId, status, start, end, orderByComparator, retrieveFromCache);
+			groupId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -1673,19 +1683,22 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByU_S(long,int, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByU_S(
 		long userId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByU_S(
-			userId, status, start, end, orderByComparator);
+			userId, status, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1700,16 +1713,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByU_S(
 		long userId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByU_S(
-			userId, status, start, end, orderByComparator, retrieveFromCache);
+			userId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -1862,20 +1873,24 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByG_U_S(long,long,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByG_U_S(
 		long groupId, long userId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByG_U_S(
-			groupId, userId, status, start, end, orderByComparator);
+			groupId, userId, status, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -1891,17 +1906,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByG_U_S(
 		long groupId, long userId, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByG_U_S(
-			groupId, userId, status, start, end, orderByComparator,
-			retrieveFromCache);
+			groupId, userId, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -2144,17 +2156,21 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName(String, int, int, OrderByComparator)}
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
-		return getPersistence().findByName(name, start, end, orderByComparator);
+		return getPersistence().findByName(
+			name, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2168,16 +2184,13 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByName(
 		String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
-		return getPersistence().findByName(
-			name, start, end, orderByComparator, retrieveFromCache);
+		return getPersistence().findByName(name, start, end, orderByComparator);
 	}
 
 	/**
@@ -2310,19 +2323,22 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G(long,String, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByName_G(
 		long groupId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByName_G(
-			groupId, name, start, end, orderByComparator);
+			groupId, name, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2337,16 +2353,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByName_G(
 		long groupId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByName_G(
-			groupId, name, start, end, orderByComparator, retrieveFromCache);
+			groupId, name, start, end, orderByComparator);
 	}
 
 	/**
@@ -2576,19 +2590,22 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_U(long,String, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByName_U(
 		long userId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByName_U(
-			userId, name, start, end, orderByComparator);
+			userId, name, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2603,16 +2620,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByName_U(
 		long userId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByName_U(
-			userId, name, start, end, orderByComparator, retrieveFromCache);
+			userId, name, start, end, orderByComparator);
 	}
 
 	/**
@@ -2760,19 +2775,22 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_S(String,int, int, int, OrderByComparator)}
 	 * @param name the name
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByName_S(
 		String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByName_S(
-			name, status, start, end, orderByComparator);
+			name, status, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -2787,16 +2805,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByName_S(
 		String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByName_S(
-			name, status, start, end, orderByComparator, retrieveFromCache);
+			name, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -2949,20 +2965,24 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G_U(long,long,String, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param name the name
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByName_G_U(
 		long groupId, long userId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByName_G_U(
-			groupId, userId, name, start, end, orderByComparator);
+			groupId, userId, name, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -2978,17 +2998,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByName_G_U(
 		long groupId, long userId, String name, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByName_G_U(
-			groupId, userId, name, start, end, orderByComparator,
-			retrieveFromCache);
+			groupId, userId, name, start, end, orderByComparator);
 	}
 
 	/**
@@ -3242,20 +3259,24 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G_S(long,String,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param name the name
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByName_G_S(
 		long groupId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByName_G_S(
-			groupId, name, status, start, end, orderByComparator);
+			groupId, name, status, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -3271,17 +3292,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByName_G_S(
 		long groupId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByName_G_S(
-			groupId, name, status, start, end, orderByComparator,
-			retrieveFromCache);
+			groupId, name, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -3533,20 +3551,24 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_U_S(long,String,int, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param name the name
 	 * @param status the status
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByName_U_S(
 		long userId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByName_U_S(
-			userId, name, status, start, end, orderByComparator);
+			userId, name, status, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -3562,17 +3584,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByName_U_S(
 		long userId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByName_U_S(
-			userId, name, status, start, end, orderByComparator,
-			retrieveFromCache);
+			userId, name, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -3735,6 +3754,7 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByName_G_U_S(long,long,String,int, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param userId the user ID
 	 * @param name the name
@@ -3742,14 +3762,17 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data types
 	 */
+	@Deprecated
 	public static List<DataType> findByName_G_U_S(
 		long groupId, long userId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator) {
+		OrderByComparator<DataType> orderByComparator, boolean useFinderCache) {
 
 		return getPersistence().findByName_G_U_S(
-			groupId, userId, name, status, start, end, orderByComparator);
+			groupId, userId, name, status, start, end, orderByComparator,
+			useFinderCache);
 	}
 
 	/**
@@ -3766,17 +3789,14 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data types
 	 */
 	public static List<DataType> findByName_G_U_S(
 		long groupId, long userId, String name, int status, int start, int end,
-		OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<DataType> orderByComparator) {
 
 		return getPersistence().findByName_G_U_S(
-			groupId, userId, name, status, start, end, orderByComparator,
-			retrieveFromCache);
+			groupId, userId, name, status, start, end, orderByComparator);
 	}
 
 	/**
@@ -4021,14 +4041,20 @@ public class DataTypeUtil {
 	}
 
 	/**
-	 * Returns the data type where name = &#63; and version = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 * Returns the data type where name = &#63; and version = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByNameVersion(String,String)}
 	 * @param name the name
 	 * @param version the version
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public static DataType fetchByNameVersion(String name, String version) {
-		return getPersistence().fetchByNameVersion(name, version);
+	@Deprecated
+	public static DataType fetchByNameVersion(
+		String name, String version, boolean useFinderCache) {
+
+		return getPersistence().fetchByNameVersion(
+			name, version, useFinderCache);
 	}
 
 	/**
@@ -4036,14 +4062,11 @@ public class DataTypeUtil {
 	 *
 	 * @param name the name
 	 * @param version the version
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type, or <code>null</code> if a matching data type could not be found
 	 */
-	public static DataType fetchByNameVersion(
-		String name, String version, boolean retrieveFromCache) {
-
-		return getPersistence().fetchByNameVersion(
-			name, version, retrieveFromCache);
+	public static DataType fetchByNameVersion(String name, String version) {
+		return getPersistence().fetchByNameVersion(name, version);
 	}
 
 	/**
@@ -4169,15 +4192,20 @@ public class DataTypeUtil {
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
+	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data types
 	 */
+	@Deprecated
 	public static List<DataType> findAll(
-		int start, int end, OrderByComparator<DataType> orderByComparator) {
+		int start, int end, OrderByComparator<DataType> orderByComparator,
+		boolean useFinderCache) {
 
-		return getPersistence().findAll(start, end, orderByComparator);
+		return getPersistence().findAll(
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -4190,15 +4218,12 @@ public class DataTypeUtil {
 	 * @param start the lower bound of the range of data types
 	 * @param end the upper bound of the range of data types (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data types
 	 */
 	public static List<DataType> findAll(
-		int start, int end, OrderByComparator<DataType> orderByComparator,
-		boolean retrieveFromCache) {
+		int start, int end, OrderByComparator<DataType> orderByComparator) {
 
-		return getPersistence().findAll(
-			start, end, orderByComparator, retrieveFromCache);
+		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**

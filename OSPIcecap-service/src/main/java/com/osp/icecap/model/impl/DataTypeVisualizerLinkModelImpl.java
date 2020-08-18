@@ -440,7 +440,12 @@ public class DataTypeVisualizerLinkModelImpl
 	@Override
 	public DataTypeVisualizerLink toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, DataTypeVisualizerLink>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -642,8 +647,13 @@ public class DataTypeVisualizerLinkModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, DataTypeVisualizerLink>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, DataTypeVisualizerLink>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
+
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 
