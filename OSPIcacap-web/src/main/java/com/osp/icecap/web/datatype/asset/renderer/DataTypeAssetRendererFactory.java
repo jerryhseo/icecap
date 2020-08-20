@@ -29,14 +29,14 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 @Component(immediate = true, 
-property = {"javax.portlet.name=" + OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY}, 
+property = {"javax.portlet.name=" + OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY}, 
 service = AssetRendererFactory.class
 )
 public class DataTypeAssetRendererFactory extends BaseAssetRendererFactory<DataType> {
 	 public DataTypeAssetRendererFactory() {
 		setClassName(CLASS_NAME);
 		setLinkable(_LINKABLE);
-		setPortletId(OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY); setSearchable(true);
+		setPortletId(OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY); setSearchable(true);
 		setSelectable(true); 
 	 }
 
@@ -82,10 +82,10 @@ public class DataTypeAssetRendererFactory extends BaseAssetRendererFactory<DataT
 			ThemeDisplay themeDisplay = (ThemeDisplay) liferayPortletRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
 			portletURL = liferayPortletResponse.createLiferayPortletURL(getControlPanelPlid(themeDisplay),
-					OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY, PortletRequest.RENDER_PHASE);
+					OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY, PortletRequest.RENDER_PHASE);
 			
 			MutableRenderParameters renderParams = portletURL.getRenderParameters(); 
-			renderParams.setValue(OSPIcecapWebConstants.PARAM_MVCPATH, OSPIcecapWebConstants.MVCPATH_EDIT_DATATYPE);
+			renderParams.setValue(OSPIcecapWebConstants.PARAM_MVCPATH, OSPIcecapWebConstants.JSP_PATH_EDIT_DATATYPE);
 			renderParams.setValue(OSPIcecapWebConstants.PARAM_SHOWBACK, Boolean.FALSE.toString());
 
 		} catch (PortalException e) {

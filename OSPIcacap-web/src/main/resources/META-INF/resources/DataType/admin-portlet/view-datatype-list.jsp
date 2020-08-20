@@ -1,4 +1,6 @@
-<%@page import="com.osp.icecap.service.DataTypeLocalServiceUtil"%>
+<%@page import="com.osp.icecap.web.constants.OSPIcecapWebConstants"%>
+<%@page import="com.liferay.portal.kernel.util.GetterUtil"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@page import="com.osp.icecap.model.DataType"%>
@@ -7,26 +9,35 @@
 <%
 	String portletWindowState = (String)request.getAttribute("portletWindowState");
 
-	int pagenationSize = 10;
-	int startItem = 0;
-	List<DataType> dataTypes = DataTypeLocalServiceUtil.getDataTypes(startItem, startItem+pagenationSize-1);
+	int itemsPerPage = GetterUtil.getInteger(renderRequest.getAttribute(OSPIcecapWebConstants.PARAM_ITEMS_PER_PAGE));
+	int startIndex = GetterUtil.getInteger(renderRequest.getAttribute(OSPIcecapWebConstants.PARAM_START_INDEX));
+	List<DataType> dataTypes = (List<DataType>)renderRequest.getAttribute(OSPIcecapWebConstants.PARAM_DATATYPE_LIST);
 	if( dataTypes == null || dataTypes.size() == 0 )
 		System.out.println("No datatypes were found.");
 %>
 
+<portlet:renderURL var="editDataTypeRender">
+	<portlet:param name="dataTypeId" value="0"/>
+	<portlet:param name="mvcRenderCommandName" value="<%= OSPIcecapWebConstants.MVC_COMMAND_DATATYPE_ADMIN_EDIT %>"/>
+	<portlet:param name="showback" value="<%= themeDisplay.getURLCurrent() %>"/>
+</portlet:renderURL>
+
 <div class="osp container OSPIcacap-web">
 	<div class="row">
-		<h1><liferay-ui:message key="new-data-type"/></h1>
-		<clay:button label="new-data-type" />
+		<div class="col-md-12">
+			<aui:button icon="plus" value="<%= LanguageUtil.get(request, "new-data-type") %>" href="<%= editDataTypeRender %>"/>
+		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-4">
 			<div class="osp-table">
 					<div id="headerButton" style="text-align: right; margin-bottom: 5px;">
 					</div>
-					<div class="table-header">
-						<div class="header__item"><liferay-ui:message key="data-type-name"/>/<liferay-ui:message key="version"/></div>
-					</div>
+					<c:if test="${!empty dataTypes}">
+						<div class="table-header">
+							<div class="header__item"><liferay-ui:message key="data-type-name"/>/<liferay-ui:message key="version"/></div>
+						</div>
+					</c:if>
 					<div class="table-content">
 						<c:choose>
 							<c:when test="${!empty dataTypes}">

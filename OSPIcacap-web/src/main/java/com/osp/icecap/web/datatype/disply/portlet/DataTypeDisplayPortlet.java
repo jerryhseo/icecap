@@ -1,4 +1,4 @@
-package com.osp.icecap.web.datatype.admin.portlet;
+package com.osp.icecap.web.datatype.disply.portlet;
 
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -14,21 +14,21 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.display-category=category.hidden",
+		"com.liferay.portlet.display-category=category.osp",
         "com.liferay.portlet.scopeable=true",
 		"com.liferay.portlet.header-portlet-css=/css/main.css",
-		"javax.portlet.display-name=Data Type Administration",
+		"javax.portlet.display-name=Data Type Display",
 		"javax.portlet.expiration-cache=0",
         "javax.portlet.init-param.portlet-title-based-navigation=true",
 		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.init-param.view-template=/DataType/admin/view.jsp",
-		"javax.portlet.name=" + OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY,
+		"javax.portlet.init-param.view-template=/DataType/display-portlet/view.jsp",
+		"javax.portlet.name=" + OSPIcecapPortletKeys.DATATYPE_DISPLAY_PORTLET_KEY,
 		"javax.portlet.resource-bundle=content.Language",
-		"javax.portlet.security-role-ref=administrator",
+		"javax.portlet.security-role-ref=power-user,user",
 		"javax.portlet.supports.mime-type=text/html",
         "com.liferay.portlet.add-default-resource=true"
 	},
 	service = Portlet.class
 )
-public class OSPDataTypeAdminPortlet extends MVCPortlet {
+public class DataTypeDisplayPortlet extends MVCPortlet {
 }

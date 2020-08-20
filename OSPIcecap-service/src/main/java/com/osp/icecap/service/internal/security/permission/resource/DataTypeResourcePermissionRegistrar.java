@@ -39,7 +39,7 @@ public class DataTypeResourcePermissionRegistrar {
                 (modelResourcePermission, consumer) -> {
                     consumer.accept(
                         new StagedModelPermissionLogic<>(
-                            _stagingPermission, OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY,
+                            _stagingPermission, OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY,
                             DataType::getPrimaryKey));
                     consumer.accept(
                         new WorkflowedModelPermissionLogic<>(

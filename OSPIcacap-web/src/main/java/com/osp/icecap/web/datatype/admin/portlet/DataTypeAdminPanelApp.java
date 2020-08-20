@@ -20,12 +20,12 @@ public class DataTypeAdminPanelApp extends BasePanelApp {
 
 	@Override
 	public String getPortletId() {
-		return OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY;
+		return OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY;
 	}
 
 	@Override
     @Reference(
-        target = "(javax.portlet.name=" + OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY + ")",
+        target = "(javax.portlet.name=" + OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY + ")",
         unbind = "-"
     )
     public void setPortlet(Portlet portlet) {

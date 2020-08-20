@@ -84,7 +84,7 @@ public class DataTypeAssetRenderer extends BaseJSPAssetRenderer<DataType> {
 			 template.equals(TEMPLATE_PREVIEW) ) {
 		      httpServletRequest.setAttribute(OSPIcecapWebConstants.ATTR_DATATYPE, _dataType);
 
-		      return OSPIcecapWebConstants.DATATYPE_PORTLET_ASSET_JSPPATH + template + ".jsp";
+		      return OSPIcecapWebConstants.JSP_FOLDER_PATH_DATATYPE_PORTLET_ASSET + template + ".jsp";
 		    } else {
 		      return null;
 		    }
@@ -120,10 +120,10 @@ public class DataTypeAssetRenderer extends BaseJSPAssetRenderer<DataType> {
 	public PortletURL getURLEdit(
 			LiferayPortletRequest liferayPortletRequest,
 			LiferayPortletResponse liferayPortletResponse) throws Exception {
-		LiferayPortletURL renderURL = liferayPortletResponse.createRenderURL(OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY);
+		LiferayPortletURL renderURL = liferayPortletResponse.createRenderURL(OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY);
 		
 		MutableRenderParameters renderParams = renderURL.getRenderParameters(); 
-		renderParams.setValue(OSPIcecapWebConstants.PARAM_MVCPATH, OSPIcecapWebConstants.MVCPATH_EDIT_DATATYPE);
+		renderParams.setValue(OSPIcecapWebConstants.PARAM_MVCPATH, OSPIcecapWebConstants.JSP_PATH_EDIT_DATATYPE);
 		renderParams.setValue(OSPIcecapWebConstants.PARAM_DATATYPE_ID, String.valueOf(_dataType.getPrimaryKey()));
 		renderParams.setValue(OSPIcecapWebConstants.PARAM_SHOWBACK, Boolean.FALSE.toString());
 
@@ -135,19 +135,19 @@ public class DataTypeAssetRenderer extends BaseJSPAssetRenderer<DataType> {
 	  LiferayPortletResponse liferayPortletResponse, String noSuchEntryRedirect) throws Exception {
 	    try {
 	      long plid = PortalUtil.getPlidFromPortletId(_dataType.getGroupId(),
-	          OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY);
+	          OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY);
 
 	      PortletURL portletURL;
 	      if (plid == LayoutConstants.DEFAULT_PLID) {
 	        portletURL = liferayPortletResponse.createLiferayPortletURL(getControlPanelPlid(liferayPortletRequest),
-	        		OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY, PortletRequest.RENDER_PHASE);
+	        		OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY, PortletRequest.RENDER_PHASE);
 	      } else {
 	        portletURL = PortletURLFactoryUtil.create(liferayPortletRequest,
-	        		OSPIcecapPortletKeys.DATA_TYPE_ADMIN_PORTLET_KEY, plid, PortletRequest.RENDER_PHASE);
+	        		OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY, plid, PortletRequest.RENDER_PHASE);
 	      }
 
 	      MutableRenderParameters renderParams =  portletURL.getRenderParameters();
-	      renderParams.setValue(OSPIcecapWebConstants.PARAM_MVCPATH, OSPIcecapWebConstants.MVCPATH_VIEW_DATATYPE);
+	      renderParams.setValue(OSPIcecapWebConstants.PARAM_MVCPATH, OSPIcecapWebConstants.JSP_PATH_DATATYPE_ADMIN_VIEW);
 	      renderParams.setValue(OSPIcecapWebConstants.PARAM_DATATYPE_ID, String.valueOf(_dataType.getPrimaryKey()));
 
 	      String currentUrl = PortalUtil.getCurrentURL(liferayPortletRequest);
