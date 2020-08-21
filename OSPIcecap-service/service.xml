@@ -26,6 +26,7 @@
         <!--  Descriptive -->
 		<column name="name" type="String"></column>
 		<column name="version" type="String"></column>
+        <column name="extension" type="String"></column>
 		<column name="samplePath" type="String"></column>
         <column name="description" type="String" localized="true"></column>
         
@@ -101,6 +102,9 @@
         </finder>
 
 		<!-- References -->
+        <finder name="Extension" return-type="Collection">
+            <finder-column name="extension"></finder-column>
+        </finder>
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 	</entity>

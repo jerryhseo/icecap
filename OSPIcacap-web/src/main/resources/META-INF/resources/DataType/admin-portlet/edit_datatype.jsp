@@ -19,21 +19,27 @@
 	}
 	
 	String showback = GetterUtil.get(renderRequest.getAttribute(OSPIcecapWebConstants.PARAM_SHOWBACK), "");
-	
-	out.println(showback);
 %>
 
 <portlet:actionURL var="editDataTypeURL" name="<%= OSPIcecapWebConstants.MVC_COMMAND_DATATYPE_ADMIN_EDIT %>">
-	<portlet:param name="command" value="<%= action %>"/>
-	<portlet:param name="showback" value="<%= showback %>"/>
 </portlet:actionURL>
 
-<clay:label label="<%= LanguageUtil.get(request, "back") %>" href="<%= showback %>"/>
-<aui:form action = "<%= editDataTypeURL %>" method="post" name="fm">
-	<aui:input name="command" value="" type="hidden"></aui:input>
-	<aui:input name="dataTypeName"></aui:input>
-	<aui:input name="dataTypeVersion"></aui:input>
-	<aui:button-row>
-		<aui:button type="submit" value="<%= submitButtonLabel %>"></aui:button>
-	</aui:button-row>	
-</aui:form>
+<div class="osp OSPIcacap-web">
+	<clay:label label="<%= LanguageUtil.get(request, "back") %>" href="<%= showback %>"/>
+	<aui:form action = "<%= editDataTypeURL %>" method="post" name="fm">
+		<aui:fieldset>
+			<aui:input name="command" value="<%= action %>" type="hidden"></aui:input>
+			<aui:input name="showback" value="<%= showback %>" type="hidden"></aui:input>
+		</aui:fieldset>
+		
+		<aui:fieldset>
+			<aui:input name="dataTypeName" label="name" required="true"></aui:input>
+			<aui:input name="dataTypeVersion" label="version" required="true"></aui:input>
+			<aui:input name="dataTypeExtension" label="extension"></aui:input>
+			<aui:input name="dataTypeDescription" type="textarea" localized="true" label="description"></aui:input>
+		</aui:fieldset>
+		<aui:button-row>
+			<aui:button type="submit" value="<%= submitButtonLabel %>"></aui:button>
+		</aui:button-row>	
+	</aui:form>
+</div>

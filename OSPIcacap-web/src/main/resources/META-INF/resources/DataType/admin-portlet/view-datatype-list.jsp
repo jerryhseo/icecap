@@ -25,7 +25,7 @@
 <div class="osp container OSPIcacap-web">
 	<div class="row">
 		<div class="col-md-12">
-			<aui:button icon="plus" value="<%= LanguageUtil.get(request, "new-data-type") %>" href="<%= editDataTypeRender %>"/>
+			<aui:button icon="plus" value="new-data-type" href="<%= editDataTypeRender %>" cssClass="btn-primary"/>
 		</div>
 	</div>
 	<div class="row">
