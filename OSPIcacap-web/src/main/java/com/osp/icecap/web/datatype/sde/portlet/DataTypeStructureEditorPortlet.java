@@ -30,5 +30,5 @@ import org.osgi.service.component.annotations.Component;
 	},
 	service = Portlet.class
 )
-public class DataStructureEditorPortlet extends MVCPortlet {
+public class DataTypeStructureEditorPortlet extends MVCPortlet {
 }

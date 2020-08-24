@@ -24,22 +24,43 @@
 <portlet:actionURL var="editDataTypeURL" name="<%= OSPIcecapWebConstants.MVC_COMMAND_DATATYPE_ADMIN_EDIT %>">
 </portlet:actionURL>
 
-<div class="osp OSPIcacap-web">
-	<clay:label label="<%= LanguageUtil.get(request, "back") %>" href="<%= showback %>"/>
+<aui:container cssClass="osp OSPIcacap-web">
 	<aui:form action = "<%= editDataTypeURL %>" method="post" name="fm">
+		<aui:fieldset>
+			<clay:label label="<%= LanguageUtil.get(request, "back") %>" href="<%= showback %>"/>
+		</aui:fieldset>
 		<aui:fieldset>
 			<aui:input name="command" value="<%= action %>" type="hidden"></aui:input>
 			<aui:input name="showback" value="<%= showback %>" type="hidden"></aui:input>
 		</aui:fieldset>
 		
 		<aui:fieldset>
-			<aui:input name="dataTypeName" label="name" required="true"></aui:input>
-			<aui:input name="dataTypeVersion" label="version" required="true"></aui:input>
-			<aui:input name="dataTypeExtension" label="extension"></aui:input>
-			<aui:input name="dataTypeDescription" type="textarea" localized="true" label="description"></aui:input>
+			<aui:row>
+				<aui:col md="4">
+					<aui:input name="dataTypeName" label="name" required="true" helpMessage="English only, under 32 characters"></aui:input>
+				</aui:col>
+				<aui:col md="2">
+					<aui:input name="dataTypeVersion" label="version" required="true" helpMessage="x.x.x, x:integer"></aui:input>
+				</aui:col>
+				<aui:col md="2">
+					<aui:input name="dataTypeExtension" label="extension" helpMessage="English only, under 8 characters"></aui:input>
+				</aui:col>
+			</aui:row>
+			<aui:row>
+				<aui:col md="11">
+					<aui:input name="dataTypeDescription" type="textarea" localized="true" label="description"></aui:input>
+				</aui:col>
+			</aui:row>
+		</aui:fieldset>
+		<aui:fieldset>
+			<aui:row>
+				<aui:col md="12">
+					<aui:input type="file" name="uploadSampleFile" required="true" enctype = "multipart/form-data"></aui:input>
+				</aui:col>
+			</aui:row>
 		</aui:fieldset>
 		<aui:button-row>
 			<aui:button type="submit" value="<%= submitButtonLabel %>"></aui:button>
 		</aui:button-row>	
 	</aui:form>
-</div>
+</aui:container>
