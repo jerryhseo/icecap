@@ -219,6 +219,13 @@ public class DataTypeStructureLocalServiceUtil {
 		return getService().getDataTypeStructure(dataTypeId);
 	}
 
+	public static com.liferay.portal.kernel.json.JSONObject
+			getDataTypeStructureJSON(long dataTypeId)
+		throws com.liferay.portal.kernel.json.JSONException {
+
+		return getService().getDataTypeStructureJSON(dataTypeId);
+	}
+
 	/**
 	 * Returns a range of all the data type structures.
 	 *
@@ -243,6 +250,10 @@ public class DataTypeStructureLocalServiceUtil {
 	 */
 	public static int getDataTypeStructuresCount() {
 		return getService().getDataTypeStructuresCount();
+	}
+
+	public static String getDataTypeStructureSTR(long dataTypeId) {
+		return getService().getDataTypeStructureSTR(dataTypeId);
 	}
 
 	public static

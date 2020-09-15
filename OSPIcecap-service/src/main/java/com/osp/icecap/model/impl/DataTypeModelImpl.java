@@ -86,8 +86,8 @@ public class DataTypeModelImpl
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
 		{"status", Types.INTEGER}, {"name", Types.VARCHAR},
-		{"version", Types.VARCHAR}, {"samplePath", Types.VARCHAR},
-		{"description", Types.VARCHAR}
+		{"version", Types.VARCHAR}, {"extension", Types.VARCHAR},
+		{"samplePath", Types.VARCHAR}, {"description", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -105,12 +105,13 @@ public class DataTypeModelImpl
 		TABLE_COLUMNS_MAP.put("status", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("version", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("extension", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("samplePath", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_DataType (uuid_ VARCHAR(75) null,dataTypeId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,name VARCHAR(75) null,version VARCHAR(75) null,samplePath VARCHAR(75) null,description STRING null)";
+		"create table ICECAP_DataType (uuid_ VARCHAR(75) null,dataTypeId LONG not null primary key,companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,status INTEGER,name VARCHAR(75) null,version VARCHAR(75) null,extension VARCHAR(75) null,samplePath VARCHAR(75) null,description STRING null)";
 
 	public static final String TABLE_SQL_DROP = "drop table ICECAP_DataType";
 
@@ -128,19 +129,21 @@ public class DataTypeModelImpl
 
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
 
-	public static final long GROUPID_COLUMN_BITMASK = 2L;
+	public static final long EXTENSION_COLUMN_BITMASK = 2L;
 
-	public static final long NAME_COLUMN_BITMASK = 4L;
+	public static final long GROUPID_COLUMN_BITMASK = 4L;
 
-	public static final long STATUS_COLUMN_BITMASK = 8L;
+	public static final long NAME_COLUMN_BITMASK = 8L;
 
-	public static final long USERID_COLUMN_BITMASK = 16L;
+	public static final long STATUS_COLUMN_BITMASK = 16L;
 
-	public static final long UUID_COLUMN_BITMASK = 32L;
+	public static final long USERID_COLUMN_BITMASK = 32L;
 
-	public static final long VERSION_COLUMN_BITMASK = 64L;
+	public static final long UUID_COLUMN_BITMASK = 64L;
 
-	public static final long DATATYPEID_COLUMN_BITMASK = 128L;
+	public static final long VERSION_COLUMN_BITMASK = 128L;
+
+	public static final long DATATYPEID_COLUMN_BITMASK = 256L;
 
 	public static void setEntityCacheEnabled(boolean entityCacheEnabled) {
 		_entityCacheEnabled = entityCacheEnabled;
@@ -308,6 +311,9 @@ public class DataTypeModelImpl
 		attributeGetterFunctions.put("version", DataType::getVersion);
 		attributeSetterBiConsumers.put(
 			"version", (BiConsumer<DataType, String>)DataType::setVersion);
+		attributeGetterFunctions.put("extension", DataType::getExtension);
+		attributeSetterBiConsumers.put(
+			"extension", (BiConsumer<DataType, String>)DataType::setExtension);
 		attributeGetterFunctions.put("samplePath", DataType::getSamplePath);
 		attributeSetterBiConsumers.put(
 			"samplePath",
@@ -554,6 +560,31 @@ public class DataTypeModelImpl
 	}
 
 	@Override
+	public String getExtension() {
+		if (_extension == null) {
+			return "";
+		}
+		else {
+			return _extension;
+		}
+	}
+
+	@Override
+	public void setExtension(String extension) {
+		_columnBitmask |= EXTENSION_COLUMN_BITMASK;
+
+		if (_originalExtension == null) {
+			_originalExtension = _extension;
+		}
+
+		_extension = extension;
+	}
+
+	public String getOriginalExtension() {
+		return GetterUtil.getString(_originalExtension);
+	}
+
+	@Override
 	public String getSamplePath() {
 		if (_samplePath == null) {
 			return "";
@@ -769,12 +800,7 @@ public class DataTypeModelImpl
 	@Override
 	public DataType toEscapedModel() {
 		if (_escapedModel == null) {
-			Function<InvocationHandler, DataType>
-				escapedModelProxyProviderFunction =
-					EscapedModelProxyProviderFunctionHolder.
-						_escapedModelProxyProviderFunction;
-
-			_escapedModel = escapedModelProxyProviderFunction.apply(
+			_escapedModel = _escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -796,6 +822,7 @@ public class DataTypeModelImpl
 		dataTypeImpl.setStatus(getStatus());
 		dataTypeImpl.setName(getName());
 		dataTypeImpl.setVersion(getVersion());
+		dataTypeImpl.setExtension(getExtension());
 		dataTypeImpl.setSamplePath(getSamplePath());
 		dataTypeImpl.setDescription(getDescription());
 
@@ -884,6 +911,8 @@ public class DataTypeModelImpl
 
 		dataTypeModelImpl._originalVersion = dataTypeModelImpl._version;
 
+		dataTypeModelImpl._originalExtension = dataTypeModelImpl._extension;
+
 		dataTypeModelImpl._columnBitmask = 0;
 	}
 
@@ -949,6 +978,14 @@ public class DataTypeModelImpl
 
 		if ((version != null) && (version.length() == 0)) {
 			dataTypeCacheModel.version = null;
+		}
+
+		dataTypeCacheModel.extension = getExtension();
+
+		String extension = dataTypeCacheModel.extension;
+
+		if ((extension != null) && (extension.length() == 0)) {
+			dataTypeCacheModel.extension = null;
 		}
 
 		dataTypeCacheModel.samplePath = getSamplePath();
@@ -1033,13 +1070,8 @@ public class DataTypeModelImpl
 		return sb.toString();
 	}
 
-	private static class EscapedModelProxyProviderFunctionHolder {
-
-		private static final Function<InvocationHandler, DataType>
-			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
-
-	}
-
+	private static final Function<InvocationHandler, DataType>
+		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 
@@ -1066,6 +1098,8 @@ public class DataTypeModelImpl
 	private String _originalName;
 	private String _version;
 	private String _originalVersion;
+	private String _extension;
+	private String _originalExtension;
 	private String _samplePath;
 	private String _description;
 	private String _descriptionCurrentLanguageId;

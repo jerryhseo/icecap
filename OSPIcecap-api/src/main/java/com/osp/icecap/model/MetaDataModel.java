@@ -594,6 +594,20 @@ public interface MetaDataModel extends BaseModel<MetaData>, LocalizedModel {
 	 */
 	public void setDataPackId(long dataPackId);
 
+	/**
+	 * Returns the data entry ID of this meta data.
+	 *
+	 * @return the data entry ID of this meta data
+	 */
+	public long getDataEntryId();
+
+	/**
+	 * Sets the data entry ID of this meta data.
+	 *
+	 * @param dataEntryId the data entry ID of this meta data
+	 */
+	public void setDataEntryId(long dataEntryId);
+
 	@Override
 	public String[] getAvailableLanguageIds();
 

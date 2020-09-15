@@ -57,6 +57,7 @@ public class DataTypeWrapper
 		attributes.put("status", getStatus());
 		attributes.put("name", getName());
 		attributes.put("version", getVersion());
+		attributes.put("extension", getExtension());
 		attributes.put("samplePath", getSamplePath());
 		attributes.put("description", getDescription());
 
@@ -129,6 +130,12 @@ public class DataTypeWrapper
 
 		if (version != null) {
 			setVersion(version);
+		}
+
+		String extension = (String)attributes.get("extension");
+
+		if (extension != null) {
+			setExtension(extension);
 		}
 
 		String samplePath = (String)attributes.get("samplePath");
@@ -258,6 +265,16 @@ public class DataTypeWrapper
 	@Override
 	public Map<java.util.Locale, String> getDescriptionMap() {
 		return model.getDescriptionMap();
+	}
+
+	/**
+	 * Returns the extension of this data type.
+	 *
+	 * @return the extension of this data type
+	 */
+	@Override
+	public String getExtension() {
+		return model.getExtension();
 	}
 
 	/**
@@ -485,6 +502,16 @@ public class DataTypeWrapper
 		java.util.Locale defaultLocale) {
 
 		model.setDescriptionMap(descriptionMap, defaultLocale);
+	}
+
+	/**
+	 * Sets the extension of this data type.
+	 *
+	 * @param extension the extension of this data type
+	 */
+	@Override
+	public void setExtension(String extension) {
+		model.setExtension(extension);
 	}
 
 	/**

@@ -132,23 +132,19 @@ public class DataTypeVisualizerLinkPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByVisualizerName(String, int, int, OrderByComparator)}
 	 * @param visualizerName the visualizer name
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
-	@Deprecated
 	@Override
 	public List<DataTypeVisualizerLink> findByVisualizerName(
 		String visualizerName, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
 
 		return findByVisualizerName(
-			visualizerName, start, end, orderByComparator);
+			visualizerName, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -162,12 +158,14 @@ public class DataTypeVisualizerLinkPersistenceImpl
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
 	@Override
 	public List<DataTypeVisualizerLink> findByVisualizerName(
 		String visualizerName, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
+		boolean retrieveFromCache) {
 
 		visualizerName = Objects.toString(visualizerName, "");
 
@@ -189,18 +187,21 @@ public class DataTypeVisualizerLinkPersistenceImpl
 			};
 		}
 
-		List<DataTypeVisualizerLink> list =
-			(List<DataTypeVisualizerLink>)finderCache.getResult(
+		List<DataTypeVisualizerLink> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<DataTypeVisualizerLink>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataTypeVisualizerLink dataTypeVisualizerLink : list) {
-				if (!visualizerName.equals(
-						dataTypeVisualizerLink.getVisualizerName())) {
+			if ((list != null) && !list.isEmpty()) {
+				for (DataTypeVisualizerLink dataTypeVisualizerLink : list) {
+					if (!visualizerName.equals(
+							dataTypeVisualizerLink.getVisualizerName())) {
 
-					list = null;
+						list = null;
 
-					break;
+						break;
+					}
 				}
 			}
 		}
@@ -696,21 +697,18 @@ public class DataTypeVisualizerLinkPersistenceImpl
 	}
 
 	/**
-	 * Returns the data type visualizer link where visualizerName = &#63; and visualizerVersion = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns the data type visualizer link where visualizerName = &#63; and visualizerVersion = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByVisualizerNameVersion(String,String)}
 	 * @param visualizerName the visualizer name
 	 * @param visualizerVersion the visualizer version
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type visualizer link, or <code>null</code> if a matching data type visualizer link could not be found
 	 */
-	@Deprecated
 	@Override
 	public DataTypeVisualizerLink fetchByVisualizerNameVersion(
-		String visualizerName, String visualizerVersion,
-		boolean useFinderCache) {
+		String visualizerName, String visualizerVersion) {
 
-		return fetchByVisualizerNameVersion(visualizerName, visualizerVersion);
+		return fetchByVisualizerNameVersion(
+			visualizerName, visualizerVersion, true);
 	}
 
 	/**
@@ -718,20 +716,25 @@ public class DataTypeVisualizerLinkPersistenceImpl
 	 *
 	 * @param visualizerName the visualizer name
 	 * @param visualizerVersion the visualizer version
-	 * @param useFinderCache whether to use the finder cache
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching data type visualizer link, or <code>null</code> if a matching data type visualizer link could not be found
 	 */
 	@Override
 	public DataTypeVisualizerLink fetchByVisualizerNameVersion(
-		String visualizerName, String visualizerVersion) {
+		String visualizerName, String visualizerVersion,
+		boolean retrieveFromCache) {
 
 		visualizerName = Objects.toString(visualizerName, "");
 		visualizerVersion = Objects.toString(visualizerVersion, "");
 
 		Object[] finderArgs = new Object[] {visualizerName, visualizerVersion};
 
-		Object result = finderCache.getResult(
-			_finderPathFetchByVisualizerNameVersion, finderArgs, this);
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = finderCache.getResult(
+				_finderPathFetchByVisualizerNameVersion, finderArgs, this);
+		}
 
 		if (result instanceof DataTypeVisualizerLink) {
 			DataTypeVisualizerLink dataTypeVisualizerLink =
@@ -995,22 +998,18 @@ public class DataTypeVisualizerLinkPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByEditable(boolean, int, int, OrderByComparator)}
 	 * @param editable the editable
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
-	@Deprecated
 	@Override
 	public List<DataTypeVisualizerLink> findByEditable(
 		boolean editable, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
 
-		return findByEditable(editable, start, end, orderByComparator);
+		return findByEditable(editable, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -1024,12 +1023,14 @@ public class DataTypeVisualizerLinkPersistenceImpl
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
 	@Override
 	public List<DataTypeVisualizerLink> findByEditable(
 		boolean editable, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1047,16 +1048,19 @@ public class DataTypeVisualizerLinkPersistenceImpl
 			finderArgs = new Object[] {editable, start, end, orderByComparator};
 		}
 
-		List<DataTypeVisualizerLink> list =
-			(List<DataTypeVisualizerLink>)finderCache.getResult(
+		List<DataTypeVisualizerLink> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<DataTypeVisualizerLink>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataTypeVisualizerLink dataTypeVisualizerLink : list) {
-				if ((editable != dataTypeVisualizerLink.isEditable())) {
-					list = null;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataTypeVisualizerLink dataTypeVisualizerLink : list) {
+					if ((editable != dataTypeVisualizerLink.isEditable())) {
+						list = null;
 
-					break;
+						break;
+					}
 				}
 			}
 		}
@@ -1510,22 +1514,19 @@ public class DataTypeVisualizerLinkPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataTypeId(long, int, int, OrderByComparator)}
 	 * @param dataTypeId the data type ID
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
-	@Deprecated
 	@Override
 	public List<DataTypeVisualizerLink> findByDataTypeId(
 		long dataTypeId, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
 
-		return findByDataTypeId(dataTypeId, start, end, orderByComparator);
+		return findByDataTypeId(
+			dataTypeId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -1539,12 +1540,14 @@ public class DataTypeVisualizerLinkPersistenceImpl
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
 	@Override
 	public List<DataTypeVisualizerLink> findByDataTypeId(
 		long dataTypeId, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1564,16 +1567,21 @@ public class DataTypeVisualizerLinkPersistenceImpl
 			};
 		}
 
-		List<DataTypeVisualizerLink> list =
-			(List<DataTypeVisualizerLink>)finderCache.getResult(
+		List<DataTypeVisualizerLink> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<DataTypeVisualizerLink>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataTypeVisualizerLink dataTypeVisualizerLink : list) {
-				if ((dataTypeId != dataTypeVisualizerLink.getDataTypeId())) {
-					list = null;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataTypeVisualizerLink dataTypeVisualizerLink : list) {
+					if ((dataTypeId !=
+							dataTypeVisualizerLink.getDataTypeId())) {
 
-					break;
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -1985,6 +1993,565 @@ public class DataTypeVisualizerLinkPersistenceImpl
 	private static final String _FINDER_COLUMN_DATATYPEID_DATATYPEID_2 =
 		"dataTypeVisualizerLink.dataTypeId = ?";
 
+	private FinderPath _finderPathWithPaginationFindByDataTypeIdEditable;
+	private FinderPath _finderPathWithoutPaginationFindByDataTypeIdEditable;
+	private FinderPath _finderPathCountByDataTypeIdEditable;
+
+	/**
+	 * Returns all the data type visualizer links where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @return the matching data type visualizer links
+	 */
+	@Override
+	public List<DataTypeVisualizerLink> findByDataTypeIdEditable(
+		long dataTypeId, boolean editable) {
+
+		return findByDataTypeIdEditable(
+			dataTypeId, editable, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data type visualizer links where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param start the lower bound of the range of data type visualizer links
+	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
+	 * @return the range of matching data type visualizer links
+	 */
+	@Override
+	public List<DataTypeVisualizerLink> findByDataTypeIdEditable(
+		long dataTypeId, boolean editable, int start, int end) {
+
+		return findByDataTypeIdEditable(dataTypeId, editable, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data type visualizer links where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param start the lower bound of the range of data type visualizer links
+	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data type visualizer links
+	 */
+	@Override
+	public List<DataTypeVisualizerLink> findByDataTypeIdEditable(
+		long dataTypeId, boolean editable, int start, int end,
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
+
+		return findByDataTypeIdEditable(
+			dataTypeId, editable, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the data type visualizer links where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param start the lower bound of the range of data type visualizer links
+	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching data type visualizer links
+	 */
+	@Override
+	public List<DataTypeVisualizerLink> findByDataTypeIdEditable(
+		long dataTypeId, boolean editable, int start, int end,
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
+		boolean retrieveFromCache) {
+
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			pagination = false;
+			finderPath = _finderPathWithoutPaginationFindByDataTypeIdEditable;
+			finderArgs = new Object[] {dataTypeId, editable};
+		}
+		else {
+			finderPath = _finderPathWithPaginationFindByDataTypeIdEditable;
+			finderArgs = new Object[] {
+				dataTypeId, editable, start, end, orderByComparator
+			};
+		}
+
+		List<DataTypeVisualizerLink> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<DataTypeVisualizerLink>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (DataTypeVisualizerLink dataTypeVisualizerLink : list) {
+					if ((dataTypeId !=
+							dataTypeVisualizerLink.getDataTypeId()) ||
+						(editable != dataTypeVisualizerLink.isEditable())) {
+
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_DATATYPEVISUALIZERLINK_WHERE);
+
+			query.append(_FINDER_COLUMN_DATATYPEIDEDITABLE_DATATYPEID_2);
+
+			query.append(_FINDER_COLUMN_DATATYPEIDEDITABLE_EDITABLE_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else if (pagination) {
+				query.append(DataTypeVisualizerLinkModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(dataTypeId);
+
+				qPos.add(editable);
+
+				if (!pagination) {
+					list = (List<DataTypeVisualizerLink>)QueryUtil.list(
+						q, getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<DataTypeVisualizerLink>)QueryUtil.list(
+						q, getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first data type visualizer link in the ordered set where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data type visualizer link
+	 * @throws NoSuchDataTypeVisualizerLinkException if a matching data type visualizer link could not be found
+	 */
+	@Override
+	public DataTypeVisualizerLink findByDataTypeIdEditable_First(
+			long dataTypeId, boolean editable,
+			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+		throws NoSuchDataTypeVisualizerLinkException {
+
+		DataTypeVisualizerLink dataTypeVisualizerLink =
+			fetchByDataTypeIdEditable_First(
+				dataTypeId, editable, orderByComparator);
+
+		if (dataTypeVisualizerLink != null) {
+			return dataTypeVisualizerLink;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("dataTypeId=");
+		msg.append(dataTypeId);
+
+		msg.append(", editable=");
+		msg.append(editable);
+
+		msg.append("}");
+
+		throw new NoSuchDataTypeVisualizerLinkException(msg.toString());
+	}
+
+	/**
+	 * Returns the first data type visualizer link in the ordered set where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data type visualizer link, or <code>null</code> if a matching data type visualizer link could not be found
+	 */
+	@Override
+	public DataTypeVisualizerLink fetchByDataTypeIdEditable_First(
+		long dataTypeId, boolean editable,
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
+
+		List<DataTypeVisualizerLink> list = findByDataTypeIdEditable(
+			dataTypeId, editable, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last data type visualizer link in the ordered set where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data type visualizer link
+	 * @throws NoSuchDataTypeVisualizerLinkException if a matching data type visualizer link could not be found
+	 */
+	@Override
+	public DataTypeVisualizerLink findByDataTypeIdEditable_Last(
+			long dataTypeId, boolean editable,
+			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+		throws NoSuchDataTypeVisualizerLinkException {
+
+		DataTypeVisualizerLink dataTypeVisualizerLink =
+			fetchByDataTypeIdEditable_Last(
+				dataTypeId, editable, orderByComparator);
+
+		if (dataTypeVisualizerLink != null) {
+			return dataTypeVisualizerLink;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("dataTypeId=");
+		msg.append(dataTypeId);
+
+		msg.append(", editable=");
+		msg.append(editable);
+
+		msg.append("}");
+
+		throw new NoSuchDataTypeVisualizerLinkException(msg.toString());
+	}
+
+	/**
+	 * Returns the last data type visualizer link in the ordered set where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data type visualizer link, or <code>null</code> if a matching data type visualizer link could not be found
+	 */
+	@Override
+	public DataTypeVisualizerLink fetchByDataTypeIdEditable_Last(
+		long dataTypeId, boolean editable,
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
+
+		int count = countByDataTypeIdEditable(dataTypeId, editable);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<DataTypeVisualizerLink> list = findByDataTypeIdEditable(
+			dataTypeId, editable, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the data type visualizer links before and after the current data type visualizer link in the ordered set where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeVisualizerLinkId the primary key of the current data type visualizer link
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data type visualizer link
+	 * @throws NoSuchDataTypeVisualizerLinkException if a data type visualizer link with the primary key could not be found
+	 */
+	@Override
+	public DataTypeVisualizerLink[] findByDataTypeIdEditable_PrevAndNext(
+			long dataTypeVisualizerLinkId, long dataTypeId, boolean editable,
+			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+		throws NoSuchDataTypeVisualizerLinkException {
+
+		DataTypeVisualizerLink dataTypeVisualizerLink = findByPrimaryKey(
+			dataTypeVisualizerLinkId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataTypeVisualizerLink[] array = new DataTypeVisualizerLinkImpl[3];
+
+			array[0] = getByDataTypeIdEditable_PrevAndNext(
+				session, dataTypeVisualizerLink, dataTypeId, editable,
+				orderByComparator, true);
+
+			array[1] = dataTypeVisualizerLink;
+
+			array[2] = getByDataTypeIdEditable_PrevAndNext(
+				session, dataTypeVisualizerLink, dataTypeId, editable,
+				orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataTypeVisualizerLink getByDataTypeIdEditable_PrevAndNext(
+		Session session, DataTypeVisualizerLink dataTypeVisualizerLink,
+		long dataTypeId, boolean editable,
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
+		boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		query.append(_SQL_SELECT_DATATYPEVISUALIZERLINK_WHERE);
+
+		query.append(_FINDER_COLUMN_DATATYPEIDEDITABLE_DATATYPEID_2);
+
+		query.append(_FINDER_COLUMN_DATATYPEIDEDITABLE_EDITABLE_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DataTypeVisualizerLinkModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(dataTypeId);
+
+		qPos.add(editable);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						dataTypeVisualizerLink)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataTypeVisualizerLink> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the data type visualizer links where dataTypeId = &#63; and editable = &#63; from the database.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 */
+	@Override
+	public void removeByDataTypeIdEditable(long dataTypeId, boolean editable) {
+		for (DataTypeVisualizerLink dataTypeVisualizerLink :
+				findByDataTypeIdEditable(
+					dataTypeId, editable, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
+			remove(dataTypeVisualizerLink);
+		}
+	}
+
+	/**
+	 * Returns the number of data type visualizer links where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @return the number of matching data type visualizer links
+	 */
+	@Override
+	public int countByDataTypeIdEditable(long dataTypeId, boolean editable) {
+		FinderPath finderPath = _finderPathCountByDataTypeIdEditable;
+
+		Object[] finderArgs = new Object[] {dataTypeId, editable};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_DATATYPEVISUALIZERLINK_WHERE);
+
+			query.append(_FINDER_COLUMN_DATATYPEIDEDITABLE_DATATYPEID_2);
+
+			query.append(_FINDER_COLUMN_DATATYPEIDEDITABLE_EDITABLE_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(dataTypeId);
+
+				qPos.add(editable);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_DATATYPEIDEDITABLE_DATATYPEID_2 =
+		"dataTypeVisualizerLink.dataTypeId = ? AND ";
+
+	private static final String _FINDER_COLUMN_DATATYPEIDEDITABLE_EDITABLE_2 =
+		"dataTypeVisualizerLink.editable = ?";
+
 	public DataTypeVisualizerLinkPersistenceImpl() {
 		setModelClass(DataTypeVisualizerLink.class);
 
@@ -2324,6 +2891,16 @@ public class DataTypeVisualizerLinkPersistenceImpl
 			finderCache.removeResult(
 				_finderPathWithoutPaginationFindByDataTypeId, args);
 
+			args = new Object[] {
+				dataTypeVisualizerLinkModelImpl.getDataTypeId(),
+				dataTypeVisualizerLinkModelImpl.isEditable()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByDataTypeIdEditable, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByDataTypeIdEditable, args);
+
 			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(
 				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
@@ -2392,6 +2969,31 @@ public class DataTypeVisualizerLinkPersistenceImpl
 				finderCache.removeResult(_finderPathCountByDataTypeId, args);
 				finderCache.removeResult(
 					_finderPathWithoutPaginationFindByDataTypeId, args);
+			}
+
+			if ((dataTypeVisualizerLinkModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByDataTypeIdEditable.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					dataTypeVisualizerLinkModelImpl.getOriginalDataTypeId(),
+					dataTypeVisualizerLinkModelImpl.getOriginalEditable()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByDataTypeIdEditable, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataTypeIdEditable, args);
+
+				args = new Object[] {
+					dataTypeVisualizerLinkModelImpl.getDataTypeId(),
+					dataTypeVisualizerLinkModelImpl.isEditable()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByDataTypeIdEditable, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataTypeIdEditable, args);
 			}
 		}
 
@@ -2495,21 +3097,17 @@ public class DataTypeVisualizerLinkPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data type visualizer links
 	 */
-	@Deprecated
 	@Override
 	public List<DataTypeVisualizerLink> findAll(
 		int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
 
-		return findAll(start, end, orderByComparator);
+		return findAll(start, end, orderByComparator, true);
 	}
 
 	/**
@@ -2522,12 +3120,14 @@ public class DataTypeVisualizerLinkPersistenceImpl
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data type visualizer links
 	 */
 	@Override
 	public List<DataTypeVisualizerLink> findAll(
 		int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator) {
+		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2545,9 +3145,12 @@ public class DataTypeVisualizerLinkPersistenceImpl
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
-		List<DataTypeVisualizerLink> list =
-			(List<DataTypeVisualizerLink>)finderCache.getResult(
+		List<DataTypeVisualizerLink> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<DataTypeVisualizerLink>)finderCache.getResult(
 				finderPath, finderArgs, this);
+		}
 
 		if (list == null) {
 			StringBundler query = null;
@@ -2781,6 +3384,31 @@ public class DataTypeVisualizerLinkPersistenceImpl
 			entityCacheEnabled, finderCacheEnabled, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDataTypeId",
 			new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByDataTypeIdEditable = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			DataTypeVisualizerLinkImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByDataTypeIdEditable",
+			new String[] {
+				Long.class.getName(), Boolean.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByDataTypeIdEditable = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			DataTypeVisualizerLinkImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByDataTypeIdEditable",
+			new String[] {Long.class.getName(), Boolean.class.getName()},
+			DataTypeVisualizerLinkModelImpl.DATATYPEID_COLUMN_BITMASK |
+			DataTypeVisualizerLinkModelImpl.EDITABLE_COLUMN_BITMASK);
+
+		_finderPathCountByDataTypeIdEditable = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByDataTypeIdEditable",
+			new String[] {Long.class.getName(), Boolean.class.getName()});
 	}
 
 	@Deactivate
@@ -2854,14 +3482,5 @@ public class DataTypeVisualizerLinkPersistenceImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DataTypeVisualizerLinkPersistenceImpl.class);
-
-	static {
-		try {
-			Class.forName(ICECAPPersistenceConstants.class.getName());
-		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
-		}
-	}
 
 }

@@ -14,8 +14,13 @@
 
 package com.osp.icecap.service.impl;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.osp.icecap.exception.NoSuchDataTypeStructureException;
 import com.osp.icecap.model.DataTypeStructure;
 import com.osp.icecap.service.base.DataTypeStructureLocalServiceBaseImpl;
 
@@ -59,5 +64,29 @@ public class DataTypeStructureLocalServiceImpl
 		super.updateDataTypeStructure(structure);
 		
 		return structure;
+	}
+	
+	public String getDataTypeStructureSTR( long dataTypeId ) {
+		DataTypeStructure dataTypeStructure;
+		try {
+			dataTypeStructure = super.dataTypeStructurePersistence.findByPrimaryKey(dataTypeId);
+		} catch (NoSuchDataTypeStructureException e) {
+			return StringPool.BLANK;
+		}
+		
+		return dataTypeStructure.getStructure();
+	}
+	
+	public JSONObject getDataTypeStructureJSON( long dataTypeId ) throws JSONException {
+		DataTypeStructure dataTypeStructure;
+		try {
+			dataTypeStructure = super.dataTypeStructurePersistence.findByPrimaryKey(dataTypeId);
+		} catch (NoSuchDataTypeStructureException e) {
+			return null;
+		}
+		
+		JSONObject structureJSON = JSONFactoryUtil.createJSONObject(dataTypeStructure.getStructure());
+		
+		return structureJSON;
 	}
 }

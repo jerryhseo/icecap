@@ -5,29 +5,17 @@
 	<model-resource>
 	    <model-name>com.osp.icecap</model-name>
 	    <portlet-ref>
-	        <portlet-name>com_osp_icecap_web_datatype_definer_OSPDataTypeDefinerPortlet</portlet-name>
+	        <portlet-name>com_osp_icecap_web_datatype_admin_portlet_DataTypeAdminPortlet</portlet-name>
+	        <portlet-name>com_osp_icecap_web_datatype_sde_portlet_DataTypeStructureEditorPortlet</portlet-name>
+	        <portlet-name>com_osp_icecap_web_datacollection_admin_portlet_DataCollectionAdminPortlet</portlet-name>
 	    </portlet-ref>
 	    <root>true</root>
+	    <weight>1</weight>
 	    <permissions>
 	        <supports>
-	            <action-key>ADD_DATATYPE</action-key>
-	            <action-key>ADD_DATA_COLLECTION</action-key>
-	            <action-key>ADD_DATA_SET</action-key>
-	            <action-key>ADD_DATA_SECTION</action-key>
-	            <action-key>ADD_DATA_PACK</action-key>
-	            <action-key>ADD_DATA_ENTRY</action-key>
-	            <action-key>UPDATE_DATATYPE</action-key>
-	            <action-key>UPDATE_DATA_COLLECTION</action-key>
-	            <action-key>UPDATE_DATA_SET</action-key>
-	            <action-key>UPDATE_DATA_SECTION</action-key>
-	            <action-key>UPDATE_DATA_PACK</action-key>
-	            <action-key>UPDATE_DATA_ENTRY</action-key>
-	            <action-key>DELETE_DATATYPE</action-key>
-	            <action-key>DELETE_DATA_COLLECTION</action-key>
-	            <action-key>DELETE_DATA_SET</action-key>
-	            <action-key>DELETE_DATA_SECTION</action-key>
-	            <action-key>DELETE_DATA_PACK</action-key>
-	            <action-key>DELETE_DATA_ENTRY</action-key>
+	            <action-key>ADD_ENTRY</action-key>
+	            <action-key>PERMISSIONS</action-key>
+	            <action-key>SUBSCRIBE</action-key>
 	            <action-key>VIEW</action-key>
 	        </supports>
 	        <site-member-defaults>
@@ -37,38 +25,23 @@
 	            <action-key>VIEW</action-key>
 	        </guest-defaults>
 	        <guest-unsupported>
-	            <action-key>ADD_DATATYPE</action-key>
-	            <action-key>ADD_DATA_COLLECTION</action-key>
-	            <action-key>ADD_DATA_SET</action-key>
-	            <action-key>ADD_DATA_SECTION</action-key>
-	            <action-key>ADD_DATA_PACK</action-key>
-	            <action-key>ADD_DATA_ENTRY</action-key>
-	            <action-key>UPDATE_DATATYPE</action-key>
-	            <action-key>UPDATE_DATA_COLLECTION</action-key>
-	            <action-key>UPDATE_DATA_SET</action-key>
-	            <action-key>UPDATE_DATA_SECTION</action-key>
-	            <action-key>UPDATE_DATA_PACK</action-key>
-	            <action-key>UPDATE_DATA_ENTRY</action-key>
-	            <action-key>DELETE_DATATYPE</action-key>
-	            <action-key>DELETE_DATA_COLLECTION</action-key>
-	            <action-key>DELETE_DATA_SET</action-key>
-	            <action-key>DELETE_DATA_SECTION</action-key>
-	            <action-key>DELETE_DATA_PACK</action-key>
-	            <action-key>DELETE_DATA_ENTRY</action-key>
+	            <action-key>ADD_ENTRY</action-key>
+	            <action-key>PERMISSIONS</action-key>
+	            <action-key>SUBSCRIBE</action-key>
 	        </guest-unsupported>
 	    </permissions>
 	</model-resource>
 	<model-resource>
 	    <model-name>com.osp.icecap.model.DataType</model-name>
 	    <portlet-ref>
-	        <portlet-name>com_osp_icecap_web_datatype_definer_OSPDataTypeDefinerPortlet</portlet-name>
+	        <portlet-name>com_osp_icecap_web_datatype_admin_portlet_DataTypeAdminPortlet</portlet-name>
 	    </portlet-ref>
 	    <root>true</root>
 	    <permissions>
 	        <supports>
-	            <action-key>ADD_DATATYPE</action-key>
-	            <action-key>UPDATE_DATATYPE</action-key>
-	            <action-key>DELETE_DATATYPE</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	            <action-key>PERMISSIONS</action-key>
 	            <action-key>VIEW</action-key>
 	        </supports>
@@ -79,23 +52,23 @@
 	            <action-key>VIEW</action-key>
 	        </guest-defaults>
 	        <guest-unsupported>
-	            <action-key>ADD_DATATYPE</action-key>
-	            <action-key>UPDATE_DATATYPE</action-key>
-	            <action-key>DELETE_DATATYPE</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	        </guest-unsupported>
 	    </permissions>
 	</model-resource>
 	<model-resource>
 	    <model-name>com.osp.icecap.model.DataCollection</model-name>
 	    <portlet-ref>
-	        <portlet-name>com_osp_icecap_web_datacollection_admin_OSPDataCollectionAdminPortlet</portlet-name>
+	        <portlet-name>com_osp_icecap_web_datacollection_admin_portlet_DataCollectionAdminPortlet</portlet-name>
 	    </portlet-ref>
 	    <root>true</root>
 	    <permissions>
 	        <supports>
-	            <action-key>ADD_DATA_COLLECTION</action-key>
-	            <action-key>UPDATE_DATA_COLLECTION</action-key>
-	            <action-key>DELETE_DATA_COLLECTION</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	            <action-key>PERMISSIONS</action-key>
 	            <action-key>VIEW</action-key>
 	        </supports>
@@ -106,23 +79,23 @@
 	            <action-key>VIEW</action-key>
 	        </guest-defaults>
 	        <guest-unsupported>
-	            <action-key>ADD_DATA_COLLECTION</action-key>
-	            <action-key>UPDATE_DATA_COLLECTION</action-key>
-	            <action-key>DELETE_DATA_COLLECTION</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	        </guest-unsupported>
 	    </permissions>
 	</model-resource>
 	<model-resource>
 	    <model-name>com.osp.icecap.model.DataSet</model-name>
 	    <portlet-ref>
-	        <portlet-name>com_osp_icecap_web_datacollection_admin_OSPDataCollectionAdminPortlet</portlet-name>
+	        <portlet-name>com_osp_icecap_web_datacollection_admin_portlet_DataCollectionAdminPortlet</portlet-name>
 	    </portlet-ref>
 	    <root>true</root>
 	    <permissions>
 	        <supports>
-	            <action-key>ADD_DATA_SET</action-key>
-	            <action-key>UPDATE_DATA_SET</action-key>
-	            <action-key>DELETE_DATA_SET</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	            <action-key>PERMISSIONS</action-key>
 	            <action-key>VIEW</action-key>
 	        </supports>
@@ -133,23 +106,23 @@
 	            <action-key>VIEW</action-key>
 	        </guest-defaults>
 	        <guest-unsupported>
-	            <action-key>ADD_DATA_SET</action-key>
-	            <action-key>UPDATE_DATA_SET</action-key>
-	            <action-key>DELETE_DATA_SET</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	        </guest-unsupported>
 	    </permissions>
 	</model-resource>
 	<model-resource>
 	    <model-name>com.osp.icecap.model.DataSection</model-name>
 	    <portlet-ref>
-	        <portlet-name>com_osp_icecap_web_datacollection_admin_OSPDataCollectionAdminPortlet</portlet-name>
+	        <portlet-name>com_osp_icecap_web_datacollection_admin_portlet_DataCollectionAdminPortlet</portlet-name>
 	    </portlet-ref>
 	    <root>true</root>
 	    <permissions>
 	        <supports>
-	            <action-key>ADD_DATA_SECTION</action-key>
-	            <action-key>UPDATE_DATA_SECTION</action-key>
-	            <action-key>DELETE_DATA_SECTION</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	            <action-key>PERMISSIONS</action-key>
 	            <action-key>VIEW</action-key>
 	        </supports>
@@ -160,23 +133,23 @@
 	            <action-key>VIEW</action-key>
 	        </guest-defaults>
 	        <guest-unsupported>
-	            <action-key>ADD_DATA_SECTION</action-key>
-	            <action-key>UPDATE_DATA_SECTION</action-key>
-	            <action-key>DELETE_DATA_SECTION</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	        </guest-unsupported>
 	    </permissions>
 	</model-resource>
 	<model-resource>
 	    <model-name>com.osp.icecap.model.DataPack</model-name>
 	    <portlet-ref>
-	        <portlet-name>com_osp_icecap_web_datacollection_admin_OSPDataCollectionAdminPortlet</portlet-name>
+	        <portlet-name>com_osp_icecap_web_datacollection_admin_portlet_DataCollectionAdminPortlet</portlet-name>
 	    </portlet-ref>
 	    <root>true</root>
 	    <permissions>
 	        <supports>
-	            <action-key>ADD_DATA_PACK</action-key>
-	            <action-key>UPDATE_DATA_PACK</action-key>
-	            <action-key>DELETE_DATA_PACK</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	            <action-key>PERMISSIONS</action-key>
 	            <action-key>VIEW</action-key>
 	        </supports>
@@ -187,23 +160,23 @@
 	            <action-key>VIEW</action-key>
 	        </guest-defaults>
 	        <guest-unsupported>
-	            <action-key>ADD_DATA_PACK</action-key>
-	            <action-key>UPDATE_DATA_PACK</action-key>
-	            <action-key>DELETE_DATA_PACK</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	        </guest-unsupported>
 	    </permissions>
 	</model-resource>
 	<model-resource>
 	    <model-name>com.osp.icecap.model.DataEntry</model-name>
 	    <portlet-ref>
-	        <portlet-name>com_osp_icecap_web_datacollection_admin_OSPDataCollectionAdminPortlet</portlet-name>
+	        <portlet-name>com_osp_icecap_web_datacollection_admin_portlet_DataCollectionAdminPortlet</portlet-name>
 	    </portlet-ref>
 	    <root>true</root>
 	    <permissions>
 	        <supports>
-	            <action-key>ADD_DATA_ENTRY</action-key>
-	            <action-key>UPDATE_DATA_ENTRY</action-key>
-	            <action-key>DELETE_DATA_ENTRY</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	            <action-key>PERMISSIONS</action-key>
 	            <action-key>VIEW</action-key>
 	        </supports>
@@ -214,9 +187,9 @@
 	            <action-key>VIEW</action-key>
 	        </guest-defaults>
 	        <guest-unsupported>
-	            <action-key>ADD_DATA_ENTRY</action-key>
-	            <action-key>UPDATE_DATA_ENTRY</action-key>
-	            <action-key>DELETE_DATA_ENTRY</action-key>
+	            <action-key>ADD</action-key>
+	            <action-key>UPDATE</action-key>
+	            <action-key>DELETE</action-key>
 	        </guest-unsupported>
 	    </permissions>
 	</model-resource>

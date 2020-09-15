@@ -58,4 +58,6 @@ public interface DataTypeVisualizerLink
 
 			};
 
+	public com.liferay.portal.kernel.json.JSONObject toJSONObject();
+
 }

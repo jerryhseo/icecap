@@ -14,6 +14,9 @@
 
 package com.osp.icecap.model.impl;
 
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -28,12 +31,17 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public class DataTypeVisualizerLinkImpl extends DataTypeVisualizerLinkBaseImpl {
 
-	/*
-	 * NOTE FOR DEVELOPERS:
-	 *
-	 * Never reference this class directly. All methods that expect a data type visualizer link model instance should use the {@link com.osp.icecap.model.DataTypeVisualizerLink} interface instead.
-	 */
 	public DataTypeVisualizerLinkImpl() {
+	}
+	
+	public JSONObject toJSONObject() {
+		JSONObject json = JSONFactoryUtil.createJSONObject();
+		json.put("visualizerName", this.getVisualizerName());
+		json.put("visualizerVersion", this.getVisualizerVersion());
+		json.put("editable", this.getEditable());
+		json.put("default", this.getDefaultVisualizer());
+		
+		return json;
 	}
 
 }

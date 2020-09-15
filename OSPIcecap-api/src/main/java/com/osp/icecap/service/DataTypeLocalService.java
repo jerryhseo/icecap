@@ -22,6 +22,9 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -285,6 +288,19 @@ public interface DataTypeLocalService
 	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getDataTypesCount();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public JSONObject getDataTypeStructureJSON(long dataTypeId)
+		throws JSONException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public String getDataTypeStructureSTR(long dataTypeId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public JSONArray getDataTypeVisualizersJSON(long dataTypeId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public String getDataTypeVisualizersSTR(long dataTypeId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ExportActionableDynamicQuery getExportActionableDynamicQuery(

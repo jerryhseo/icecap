@@ -29,6 +29,10 @@ public class OSPIcecapWebConstants {
 	//MVC Command names
 	public static final String MVC_COMMAND_DATATYPE_ADMIN_VIEW_LIST = "/datatype/admin/view_list";
 	public static final String MVC_COMMAND_DATATYPE_ADMIN_EDIT = "/datatype/admin/edit_datatype";
+	public static final String MVC_COMMAND_DATATYPE_ADMIN_VIEW = "/datatype/admin/viewt_datatype";
+	public static final String MVC_COMMAND_DATATYPE_ADMIN_ADD = "/datatype/admin/add_datatype";
+	public static final String MVC_COMMAND_DATATYPE_ADMIN_UPDATE = "/datatype/admin/update_datatype";
+	public static final String MVC_COMMAND_DATATYPE_ADMIN_DELETE = "/datatype/admin/delete_datatype";
 	public static final String MVC_COMMAND_DATATYPE_DISPLAY_VIEW_LIST = "/datatype/display/view_list";
 	public static final String MVC_COMMAND_DATATYPE_STRUCTURE_EDITOR = "/datatype/structure/editor";
 	

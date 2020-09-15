@@ -81,7 +81,7 @@ public class MetaDataModelImpl
 		{"issued", Types.VARCHAR}, {"license", Types.VARCHAR},
 		{"datePattern", Types.VARCHAR}, {"dataCollectionId", Types.BIGINT},
 		{"dataSetId", Types.BIGINT}, {"dataSectionId", Types.BIGINT},
-		{"dataPackId", Types.BIGINT}
+		{"dataPackId", Types.BIGINT}, {"dataEntryId", Types.BIGINT}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -107,10 +107,11 @@ public class MetaDataModelImpl
 		TABLE_COLUMNS_MAP.put("dataSetId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("dataSectionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("dataPackId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("dataEntryId", Types.BIGINT);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ICECAP_MetaData (dataUuid VARCHAR(75) not null primary key,creator VARCHAR(75) null,created VARCHAR(75) null,title STRING null,description STRING null,summary STRING null,doi VARCHAR(75) null,dateAccepted VARCHAR(75) null,dateCopyrighted VARCHAR(75) null,dateSubmitted VARCHAR(75) null,format VARCHAR(75) null,version VARCHAR(75) null,issued VARCHAR(75) null,license VARCHAR(75) null,datePattern VARCHAR(75) null,dataCollectionId LONG,dataSetId LONG,dataSectionId LONG,dataPackId LONG)";
+		"create table ICECAP_MetaData (dataUuid VARCHAR(75) not null primary key,creator VARCHAR(75) null,created VARCHAR(75) null,title STRING null,description STRING null,summary STRING null,doi VARCHAR(75) null,dateAccepted VARCHAR(75) null,dateCopyrighted VARCHAR(75) null,dateSubmitted VARCHAR(75) null,format VARCHAR(75) null,version VARCHAR(75) null,issued VARCHAR(75) null,license VARCHAR(75) null,datePattern VARCHAR(75) null,dataCollectionId LONG,dataSetId LONG,dataSectionId LONG,dataPackId LONG,dataEntryId LONG)";
 
 	public static final String TABLE_SQL_DROP = "drop table ICECAP_MetaData";
 
@@ -130,13 +131,15 @@ public class MetaDataModelImpl
 
 	public static final long DATACOLLECTIONID_COLUMN_BITMASK = 2L;
 
-	public static final long DATAPACKID_COLUMN_BITMASK = 4L;
+	public static final long DATAENTRYID_COLUMN_BITMASK = 4L;
 
-	public static final long DATASECTIONID_COLUMN_BITMASK = 8L;
+	public static final long DATAPACKID_COLUMN_BITMASK = 8L;
 
-	public static final long DATASETID_COLUMN_BITMASK = 16L;
+	public static final long DATASECTIONID_COLUMN_BITMASK = 16L;
 
-	public static final long DATAUUID_COLUMN_BITMASK = 32L;
+	public static final long DATASETID_COLUMN_BITMASK = 32L;
+
+	public static final long DATAUUID_COLUMN_BITMASK = 64L;
 
 	public static void setEntityCacheEnabled(boolean entityCacheEnabled) {
 		_entityCacheEnabled = entityCacheEnabled;
@@ -338,6 +341,10 @@ public class MetaDataModelImpl
 		attributeGetterFunctions.put("dataPackId", MetaData::getDataPackId);
 		attributeSetterBiConsumers.put(
 			"dataPackId", (BiConsumer<MetaData, Long>)MetaData::setDataPackId);
+		attributeGetterFunctions.put("dataEntryId", MetaData::getDataEntryId);
+		attributeSetterBiConsumers.put(
+			"dataEntryId",
+			(BiConsumer<MetaData, Long>)MetaData::setDataEntryId);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -941,6 +948,28 @@ public class MetaDataModelImpl
 		return _originalDataPackId;
 	}
 
+	@Override
+	public long getDataEntryId() {
+		return _dataEntryId;
+	}
+
+	@Override
+	public void setDataEntryId(long dataEntryId) {
+		_columnBitmask |= DATAENTRYID_COLUMN_BITMASK;
+
+		if (!_setOriginalDataEntryId) {
+			_setOriginalDataEntryId = true;
+
+			_originalDataEntryId = _dataEntryId;
+		}
+
+		_dataEntryId = dataEntryId;
+	}
+
+	public long getOriginalDataEntryId() {
+		return _originalDataEntryId;
+	}
+
 	public long getColumnBitmask() {
 		return _columnBitmask;
 	}
@@ -1056,12 +1085,7 @@ public class MetaDataModelImpl
 	@Override
 	public MetaData toEscapedModel() {
 		if (_escapedModel == null) {
-			Function<InvocationHandler, MetaData>
-				escapedModelProxyProviderFunction =
-					EscapedModelProxyProviderFunctionHolder.
-						_escapedModelProxyProviderFunction;
-
-			_escapedModel = escapedModelProxyProviderFunction.apply(
+			_escapedModel = _escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -1091,6 +1115,7 @@ public class MetaDataModelImpl
 		metaDataImpl.setDataSetId(getDataSetId());
 		metaDataImpl.setDataSectionId(getDataSectionId());
 		metaDataImpl.setDataPackId(getDataPackId());
+		metaDataImpl.setDataEntryId(getDataEntryId());
 
 		metaDataImpl.resetOriginalValues();
 
@@ -1164,6 +1189,10 @@ public class MetaDataModelImpl
 		metaDataModelImpl._originalDataPackId = metaDataModelImpl._dataPackId;
 
 		metaDataModelImpl._setOriginalDataPackId = false;
+
+		metaDataModelImpl._originalDataEntryId = metaDataModelImpl._dataEntryId;
+
+		metaDataModelImpl._setOriginalDataEntryId = false;
 
 		metaDataModelImpl._columnBitmask = 0;
 	}
@@ -1300,6 +1329,8 @@ public class MetaDataModelImpl
 
 		metaDataCacheModel.dataPackId = getDataPackId();
 
+		metaDataCacheModel.dataEntryId = getDataEntryId();
+
 		return metaDataCacheModel;
 	}
 
@@ -1366,13 +1397,8 @@ public class MetaDataModelImpl
 		return sb.toString();
 	}
 
-	private static class EscapedModelProxyProviderFunctionHolder {
-
-		private static final Function<InvocationHandler, MetaData>
-			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
-
-	}
-
+	private static final Function<InvocationHandler, MetaData>
+		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 
@@ -1407,6 +1433,9 @@ public class MetaDataModelImpl
 	private long _dataPackId;
 	private long _originalDataPackId;
 	private boolean _setOriginalDataPackId;
+	private long _dataEntryId;
+	private long _originalDataEntryId;
+	private boolean _setOriginalDataEntryId;
 	private long _columnBitmask;
 	private MetaData _escapedModel;
 

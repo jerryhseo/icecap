@@ -337,6 +337,27 @@ public class DataTypeLocalServiceUtil {
 		return getService().getDataTypesCount();
 	}
 
+	public static com.liferay.portal.kernel.json.JSONObject
+			getDataTypeStructureJSON(long dataTypeId)
+		throws com.liferay.portal.kernel.json.JSONException {
+
+		return getService().getDataTypeStructureJSON(dataTypeId);
+	}
+
+	public static String getDataTypeStructureSTR(long dataTypeId) {
+		return getService().getDataTypeStructureSTR(dataTypeId);
+	}
+
+	public static com.liferay.portal.kernel.json.JSONArray
+		getDataTypeVisualizersJSON(long dataTypeId) {
+
+		return getService().getDataTypeVisualizersJSON(dataTypeId);
+	}
+
+	public static String getDataTypeVisualizersSTR(long dataTypeId) {
+		return getService().getDataTypeVisualizersSTR(dataTypeId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
 		getExportActionableDynamicQuery(
 			com.liferay.exportimport.kernel.lar.PortletDataContext

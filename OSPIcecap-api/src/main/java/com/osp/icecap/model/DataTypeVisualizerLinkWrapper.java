@@ -264,6 +264,11 @@ public class DataTypeVisualizerLinkWrapper
 	}
 
 	@Override
+	public com.liferay.portal.kernel.json.JSONObject toJSONObject() {
+		return model.toJSONObject();
+	}
+
+	@Override
 	protected DataTypeVisualizerLinkWrapper wrap(
 		DataTypeVisualizerLink dataTypeVisualizerLink) {
 

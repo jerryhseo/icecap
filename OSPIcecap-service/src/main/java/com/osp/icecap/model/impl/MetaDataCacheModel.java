@@ -63,7 +63,7 @@ public class MetaDataCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(39);
+		StringBundler sb = new StringBundler(41);
 
 		sb.append("{dataUuid=");
 		sb.append(dataUuid);
@@ -103,6 +103,8 @@ public class MetaDataCacheModel
 		sb.append(dataSectionId);
 		sb.append(", dataPackId=");
 		sb.append(dataPackId);
+		sb.append(", dataEntryId=");
+		sb.append(dataEntryId);
 		sb.append("}");
 
 		return sb.toString();
@@ -221,6 +223,7 @@ public class MetaDataCacheModel
 		metaDataImpl.setDataSetId(dataSetId);
 		metaDataImpl.setDataSectionId(dataSectionId);
 		metaDataImpl.setDataPackId(dataPackId);
+		metaDataImpl.setDataEntryId(dataEntryId);
 
 		metaDataImpl.resetOriginalValues();
 
@@ -252,6 +255,8 @@ public class MetaDataCacheModel
 		dataSectionId = objectInput.readLong();
 
 		dataPackId = objectInput.readLong();
+
+		dataEntryId = objectInput.readLong();
 	}
 
 	@Override
@@ -368,6 +373,8 @@ public class MetaDataCacheModel
 		objectOutput.writeLong(dataSectionId);
 
 		objectOutput.writeLong(dataPackId);
+
+		objectOutput.writeLong(dataEntryId);
 	}
 
 	public String dataUuid;
@@ -389,5 +396,6 @@ public class MetaDataCacheModel
 	public long dataSetId;
 	public long dataSectionId;
 	public long dataPackId;
+	public long dataEntryId;
 
 }

@@ -1,3 +1,4 @@
+<%@page import="com.osp.icecap.constants.OSPIcecapPortletKeys"%>
 <%@page import="com.osp.icecap.web.constants.OSPIcecapWebConstants"%>
 <%@page import="com.liferay.portal.kernel.util.GetterUtil"%>
 <%@page import="java.util.ArrayList"%>
@@ -16,16 +17,17 @@
 		System.out.println("No datatypes were found.");
 %>
 
-<portlet:renderURL var="editDataTypeRender">
+<liferay-portlet:renderURL var="editDataTypeRenderURL" portletName="<%= OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY %>">
 	<portlet:param name="dataTypeId" value="0"/>
 	<portlet:param name="mvcRenderCommandName" value="<%= OSPIcecapWebConstants.MVC_COMMAND_DATATYPE_ADMIN_EDIT %>"/>
 	<portlet:param name="showback" value="<%= themeDisplay.getURLCurrent() %>"/>
-</portlet:renderURL>
+</liferay-portlet:renderURL>
 
+<% out.println( editDataTypeRenderURL ); %>
 <div class="osp container OSPIcacap-web">
 	<div class="row">
 		<div class="col-md-12">
-			<aui:button icon="plus" value="new-data-type" href="<%= editDataTypeRender %>" cssClass="btn-primary"/>
+			<clay:management-toolbar />
 		</div>
 	</div>
 	<div class="row">

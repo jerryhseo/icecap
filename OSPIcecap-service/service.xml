@@ -100,11 +100,11 @@
             <finder-column name="name"></finder-column>
             <finder-column name="version"></finder-column>
         </finder>
-
-		<!-- References -->
         <finder name="Extension" return-type="Collection">
             <finder-column name="extension"></finder-column>
         </finder>
+
+		<!-- References -->
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 	</entity>
@@ -124,9 +124,10 @@
         <column name="visualizerVersion" type="String" />
         <column name="defaultVisualizer" type="boolean" />
         
-        <!-- EDITOR or VIEWER -->
         <column name="editable" type="boolean"></column>
         
+        
+        <!--Finders -->
         <finder name="VisualizerName" return-type="Collection">
             <finder-column name="visualizerName"></finder-column>
         </finder>
@@ -139,6 +140,10 @@
         </finder>
         <finder name="DataTypeId" return-type="Collection">
             <finder-column name="dataTypeId"></finder-column>
+        </finder>
+        <finder name="DataTypeIdEditable" return-type="Collection">
+            <finder-column name="dataTypeId"></finder-column>
+            <finder-column name="editable"></finder-column>
         </finder>
     </entity>
     
@@ -169,9 +174,9 @@
         
 		<column name="copiedFrom" type="long"></column>
         <column name="organizationId" type="long"></column>
+        <column name="hasMetaData" type="boolean"></column>
 
 		<!-- Order -->
-        <column name="hasMetaData" type="boolean"></column>
 		<order by="asc">
 			<order-column name="createDate" />
 		</order>
@@ -215,11 +220,11 @@
             <finder-column name="name"></finder-column>
             <finder-column name="version"></finder-column>
         </finder>
-
-        <!-- References -->
         <finder name="Variants" return-type="Collection">
             <finder-column name="copiedFrom"></finder-column>
         </finder>
+
+        <!-- References -->
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
@@ -270,6 +275,9 @@
         <column name="dataSetId" type="long"></column>
         <column name="dataSectionId" type="long"></column>
         <column name="dataPackId" type="long"></column>
+        <column name="dataEntryId" type="long"></column>
+        
+        <!-- Finders -->
         <finder name="DataCollectionId" return-type="Collection">
             <finder-column name="dataCollectionId"></finder-column>
         </finder>
@@ -281,6 +289,9 @@
         </finder>
         <finder name="DataPackId" return-type="Collection">
             <finder-column name="dataPackId"></finder-column>
+        </finder>
+        <finder name="DataEntryId" return-type="MetaData">
+            <finder-column name="dataEntryId"></finder-column>
         </finder>
         <finder name="Creator" return-type="Collection">
             <finder-column name="creator"></finder-column>
@@ -316,9 +327,9 @@
         <column name="name" type="String"></column>
 		<column name="version" type="String"></column>
         <column name="copiedFrom" type="long"></column>
+        <column name="hasMetaData" type="boolean"></column>
 		
 		<!-- Finders -->
-        <column name="hasMetaData" type="boolean"></column>
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
         </finder>
@@ -335,11 +346,11 @@
         <finder name="CopiedFrom" return-type="Collection">
             <finder-column name="copiedFrom"></finder-column>
         </finder>
-        
-        <!-- References -->
         <finder name="Name" return-type="Collection">
             <finder-column name="name"></finder-column>
         </finder>
+        
+        <!-- References -->
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
@@ -374,10 +385,10 @@
         <!-- Descriptive Fields -->
         <column name="name" type="String"></column>
         <column name="version" type="String"></column>
-
-		<!-- Finders -->
         <column name="copiedFrom" type="long"></column>
         <column name="hasMetaData" type="boolean"></column>
+
+		<!-- Finders -->
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
         </finder>
@@ -396,11 +407,11 @@
         <finder name="CopiedFrom" return-type="Collection">
             <finder-column name="copiedFrom"></finder-column>
         </finder>
-
-		<!-- References -->
         <finder name="Name" return-type="Collection">
             <finder-column name="name"></finder-column>
         </finder>
+
+		<!-- References -->
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
@@ -436,9 +447,9 @@
         <column name="version" type="String" primary="false"></column>
 		<column name="component" type="String"></column>
         <column name="copiedFrom" type="long"></column>
+        <column name="hasMetaData" type="boolean"></column>
 		
 		<!-- Finders -->
-        <column name="hasMetaData" type="boolean"></column>
         <finder name="GroupId" return-type="Collection">
             <finder-column name="groupId"></finder-column>
         </finder>
@@ -460,11 +471,11 @@
         <finder name="CopiedFrom" return-type="Collection">
             <finder-column name="copiedFrom"></finder-column>
         </finder>
-
-		<!-- References -->
         <finder name="Name" return-type="Collection">
             <finder-column name="name"></finder-column>
         </finder>
+
+		<!-- References -->
         <reference package-path="com.liferay.portlet.asset" entity="AssetEntry" />
 		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
 		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
@@ -528,6 +539,9 @@
         </finder>
         <finder name="CopiedFrom" return-type="Collection">
             <finder-column name="copiedFrom"></finder-column>
+        </finder>
+        <finder name="DataTypeId" return-type="Collection" unique="false">
+            <finder-column name="dataTypeId"></finder-column>
         </finder>
     	
         <!-- References -->

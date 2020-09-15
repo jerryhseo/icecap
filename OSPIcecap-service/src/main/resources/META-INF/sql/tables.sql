@@ -178,6 +178,7 @@ create table ICECAP_DataType (
 	status INTEGER,
 	name VARCHAR(75) null,
 	version VARCHAR(75) null,
+	extension VARCHAR(75) null,
 	samplePath VARCHAR(75) null,
 	description STRING null
 );
@@ -201,6 +202,13 @@ create table ICECAP_DataTypeVisualizerLink (
 	editable BOOLEAN
 );
 
+create table ICECAP_DataType_Visualizers (
+	companyId LONG not null,
+	dataTypeId LONG not null,
+	dataTypeVisualizerLinkId LONG not null,
+	primary key (dataTypeId, dataTypeVisualizerLinkId)
+);
+
 create table ICECAP_MetaData (
 	dataUuid VARCHAR(75) not null primary key,
 	creator VARCHAR(75) null,
@@ -220,5 +228,6 @@ create table ICECAP_MetaData (
 	dataCollectionId LONG,
 	dataSetId LONG,
 	dataSectionId LONG,
-	dataPackId LONG
+	dataPackId LONG,
+	dataEntryId LONG
 );

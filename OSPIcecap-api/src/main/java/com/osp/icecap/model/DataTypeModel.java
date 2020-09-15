@@ -253,6 +253,21 @@ public interface DataTypeModel
 	public void setVersion(String version);
 
 	/**
+	 * Returns the extension of this data type.
+	 *
+	 * @return the extension of this data type
+	 */
+	@AutoEscape
+	public String getExtension();
+
+	/**
+	 * Sets the extension of this data type.
+	 *
+	 * @param extension the extension of this data type
+	 */
+	public void setExtension(String extension);
+
+	/**
 	 * Returns the sample path of this data type.
 	 *
 	 * @return the sample path of this data type

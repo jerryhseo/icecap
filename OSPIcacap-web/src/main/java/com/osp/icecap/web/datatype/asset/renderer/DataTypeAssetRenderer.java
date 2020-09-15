@@ -1,6 +1,7 @@
 package com.osp.icecap.web.datatype.asset.renderer;
 
 import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
+import com.liferay.document.library.kernel.store.DLStoreUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.LayoutConstants;

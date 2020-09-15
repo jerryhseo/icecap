@@ -27,10 +27,11 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.service.persistence.CompanyProvider;
+import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -137,22 +138,18 @@ public class DataEntryPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid(String, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data entries
 	 */
-	@Deprecated
 	@Override
 	public List<DataEntry> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataEntry> orderByComparator) {
 
-		return findByUuid(uuid, start, end, orderByComparator);
+		return findByUuid(uuid, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -166,12 +163,14 @@ public class DataEntryPersistenceImpl
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data entries
 	 */
 	@Override
 	public List<DataEntry> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator) {
+		OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -191,15 +190,19 @@ public class DataEntryPersistenceImpl
 			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
-		List<DataEntry> list = (List<DataEntry>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataEntry> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataEntry dataEntry : list) {
-				if (!uuid.equals(dataEntry.getUuid())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataEntry dataEntry : list) {
+					if (!uuid.equals(dataEntry.getUuid())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -678,20 +681,15 @@ public class DataEntryPersistenceImpl
 	}
 
 	/**
-	 * Returns the data entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns the data entry where uuid = &#63; and groupId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByUUID_G(String,long)}
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data entry, or <code>null</code> if a matching data entry could not be found
 	 */
-	@Deprecated
 	@Override
-	public DataEntry fetchByUUID_G(
-		String uuid, long groupId, boolean useFinderCache) {
-
-		return fetchByUUID_G(uuid, groupId);
+	public DataEntry fetchByUUID_G(String uuid, long groupId) {
+		return fetchByUUID_G(uuid, groupId, true);
 	}
 
 	/**
@@ -699,17 +697,23 @@ public class DataEntryPersistenceImpl
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param useFinderCache whether to use the finder cache
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching data entry, or <code>null</code> if a matching data entry could not be found
 	 */
 	@Override
-	public DataEntry fetchByUUID_G(String uuid, long groupId) {
+	public DataEntry fetchByUUID_G(
+		String uuid, long groupId, boolean retrieveFromCache) {
+
 		uuid = Objects.toString(uuid, "");
 
 		Object[] finderArgs = new Object[] {uuid, groupId};
 
-		Object result = finderCache.getResult(
-			_finderPathFetchByUUID_G, finderArgs, this);
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = finderCache.getResult(
+				_finderPathFetchByUUID_G, finderArgs, this);
+		}
 
 		if (result instanceof DataEntry) {
 			DataEntry dataEntry = (DataEntry)result;
@@ -926,23 +930,20 @@ public class DataEntryPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUuid_C(String,long, int, int, OrderByComparator)}
 	 * @param uuid the uuid
 	 * @param companyId the company ID
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data entries
 	 */
-	@Deprecated
 	@Override
 	public List<DataEntry> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataEntry> orderByComparator) {
 
-		return findByUuid_C(uuid, companyId, start, end, orderByComparator);
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -957,12 +958,14 @@ public class DataEntryPersistenceImpl
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data entries
 	 */
 	@Override
 	public List<DataEntry> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator) {
+		OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -984,17 +987,21 @@ public class DataEntryPersistenceImpl
 			};
 		}
 
-		List<DataEntry> list = (List<DataEntry>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataEntry> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataEntry dataEntry : list) {
-				if (!uuid.equals(dataEntry.getUuid()) ||
-					(companyId != dataEntry.getCompanyId())) {
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					list = null;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataEntry dataEntry : list) {
+					if (!uuid.equals(dataEntry.getUuid()) ||
+						(companyId != dataEntry.getCompanyId())) {
 
-					break;
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -1509,22 +1516,18 @@ public class DataEntryPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByGroupId(long, int, int, OrderByComparator)}
 	 * @param groupId the group ID
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data entries
 	 */
-	@Deprecated
 	@Override
 	public List<DataEntry> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataEntry> orderByComparator) {
 
-		return findByGroupId(groupId, start, end, orderByComparator);
+		return findByGroupId(groupId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -1538,12 +1541,14 @@ public class DataEntryPersistenceImpl
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data entries
 	 */
 	@Override
 	public List<DataEntry> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator) {
+		OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1561,15 +1566,19 @@ public class DataEntryPersistenceImpl
 			finderArgs = new Object[] {groupId, start, end, orderByComparator};
 		}
 
-		List<DataEntry> list = (List<DataEntry>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataEntry> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataEntry dataEntry : list) {
-				if ((groupId != dataEntry.getGroupId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataEntry dataEntry : list) {
+					if ((groupId != dataEntry.getGroupId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -2382,22 +2391,18 @@ public class DataEntryPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByUserId(long, int, int, OrderByComparator)}
 	 * @param userId the user ID
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data entries
 	 */
-	@Deprecated
 	@Override
 	public List<DataEntry> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataEntry> orderByComparator) {
 
-		return findByUserId(userId, start, end, orderByComparator);
+		return findByUserId(userId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -2411,12 +2416,14 @@ public class DataEntryPersistenceImpl
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data entries
 	 */
 	@Override
 	public List<DataEntry> findByUserId(
 		long userId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator) {
+		OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2434,15 +2441,19 @@ public class DataEntryPersistenceImpl
 			finderArgs = new Object[] {userId, start, end, orderByComparator};
 		}
 
-		List<DataEntry> list = (List<DataEntry>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataEntry> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataEntry dataEntry : list) {
-				if ((userId != dataEntry.getUserId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataEntry dataEntry : list) {
+					if ((userId != dataEntry.getUserId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -2880,22 +2891,18 @@ public class DataEntryPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByStatus(int, int, int, OrderByComparator)}
 	 * @param status the status
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data entries
 	 */
-	@Deprecated
 	@Override
 	public List<DataEntry> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataEntry> orderByComparator) {
 
-		return findByStatus(status, start, end, orderByComparator);
+		return findByStatus(status, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -2909,12 +2916,14 @@ public class DataEntryPersistenceImpl
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data entries
 	 */
 	@Override
 	public List<DataEntry> findByStatus(
 		int status, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator) {
+		OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2932,15 +2941,19 @@ public class DataEntryPersistenceImpl
 			finderArgs = new Object[] {status, start, end, orderByComparator};
 		}
 
-		List<DataEntry> list = (List<DataEntry>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataEntry> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataEntry dataEntry : list) {
-				if ((status != dataEntry.getStatus())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataEntry dataEntry : list) {
+					if ((status != dataEntry.getStatus())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -3381,23 +3394,19 @@ public class DataEntryPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
 	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data entries
 	 */
-	@Deprecated
 	@Override
 	public List<DataEntry> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataEntry> orderByComparator) {
 
 		return findByDataCollectionId(
-			dataCollectionId, start, end, orderByComparator);
+			dataCollectionId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -3411,12 +3420,14 @@ public class DataEntryPersistenceImpl
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data entries
 	 */
 	@Override
 	public List<DataEntry> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator) {
+		OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3436,15 +3447,19 @@ public class DataEntryPersistenceImpl
 			};
 		}
 
-		List<DataEntry> list = (List<DataEntry>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataEntry> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataEntry dataEntry : list) {
-				if ((dataCollectionId != dataEntry.getDataCollectionId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataEntry dataEntry : list) {
+					if ((dataCollectionId != dataEntry.getDataCollectionId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -3890,22 +3905,18 @@ public class DataEntryPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSetId(long, int, int, OrderByComparator)}
 	 * @param dataSetId the data set ID
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data entries
 	 */
-	@Deprecated
 	@Override
 	public List<DataEntry> findByDataSetId(
 		long dataSetId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataEntry> orderByComparator) {
 
-		return findByDataSetId(dataSetId, start, end, orderByComparator);
+		return findByDataSetId(dataSetId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -3919,12 +3930,14 @@ public class DataEntryPersistenceImpl
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data entries
 	 */
 	@Override
 	public List<DataEntry> findByDataSetId(
 		long dataSetId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator) {
+		OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3944,15 +3957,19 @@ public class DataEntryPersistenceImpl
 			};
 		}
 
-		List<DataEntry> list = (List<DataEntry>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataEntry> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataEntry dataEntry : list) {
-				if ((dataSetId != dataEntry.getDataSetId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataEntry dataEntry : list) {
+					if ((dataSetId != dataEntry.getDataSetId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -4396,23 +4413,19 @@ public class DataEntryPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSectionId(long, int, int, OrderByComparator)}
 	 * @param dataSectionId the data section ID
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data entries
 	 */
-	@Deprecated
 	@Override
 	public List<DataEntry> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataEntry> orderByComparator) {
 
 		return findByDataSectionId(
-			dataSectionId, start, end, orderByComparator);
+			dataSectionId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -4426,12 +4439,14 @@ public class DataEntryPersistenceImpl
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data entries
 	 */
 	@Override
 	public List<DataEntry> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator) {
+		OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -4451,15 +4466,19 @@ public class DataEntryPersistenceImpl
 			};
 		}
 
-		List<DataEntry> list = (List<DataEntry>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataEntry> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataEntry dataEntry : list) {
-				if ((dataSectionId != dataEntry.getDataSectionId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataEntry dataEntry : list) {
+					if ((dataSectionId != dataEntry.getDataSectionId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -4904,22 +4923,19 @@ public class DataEntryPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataPackId(long, int, int, OrderByComparator)}
 	 * @param dataPackId the data pack ID
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data entries
 	 */
-	@Deprecated
 	@Override
 	public List<DataEntry> findByDataPackId(
 		long dataPackId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataEntry> orderByComparator) {
 
-		return findByDataPackId(dataPackId, start, end, orderByComparator);
+		return findByDataPackId(
+			dataPackId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -4933,12 +4949,14 @@ public class DataEntryPersistenceImpl
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data entries
 	 */
 	@Override
 	public List<DataEntry> findByDataPackId(
 		long dataPackId, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator) {
+		OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -4958,15 +4976,19 @@ public class DataEntryPersistenceImpl
 			};
 		}
 
-		List<DataEntry> list = (List<DataEntry>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataEntry> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataEntry dataEntry : list) {
-				if ((dataPackId != dataEntry.getDataPackId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataEntry dataEntry : list) {
+					if ((dataPackId != dataEntry.getDataPackId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -5410,22 +5432,19 @@ public class DataEntryPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByCopiedFrom(long, int, int, OrderByComparator)}
 	 * @param copiedFrom the copied from
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data entries
 	 */
-	@Deprecated
 	@Override
 	public List<DataEntry> findByCopiedFrom(
 		long copiedFrom, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator,
-		boolean useFinderCache) {
+		OrderByComparator<DataEntry> orderByComparator) {
 
-		return findByCopiedFrom(copiedFrom, start, end, orderByComparator);
+		return findByCopiedFrom(
+			copiedFrom, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -5439,12 +5458,14 @@ public class DataEntryPersistenceImpl
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data entries
 	 */
 	@Override
 	public List<DataEntry> findByCopiedFrom(
 		long copiedFrom, int start, int end,
-		OrderByComparator<DataEntry> orderByComparator) {
+		OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -5464,15 +5485,19 @@ public class DataEntryPersistenceImpl
 			};
 		}
 
-		List<DataEntry> list = (List<DataEntry>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataEntry> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (DataEntry dataEntry : list) {
-				if ((copiedFrom != dataEntry.getCopiedFrom())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (DataEntry dataEntry : list) {
+					if ((copiedFrom != dataEntry.getCopiedFrom())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -5874,6 +5899,515 @@ public class DataEntryPersistenceImpl
 	private static final String _FINDER_COLUMN_COPIEDFROM_COPIEDFROM_2 =
 		"dataEntry.copiedFrom = ?";
 
+	private FinderPath _finderPathWithPaginationFindByDataTypeId;
+	private FinderPath _finderPathWithoutPaginationFindByDataTypeId;
+	private FinderPath _finderPathCountByDataTypeId;
+
+	/**
+	 * Returns all the data entries where dataTypeId = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @return the matching data entries
+	 */
+	@Override
+	public List<DataEntry> findByDataTypeId(long dataTypeId) {
+		return findByDataTypeId(
+			dataTypeId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the data entries where dataTypeId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @return the range of matching data entries
+	 */
+	@Override
+	public List<DataEntry> findByDataTypeId(
+		long dataTypeId, int start, int end) {
+
+		return findByDataTypeId(dataTypeId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the data entries where dataTypeId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data entries
+	 */
+	@Override
+	public List<DataEntry> findByDataTypeId(
+		long dataTypeId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator) {
+
+		return findByDataTypeId(
+			dataTypeId, start, end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the data entries where dataTypeId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param start the lower bound of the range of data entries
+	 * @param end the upper bound of the range of data entries (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching data entries
+	 */
+	@Override
+	public List<DataEntry> findByDataTypeId(
+		long dataTypeId, int start, int end,
+		OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
+
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+			(orderByComparator == null)) {
+
+			pagination = false;
+			finderPath = _finderPathWithoutPaginationFindByDataTypeId;
+			finderArgs = new Object[] {dataTypeId};
+		}
+		else {
+			finderPath = _finderPathWithPaginationFindByDataTypeId;
+			finderArgs = new Object[] {
+				dataTypeId, start, end, orderByComparator
+			};
+		}
+
+		List<DataEntry> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (DataEntry dataEntry : list) {
+					if ((dataTypeId != dataEntry.getDataTypeId())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(3);
+			}
+
+			query.append(_SQL_SELECT_DATAENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_DATATYPEID_DATATYPEID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
+			}
+			else if (pagination) {
+				query.append(DataEntryModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(dataTypeId);
+
+				if (!pagination) {
+					list = (List<DataEntry>)QueryUtil.list(
+						q, getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<DataEntry>)QueryUtil.list(
+						q, getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first data entry in the ordered set where dataTypeId = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	@Override
+	public DataEntry findByDataTypeId_First(
+			long dataTypeId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException {
+
+		DataEntry dataEntry = fetchByDataTypeId_First(
+			dataTypeId, orderByComparator);
+
+		if (dataEntry != null) {
+			return dataEntry;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("dataTypeId=");
+		msg.append(dataTypeId);
+
+		msg.append("}");
+
+		throw new NoSuchDataEntryException(msg.toString());
+	}
+
+	/**
+	 * Returns the first data entry in the ordered set where dataTypeId = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	@Override
+	public DataEntry fetchByDataTypeId_First(
+		long dataTypeId, OrderByComparator<DataEntry> orderByComparator) {
+
+		List<DataEntry> list = findByDataTypeId(
+			dataTypeId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last data entry in the ordered set where dataTypeId = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry
+	 * @throws NoSuchDataEntryException if a matching data entry could not be found
+	 */
+	@Override
+	public DataEntry findByDataTypeId_Last(
+			long dataTypeId, OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException {
+
+		DataEntry dataEntry = fetchByDataTypeId_Last(
+			dataTypeId, orderByComparator);
+
+		if (dataEntry != null) {
+			return dataEntry;
+		}
+
+		StringBundler msg = new StringBundler(4);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("dataTypeId=");
+		msg.append(dataTypeId);
+
+		msg.append("}");
+
+		throw new NoSuchDataEntryException(msg.toString());
+	}
+
+	/**
+	 * Returns the last data entry in the ordered set where dataTypeId = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data entry, or <code>null</code> if a matching data entry could not be found
+	 */
+	@Override
+	public DataEntry fetchByDataTypeId_Last(
+		long dataTypeId, OrderByComparator<DataEntry> orderByComparator) {
+
+		int count = countByDataTypeId(dataTypeId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<DataEntry> list = findByDataTypeId(
+			dataTypeId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the data entries before and after the current data entry in the ordered set where dataTypeId = &#63;.
+	 *
+	 * @param dataEntryId the primary key of the current data entry
+	 * @param dataTypeId the data type ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data entry
+	 * @throws NoSuchDataEntryException if a data entry with the primary key could not be found
+	 */
+	@Override
+	public DataEntry[] findByDataTypeId_PrevAndNext(
+			long dataEntryId, long dataTypeId,
+			OrderByComparator<DataEntry> orderByComparator)
+		throws NoSuchDataEntryException {
+
+		DataEntry dataEntry = findByPrimaryKey(dataEntryId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			DataEntry[] array = new DataEntryImpl[3];
+
+			array[0] = getByDataTypeId_PrevAndNext(
+				session, dataEntry, dataTypeId, orderByComparator, true);
+
+			array[1] = dataEntry;
+
+			array[2] = getByDataTypeId_PrevAndNext(
+				session, dataEntry, dataTypeId, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected DataEntry getByDataTypeId_PrevAndNext(
+		Session session, DataEntry dataEntry, long dataTypeId,
+		OrderByComparator<DataEntry> orderByComparator, boolean previous) {
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(3);
+		}
+
+		query.append(_SQL_SELECT_DATAENTRY_WHERE);
+
+		query.append(_FINDER_COLUMN_DATATYPEID_DATATYPEID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(DataEntryModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(dataTypeId);
+
+		if (orderByComparator != null) {
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(dataEntry)) {
+
+				qPos.add(orderByConditionValue);
+			}
+		}
+
+		List<DataEntry> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the data entries where dataTypeId = &#63; from the database.
+	 *
+	 * @param dataTypeId the data type ID
+	 */
+	@Override
+	public void removeByDataTypeId(long dataTypeId) {
+		for (DataEntry dataEntry :
+				findByDataTypeId(
+					dataTypeId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
+			remove(dataEntry);
+		}
+	}
+
+	/**
+	 * Returns the number of data entries where dataTypeId = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @return the number of matching data entries
+	 */
+	@Override
+	public int countByDataTypeId(long dataTypeId) {
+		FinderPath finderPath = _finderPathCountByDataTypeId;
+
+		Object[] finderArgs = new Object[] {dataTypeId};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_DATAENTRY_WHERE);
+
+			query.append(_FINDER_COLUMN_DATATYPEID_DATATYPEID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(dataTypeId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_DATATYPEID_DATATYPEID_2 =
+		"dataEntry.dataTypeId = ?";
+
 	public DataEntryPersistenceImpl() {
 		setModelClass(DataEntry.class);
 
@@ -6029,7 +6563,7 @@ public class DataEntryPersistenceImpl
 
 		dataEntry.setUuid(uuid);
 
-		dataEntry.setCompanyId(CompanyThreadLocal.getCompanyId());
+		dataEntry.setCompanyId(companyProvider.getCompanyId());
 
 		return dataEntry;
 	}
@@ -6257,6 +6791,12 @@ public class DataEntryPersistenceImpl
 			finderCache.removeResult(
 				_finderPathWithoutPaginationFindByCopiedFrom, args);
 
+			args = new Object[] {dataEntryModelImpl.getDataTypeId()};
+
+			finderCache.removeResult(_finderPathCountByDataTypeId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByDataTypeId, args);
+
 			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(
 				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
@@ -6457,6 +6997,25 @@ public class DataEntryPersistenceImpl
 				finderCache.removeResult(
 					_finderPathWithoutPaginationFindByCopiedFrom, args);
 			}
+
+			if ((dataEntryModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByDataTypeId.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					dataEntryModelImpl.getOriginalDataTypeId()
+				};
+
+				finderCache.removeResult(_finderPathCountByDataTypeId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataTypeId, args);
+
+				args = new Object[] {dataEntryModelImpl.getDataTypeId()};
+
+				finderCache.removeResult(_finderPathCountByDataTypeId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByDataTypeId, args);
+			}
 		}
 
 		entityCache.putResult(
@@ -6554,20 +7113,16 @@ public class DataEntryPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataEntryModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data entries
 	 */
-	@Deprecated
 	@Override
 	public List<DataEntry> findAll(
-		int start, int end, OrderByComparator<DataEntry> orderByComparator,
-		boolean useFinderCache) {
+		int start, int end, OrderByComparator<DataEntry> orderByComparator) {
 
-		return findAll(start, end, orderByComparator);
+		return findAll(start, end, orderByComparator, true);
 	}
 
 	/**
@@ -6580,11 +7135,13 @@ public class DataEntryPersistenceImpl
 	 * @param start the lower bound of the range of data entries
 	 * @param end the upper bound of the range of data entries (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data entries
 	 */
 	@Override
 	public List<DataEntry> findAll(
-		int start, int end, OrderByComparator<DataEntry> orderByComparator) {
+		int start, int end, OrderByComparator<DataEntry> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -6602,8 +7159,12 @@ public class DataEntryPersistenceImpl
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
-		List<DataEntry> list = (List<DataEntry>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<DataEntry> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<DataEntry>)finderCache.getResult(
+				finderPath, finderArgs, this);
+		}
 
 		if (list == null) {
 			StringBundler query = null;
@@ -6963,6 +7524,25 @@ public class DataEntryPersistenceImpl
 			entityCacheEnabled, finderCacheEnabled, Long.class,
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByCopiedFrom",
 			new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByDataTypeId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, DataEntryImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByDataTypeId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByDataTypeId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, DataEntryImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByDataTypeId",
+			new String[] {Long.class.getName()},
+			DataEntryModelImpl.DATATYPEID_COLUMN_BITMASK);
+
+		_finderPathCountByDataTypeId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDataTypeId",
+			new String[] {Long.class.getName()});
 	}
 
 	@Deactivate
@@ -7006,6 +7586,9 @@ public class DataEntryPersistenceImpl
 	}
 
 	private boolean _columnBitmaskEnabled;
+
+	@Reference(service = CompanyProviderWrapper.class)
+	protected CompanyProvider companyProvider;
 
 	@Reference
 	protected EntityCache entityCache;
@@ -7061,14 +7644,5 @@ public class DataEntryPersistenceImpl
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
-
-	static {
-		try {
-			Class.forName(ICECAPPersistenceConstants.class.getName());
-		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
-		}
-	}
 
 }

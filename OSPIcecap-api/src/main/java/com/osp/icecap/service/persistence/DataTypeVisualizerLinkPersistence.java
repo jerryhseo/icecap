@@ -15,7 +15,6 @@
 package com.osp.icecap.service.persistence;
 
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
-import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.osp.icecap.exception.NoSuchDataTypeVisualizerLinkException;
 import com.osp.icecap.model.DataTypeVisualizerLink;
@@ -74,19 +73,16 @@ public interface DataTypeVisualizerLinkPersistence
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByVisualizerName(String, int, int, OrderByComparator)}
 	 * @param visualizerName the visualizer name
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
-	@Deprecated
 	public java.util.List<DataTypeVisualizerLink> findByVisualizerName(
 		String visualizerName, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean useFinderCache);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
 
 	/**
 	 * Returns an ordered range of all the data type visualizer links where visualizerName = &#63;.
@@ -99,11 +95,14 @@ public interface DataTypeVisualizerLinkPersistence
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
 	public java.util.List<DataTypeVisualizerLink> findByVisualizerName(
 		String visualizerName, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator,
+		boolean retrieveFromCache);
 
 	/**
 	 * Returns the first data type visualizer link in the ordered set where visualizerName = &#63;.
@@ -115,7 +114,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink findByVisualizerName_First(
 			String visualizerName,
-			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
 		throws NoSuchDataTypeVisualizerLinkException;
 
 	/**
@@ -127,7 +127,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink fetchByVisualizerName_First(
 		String visualizerName,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
 
 	/**
 	 * Returns the last data type visualizer link in the ordered set where visualizerName = &#63;.
@@ -139,7 +140,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink findByVisualizerName_Last(
 			String visualizerName,
-			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
 		throws NoSuchDataTypeVisualizerLinkException;
 
 	/**
@@ -151,7 +153,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink fetchByVisualizerName_Last(
 		String visualizerName,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
 
 	/**
 	 * Returns the data type visualizer links before and after the current data type visualizer link in the ordered set where visualizerName = &#63;.
@@ -164,7 +167,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink[] findByVisualizerName_PrevAndNext(
 			long dataTypeVisualizerLinkId, String visualizerName,
-			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
 		throws NoSuchDataTypeVisualizerLinkException;
 
 	/**
@@ -195,29 +199,26 @@ public interface DataTypeVisualizerLinkPersistence
 		throws NoSuchDataTypeVisualizerLinkException;
 
 	/**
-	 * Returns the data type visualizer link where visualizerName = &#63; and visualizerVersion = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 * Returns the data type visualizer link where visualizerName = &#63; and visualizerVersion = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #fetchByVisualizerNameVersion(String,String)}
 	 * @param visualizerName the visualizer name
 	 * @param visualizerVersion the visualizer version
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching data type visualizer link, or <code>null</code> if a matching data type visualizer link could not be found
 	 */
-	@Deprecated
 	public DataTypeVisualizerLink fetchByVisualizerNameVersion(
-		String visualizerName, String visualizerVersion,
-		boolean useFinderCache);
+		String visualizerName, String visualizerVersion);
 
 	/**
 	 * Returns the data type visualizer link where visualizerName = &#63; and visualizerVersion = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param visualizerName the visualizer name
 	 * @param visualizerVersion the visualizer version
-	 * @param useFinderCache whether to use the finder cache
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the matching data type visualizer link, or <code>null</code> if a matching data type visualizer link could not be found
 	 */
 	public DataTypeVisualizerLink fetchByVisualizerNameVersion(
-		String visualizerName, String visualizerVersion);
+		String visualizerName, String visualizerVersion,
+		boolean retrieveFromCache);
 
 	/**
 	 * Removes the data type visualizer link where visualizerName = &#63; and visualizerVersion = &#63; from the database.
@@ -271,19 +272,16 @@ public interface DataTypeVisualizerLinkPersistence
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByEditable(boolean, int, int, OrderByComparator)}
 	 * @param editable the editable
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
-	@Deprecated
 	public java.util.List<DataTypeVisualizerLink> findByEditable(
 		boolean editable, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean useFinderCache);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
 
 	/**
 	 * Returns an ordered range of all the data type visualizer links where editable = &#63;.
@@ -296,11 +294,14 @@ public interface DataTypeVisualizerLinkPersistence
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
 	public java.util.List<DataTypeVisualizerLink> findByEditable(
 		boolean editable, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator,
+		boolean retrieveFromCache);
 
 	/**
 	 * Returns the first data type visualizer link in the ordered set where editable = &#63;.
@@ -312,7 +313,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink findByEditable_First(
 			boolean editable,
-			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
 		throws NoSuchDataTypeVisualizerLinkException;
 
 	/**
@@ -324,7 +326,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink fetchByEditable_First(
 		boolean editable,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
 
 	/**
 	 * Returns the last data type visualizer link in the ordered set where editable = &#63;.
@@ -336,7 +339,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink findByEditable_Last(
 			boolean editable,
-			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
 		throws NoSuchDataTypeVisualizerLinkException;
 
 	/**
@@ -348,7 +352,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink fetchByEditable_Last(
 		boolean editable,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
 
 	/**
 	 * Returns the data type visualizer links before and after the current data type visualizer link in the ordered set where editable = &#63;.
@@ -361,7 +366,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink[] findByEditable_PrevAndNext(
 			long dataTypeVisualizerLinkId, boolean editable,
-			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
 		throws NoSuchDataTypeVisualizerLinkException;
 
 	/**
@@ -410,19 +416,16 @@ public interface DataTypeVisualizerLinkPersistence
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataTypeId(long, int, int, OrderByComparator)}
 	 * @param dataTypeId the data type ID
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
-	@Deprecated
 	public java.util.List<DataTypeVisualizerLink> findByDataTypeId(
 		long dataTypeId, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean useFinderCache);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
 
 	/**
 	 * Returns an ordered range of all the data type visualizer links where dataTypeId = &#63;.
@@ -435,11 +438,14 @@ public interface DataTypeVisualizerLinkPersistence
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching data type visualizer links
 	 */
 	public java.util.List<DataTypeVisualizerLink> findByDataTypeId(
 		long dataTypeId, int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator,
+		boolean retrieveFromCache);
 
 	/**
 	 * Returns the first data type visualizer link in the ordered set where dataTypeId = &#63;.
@@ -451,7 +457,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink findByDataTypeId_First(
 			long dataTypeId,
-			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
 		throws NoSuchDataTypeVisualizerLinkException;
 
 	/**
@@ -463,7 +470,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink fetchByDataTypeId_First(
 		long dataTypeId,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
 
 	/**
 	 * Returns the last data type visualizer link in the ordered set where dataTypeId = &#63;.
@@ -475,7 +483,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink findByDataTypeId_Last(
 			long dataTypeId,
-			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
 		throws NoSuchDataTypeVisualizerLinkException;
 
 	/**
@@ -487,7 +496,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink fetchByDataTypeId_Last(
 		long dataTypeId,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
 
 	/**
 	 * Returns the data type visualizer links before and after the current data type visualizer link in the ordered set where dataTypeId = &#63;.
@@ -500,7 +510,8 @@ public interface DataTypeVisualizerLinkPersistence
 	 */
 	public DataTypeVisualizerLink[] findByDataTypeId_PrevAndNext(
 			long dataTypeVisualizerLinkId, long dataTypeId,
-			OrderByComparator<DataTypeVisualizerLink> orderByComparator)
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
 		throws NoSuchDataTypeVisualizerLinkException;
 
 	/**
@@ -517,6 +528,161 @@ public interface DataTypeVisualizerLinkPersistence
 	 * @return the number of matching data type visualizer links
 	 */
 	public int countByDataTypeId(long dataTypeId);
+
+	/**
+	 * Returns all the data type visualizer links where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @return the matching data type visualizer links
+	 */
+	public java.util.List<DataTypeVisualizerLink> findByDataTypeIdEditable(
+		long dataTypeId, boolean editable);
+
+	/**
+	 * Returns a range of all the data type visualizer links where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param start the lower bound of the range of data type visualizer links
+	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
+	 * @return the range of matching data type visualizer links
+	 */
+	public java.util.List<DataTypeVisualizerLink> findByDataTypeIdEditable(
+		long dataTypeId, boolean editable, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the data type visualizer links where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param start the lower bound of the range of data type visualizer links
+	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching data type visualizer links
+	 */
+	public java.util.List<DataTypeVisualizerLink> findByDataTypeIdEditable(
+		long dataTypeId, boolean editable, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
+
+	/**
+	 * Returns an ordered range of all the data type visualizer links where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param start the lower bound of the range of data type visualizer links
+	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching data type visualizer links
+	 */
+	public java.util.List<DataTypeVisualizerLink> findByDataTypeIdEditable(
+		long dataTypeId, boolean editable, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	 * Returns the first data type visualizer link in the ordered set where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data type visualizer link
+	 * @throws NoSuchDataTypeVisualizerLinkException if a matching data type visualizer link could not be found
+	 */
+	public DataTypeVisualizerLink findByDataTypeIdEditable_First(
+			long dataTypeId, boolean editable,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
+		throws NoSuchDataTypeVisualizerLinkException;
+
+	/**
+	 * Returns the first data type visualizer link in the ordered set where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching data type visualizer link, or <code>null</code> if a matching data type visualizer link could not be found
+	 */
+	public DataTypeVisualizerLink fetchByDataTypeIdEditable_First(
+		long dataTypeId, boolean editable,
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
+
+	/**
+	 * Returns the last data type visualizer link in the ordered set where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data type visualizer link
+	 * @throws NoSuchDataTypeVisualizerLinkException if a matching data type visualizer link could not be found
+	 */
+	public DataTypeVisualizerLink findByDataTypeIdEditable_Last(
+			long dataTypeId, boolean editable,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
+		throws NoSuchDataTypeVisualizerLinkException;
+
+	/**
+	 * Returns the last data type visualizer link in the ordered set where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching data type visualizer link, or <code>null</code> if a matching data type visualizer link could not be found
+	 */
+	public DataTypeVisualizerLink fetchByDataTypeIdEditable_Last(
+		long dataTypeId, boolean editable,
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
+
+	/**
+	 * Returns the data type visualizer links before and after the current data type visualizer link in the ordered set where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeVisualizerLinkId the primary key of the current data type visualizer link
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next data type visualizer link
+	 * @throws NoSuchDataTypeVisualizerLinkException if a data type visualizer link with the primary key could not be found
+	 */
+	public DataTypeVisualizerLink[] findByDataTypeIdEditable_PrevAndNext(
+			long dataTypeVisualizerLinkId, long dataTypeId, boolean editable,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<DataTypeVisualizerLink> orderByComparator)
+		throws NoSuchDataTypeVisualizerLinkException;
+
+	/**
+	 * Removes all the data type visualizer links where dataTypeId = &#63; and editable = &#63; from the database.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 */
+	public void removeByDataTypeIdEditable(long dataTypeId, boolean editable);
+
+	/**
+	 * Returns the number of data type visualizer links where dataTypeId = &#63; and editable = &#63;.
+	 *
+	 * @param dataTypeId the data type ID
+	 * @param editable the editable
+	 * @return the number of matching data type visualizer links
+	 */
+	public int countByDataTypeIdEditable(long dataTypeId, boolean editable);
 
 	/**
 	 * Caches the data type visualizer link in the entity cache if it is enabled.
@@ -601,18 +767,15 @@ public interface DataTypeVisualizerLinkPersistence
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>DataTypeVisualizerLinkModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of data type visualizer links
 	 */
-	@Deprecated
 	public java.util.List<DataTypeVisualizerLink> findAll(
 		int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator,
-		boolean useFinderCache);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator);
 
 	/**
 	 * Returns an ordered range of all the data type visualizer links.
@@ -624,11 +787,14 @@ public interface DataTypeVisualizerLinkPersistence
 	 * @param start the lower bound of the range of data type visualizer links
 	 * @param end the upper bound of the range of data type visualizer links (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of data type visualizer links
 	 */
 	public java.util.List<DataTypeVisualizerLink> findAll(
 		int start, int end,
-		OrderByComparator<DataTypeVisualizerLink> orderByComparator);
+		com.liferay.portal.kernel.util.OrderByComparator<DataTypeVisualizerLink>
+			orderByComparator,
+		boolean retrieveFromCache);
 
 	/**
 	 * Removes all the data type visualizer links from the database.

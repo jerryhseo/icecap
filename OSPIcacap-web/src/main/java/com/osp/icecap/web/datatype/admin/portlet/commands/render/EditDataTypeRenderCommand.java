@@ -30,6 +30,7 @@ public class EditDataTypeRenderCommand implements MVCRenderCommand {
 		int dataTypeId = ParamUtil.getInteger(renderRequest, OSPIcecapWebConstants.PARAM_DATATYPE_ID, OSPIcecapWebConstants.ZERO);
 		String showback = ParamUtil.getString(renderRequest, OSPIcecapWebConstants.PARAM_SHOWBACK);
 
+		System.out.println("In EditDataTypeRenderCommand.");
 		DataType dataType = null;
 		
 		try{

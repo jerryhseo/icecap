@@ -149,15 +149,17 @@ public class DataEntryModelImpl
 
 	public static final long DATASETID_COLUMN_BITMASK = 32L;
 
-	public static final long GROUPID_COLUMN_BITMASK = 64L;
+	public static final long DATATYPEID_COLUMN_BITMASK = 64L;
 
-	public static final long STATUS_COLUMN_BITMASK = 128L;
+	public static final long GROUPID_COLUMN_BITMASK = 128L;
 
-	public static final long USERID_COLUMN_BITMASK = 256L;
+	public static final long STATUS_COLUMN_BITMASK = 256L;
 
-	public static final long UUID_COLUMN_BITMASK = 512L;
+	public static final long USERID_COLUMN_BITMASK = 512L;
 
-	public static final long DATAENTRYID_COLUMN_BITMASK = 1024L;
+	public static final long UUID_COLUMN_BITMASK = 1024L;
+
+	public static final long DATAENTRYID_COLUMN_BITMASK = 2048L;
 
 	public static void setEntityCacheEnabled(boolean entityCacheEnabled) {
 		_entityCacheEnabled = entityCacheEnabled;
@@ -694,7 +696,19 @@ public class DataEntryModelImpl
 
 	@Override
 	public void setDataTypeId(long dataTypeId) {
+		_columnBitmask |= DATATYPEID_COLUMN_BITMASK;
+
+		if (!_setOriginalDataTypeId) {
+			_setOriginalDataTypeId = true;
+
+			_originalDataTypeId = _dataTypeId;
+		}
+
 		_dataTypeId = dataTypeId;
+	}
+
+	public long getOriginalDataTypeId() {
+		return _originalDataTypeId;
 	}
 
 	@JSON
@@ -983,12 +997,7 @@ public class DataEntryModelImpl
 	@Override
 	public DataEntry toEscapedModel() {
 		if (_escapedModel == null) {
-			Function<InvocationHandler, DataEntry>
-				escapedModelProxyProviderFunction =
-					EscapedModelProxyProviderFunctionHolder.
-						_escapedModelProxyProviderFunction;
-
-			_escapedModel = escapedModelProxyProviderFunction.apply(
+			_escapedModel = _escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -1102,6 +1111,10 @@ public class DataEntryModelImpl
 		dataEntryModelImpl._originalStatus = dataEntryModelImpl._status;
 
 		dataEntryModelImpl._setOriginalStatus = false;
+
+		dataEntryModelImpl._originalDataTypeId = dataEntryModelImpl._dataTypeId;
+
+		dataEntryModelImpl._setOriginalDataTypeId = false;
 
 		dataEntryModelImpl._originalDataPackId = dataEntryModelImpl._dataPackId;
 
@@ -1299,13 +1312,8 @@ public class DataEntryModelImpl
 		return sb.toString();
 	}
 
-	private static class EscapedModelProxyProviderFunctionHolder {
-
-		private static final Function<InvocationHandler, DataEntry>
-			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
-
-	}
-
+	private static final Function<InvocationHandler, DataEntry>
+		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 
@@ -1332,6 +1340,8 @@ public class DataEntryModelImpl
 	private String _statusByUserName;
 	private Date _statusDate;
 	private long _dataTypeId;
+	private long _originalDataTypeId;
+	private boolean _setOriginalDataTypeId;
 	private long _dataPackId;
 	private long _originalDataPackId;
 	private boolean _setOriginalDataPackId;

@@ -315,7 +315,7 @@ public class DataCollectionLocalServiceImpl
 		else {
 			dataCollection.setHasMetaData(false);
 		}
-		
+
 		DataAnalysisLayout dataAnalysisLayout = super.dataAnalysisLayoutPersistence.create(dataCollection.getUuid());
 		dataAnalysisLayout.setLayout(layout);
 		super.dataAnalysisLayoutPersistence.update(dataAnalysisLayout);

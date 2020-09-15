@@ -235,6 +235,15 @@ public class DataTypeStructureLocalServiceWrapper
 		return _dataTypeStructureLocalService.getDataTypeStructure(dataTypeId);
 	}
 
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject getDataTypeStructureJSON(
+			long dataTypeId)
+		throws com.liferay.portal.kernel.json.JSONException {
+
+		return _dataTypeStructureLocalService.getDataTypeStructureJSON(
+			dataTypeId);
+	}
+
 	/**
 	 * Returns a range of all the data type structures.
 	 *
@@ -261,6 +270,12 @@ public class DataTypeStructureLocalServiceWrapper
 	@Override
 	public int getDataTypeStructuresCount() {
 		return _dataTypeStructureLocalService.getDataTypeStructuresCount();
+	}
+
+	@Override
+	public String getDataTypeStructureSTR(long dataTypeId) {
+		return _dataTypeStructureLocalService.getDataTypeStructureSTR(
+			dataTypeId);
 	}
 
 	@Override

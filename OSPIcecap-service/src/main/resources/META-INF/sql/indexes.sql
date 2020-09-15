@@ -18,6 +18,7 @@ create index IX_A897158D on ICECAP_DataEntry (dataCollectionId);
 create index IX_B74AED08 on ICECAP_DataEntry (dataPackId);
 create index IX_E254ED10 on ICECAP_DataEntry (dataSectionId);
 create index IX_BCD4530D on ICECAP_DataEntry (dataSetId);
+create index IX_623FA1A9 on ICECAP_DataEntry (dataTypeId);
 create index IX_17A2C3B4 on ICECAP_DataEntry (groupId);
 create index IX_CE15E69C on ICECAP_DataEntry (status);
 create index IX_6F94FFF0 on ICECAP_DataEntry (userId);
@@ -53,6 +54,7 @@ create index IX_E67E560C on ICECAP_DataSet (status);
 create index IX_34BC619A on ICECAP_DataSet (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_AD44869C on ICECAP_DataSet (uuid_[$COLUMN_LENGTH:75$], groupId);
 
+create index IX_1BF5542D on ICECAP_DataType (extension[$COLUMN_LENGTH:75$]);
 create index IX_E6ECF9CD on ICECAP_DataType (groupId, name[$COLUMN_LENGTH:75$], status);
 create index IX_2C6B970E on ICECAP_DataType (groupId, status);
 create index IX_DB9DBC87 on ICECAP_DataType (groupId, userId, name[$COLUMN_LENGTH:75$], status);
@@ -65,12 +67,16 @@ create index IX_F31FE7E2 on ICECAP_DataType (userId, status);
 create index IX_FED60436 on ICECAP_DataType (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_975E2038 on ICECAP_DataType (uuid_[$COLUMN_LENGTH:75$], groupId);
 
-create index IX_4FF777CD on ICECAP_DataTypeVisualizerLink (dataTypeId);
+create index IX_7EE8DBE5 on ICECAP_DataTypeVisualizerLink (dataTypeId, editable);
 create index IX_5D42A1B2 on ICECAP_DataTypeVisualizerLink (editable);
 create unique index IX_B506253 on ICECAP_DataTypeVisualizerLink (visualizerName[$COLUMN_LENGTH:75$], visualizerVersion[$COLUMN_LENGTH:75$]);
 
+create index IX_67BA6870 on ICECAP_DataType_Visualizers (companyId);
+create index IX_18599343 on ICECAP_DataType_Visualizers (dataTypeVisualizerLinkId);
+
 create index IX_4F9DD1AF on ICECAP_MetaData (creator[$COLUMN_LENGTH:75$]);
 create index IX_639E964 on ICECAP_MetaData (dataCollectionId);
+create index IX_3285F166 on ICECAP_MetaData (dataEntryId);
 create index IX_ED332E1F on ICECAP_MetaData (dataPackId);
 create index IX_21038099 on ICECAP_MetaData (dataSectionId);
 create index IX_8E41316 on ICECAP_MetaData (dataSetId);

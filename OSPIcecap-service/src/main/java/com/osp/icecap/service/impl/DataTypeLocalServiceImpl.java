@@ -19,6 +19,10 @@ import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -27,6 +31,7 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.osp.icecap.exception.NoSuchDataTypeException;
 import com.osp.icecap.model.DataType;
+import com.osp.icecap.model.DataTypeVisualizerLink;
 import com.osp.icecap.service.DataTypeStructureLocalService;
 import com.osp.icecap.service.base.DataTypeLocalServiceBaseImpl;
 
@@ -36,6 +41,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The implementation of the data type local service.
@@ -246,6 +252,35 @@ public class DataTypeLocalServiceImpl extends DataTypeLocalServiceBaseImpl {
 		return super.dataTypePersistence.findByNameVersion(name, version);
 	}
 	
-	@BeanReference
+	public JSONObject getDataTypeStructureJSON( long dataTypeId ) throws JSONException {
+		return dataTypeStructureLocalService.getDataTypeStructureJSON(dataTypeId);
+	}
+	
+	public String getDataTypeStructureSTR( long dataTypeId ) {
+		return dataTypeStructureLocalService.getDataTypeStructureSTR(dataTypeId);
+	}
+	
+	public String getDataTypeVisualizersSTR( long dataTypeId ) {
+		
+		JSONArray visualizersJSON = getDataTypeVisualizersJSON(dataTypeId);
+		
+		return visualizersJSON.toString();
+	}
+
+	public JSONArray getDataTypeVisualizersJSON( long dataTypeId ) {
+		
+		List<DataTypeVisualizerLink> visualizers = super.dataTypeVisualizerLinkPersistence.findByDataTypeId(dataTypeId);
+		
+		JSONArray visualizersJSON = JSONFactoryUtil.createJSONArray();
+		
+		for( DataTypeVisualizerLink link : visualizers ) {
+			JSONObject linkJSON = link.toJSONObject();
+			visualizersJSON.put(linkJSON);
+		}
+		
+		return visualizersJSON;
+	}
+
+	@Reference
 	private volatile DataTypeStructureLocalService dataTypeStructureLocalService;
 }

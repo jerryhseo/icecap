@@ -52,6 +52,7 @@ public class MetaDataSoap implements Serializable {
 		soapModel.setDataSetId(model.getDataSetId());
 		soapModel.setDataSectionId(model.getDataSectionId());
 		soapModel.setDataPackId(model.getDataPackId());
+		soapModel.setDataEntryId(model.getDataEntryId());
 
 		return soapModel;
 	}
@@ -257,6 +258,14 @@ public class MetaDataSoap implements Serializable {
 		_dataPackId = dataPackId;
 	}
 
+	public long getDataEntryId() {
+		return _dataEntryId;
+	}
+
+	public void setDataEntryId(long dataEntryId) {
+		_dataEntryId = dataEntryId;
+	}
+
 	private String _dataUuid;
 	private String _creator;
 	private String _created;
@@ -276,5 +285,6 @@ public class MetaDataSoap implements Serializable {
 	private long _dataSetId;
 	private long _dataSectionId;
 	private long _dataPackId;
+	private long _dataEntryId;
 
 }

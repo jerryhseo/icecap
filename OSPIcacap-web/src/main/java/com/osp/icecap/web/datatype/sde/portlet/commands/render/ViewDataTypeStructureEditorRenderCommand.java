@@ -1,13 +1,12 @@
 package com.osp.icecap.web.datatype.sde.portlet.commands.render;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.osp.icecap.constants.OSPIcecapPortletKeys;
-import com.osp.icecap.model.DataType;
 import com.osp.icecap.service.DataTypeLocalService;
 import com.osp.icecap.web.constants.OSPIcecapWebConstants;
-
-import java.util.List;
 
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
@@ -28,18 +27,25 @@ public class ViewDataTypeStructureEditorRenderCommand implements MVCRenderComman
 
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
-		int startIndex = ParamUtil.getInteger(renderRequest, OSPIcecapWebConstants.PARAM_START_INDEX, OSPIcecapWebConstants.DEFAULT_START_INDEX);
-		int itemsPerPage = ParamUtil.getInteger(renderRequest, OSPIcecapWebConstants.PARAM_ITEMS_PER_PAGE, OSPIcecapWebConstants.DEFAULT_ITEMS_PER_PAGE);
+		long dataTypeId = ParamUtil.getLong(renderRequest, OSPIcecapWebConstants.PARAM_DATATYPE_ID, OSPIcecapWebConstants.ZERO);
+		String showback = ParamUtil.getString(renderRequest, OSPIcecapWebConstants.PARAM_SHOWBACK, StringPool.BLANK);
+		String dataTypeStructure = "";
+		String editorMode = "edit";
 		
-		List<DataType> dataTypeList = _dataTypeLocalService.getDataTypes(startIndex, itemsPerPage);
+		dataTypeStructure = _dataTypeLocalService.getDataTypeStructureSTR(dataTypeId);
 		
-		renderRequest.setAttribute(OSPIcecapWebConstants.PARAM_START_INDEX, startIndex);
-		renderRequest.setAttribute(OSPIcecapWebConstants.PARAM_ITEMS_PER_PAGE, itemsPerPage);
-		renderRequest.setAttribute(OSPIcecapWebConstants.PARAM_DATATYPE_LIST, dataTypeList);
+		if( Validator.isBlank(dataTypeStructure) && dataTypeId == 0) {
+			System.out.println("Data Type Structure Editor Mode: CREATE");
+			editorMode = "cteate";
+		}
+		
+
+		System.out.println("This is the SDE!!");
 		
 		return OSPIcecapWebConstants.JSP_PATH_DATATYPE_STRUCTURE_EDITOR;
 	}
 
 	@Reference
 	private DataTypeLocalService _dataTypeLocalService;
+	
 }

@@ -45,6 +45,7 @@ public class DataTypeSoap implements Serializable {
 		soapModel.setStatus(model.getStatus());
 		soapModel.setName(model.getName());
 		soapModel.setVersion(model.getVersion());
+		soapModel.setExtension(model.getExtension());
 		soapModel.setSamplePath(model.getSamplePath());
 		soapModel.setDescription(model.getDescription());
 
@@ -188,6 +189,14 @@ public class DataTypeSoap implements Serializable {
 		_version = version;
 	}
 
+	public String getExtension() {
+		return _extension;
+	}
+
+	public void setExtension(String extension) {
+		_extension = extension;
+	}
+
 	public String getSamplePath() {
 		return _samplePath;
 	}
@@ -215,6 +224,7 @@ public class DataTypeSoap implements Serializable {
 	private int _status;
 	private String _name;
 	private String _version;
+	private String _extension;
 	private String _samplePath;
 	private String _description;
 

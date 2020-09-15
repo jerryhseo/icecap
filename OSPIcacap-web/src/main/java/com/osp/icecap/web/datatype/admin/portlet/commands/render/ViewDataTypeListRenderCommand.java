@@ -31,7 +31,10 @@ public class ViewDataTypeListRenderCommand implements MVCRenderCommand {
 		int startIndex = ParamUtil.getInteger(renderRequest, OSPIcecapWebConstants.PARAM_START_INDEX, OSPIcecapWebConstants.DEFAULT_START_INDEX);
 		int itemsPerPage = ParamUtil.getInteger(renderRequest, OSPIcecapWebConstants.PARAM_ITEMS_PER_PAGE, OSPIcecapWebConstants.DEFAULT_ITEMS_PER_PAGE);
 		
+		System.out.println("Start: "+startIndex);
+		System.out.println("Items Per Page: "+itemsPerPage);
 		List<DataType> dataTypeList = _dataTypeLocalService.getDataTypes(startIndex, itemsPerPage);
+		System.out.println("Datatype Count: "+dataTypeList.size());
 		
 		renderRequest.setAttribute(OSPIcecapWebConstants.PARAM_START_INDEX, startIndex);
 		renderRequest.setAttribute(OSPIcecapWebConstants.PARAM_ITEMS_PER_PAGE, itemsPerPage);

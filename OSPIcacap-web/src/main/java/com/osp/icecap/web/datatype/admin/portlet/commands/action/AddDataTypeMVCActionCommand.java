@@ -14,15 +14,14 @@ import com.osp.icecap.model.DataType;
 import com.osp.icecap.service.DataTypeLocalService;
 import com.osp.icecap.web.constants.OSPIcecapWebConstants;
 
-import java.io.InputStream;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.MutableRenderParameters;
-import javax.servlet.http.Part;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -31,11 +30,11 @@ import org.osgi.service.component.annotations.Reference;
 	    immediate = true,
 	    property = {
 	        "javax.portlet.name=" + OSPIcecapPortletKeys.DATATYPE_ADMIN_PORTLET_KEY,
-	        "mvc.command.name="+OSPIcecapWebConstants.MVC_COMMAND_DATATYPE_ADMIN_EDIT
+	        "mvc.command.name="+OSPIcecapWebConstants.MVC_COMMAND_DATATYPE_ADMIN_ADD
 	    },
 	    service = MVCActionCommand.class
 	)
-public class EditDataTypeMVCActionCommand extends BaseMVCActionCommand {
+public class AddDataTypeMVCActionCommand extends BaseMVCActionCommand {
 	@Reference
 	DataTypeLocalService _dataTypeLocalService;
 
@@ -48,7 +47,7 @@ public class EditDataTypeMVCActionCommand extends BaseMVCActionCommand {
 		Map<Locale, String> dataTypeDescription = LocalizationUtil.getLocalizationMap(actionRequest, OSPIcecapWebConstants.PARAM_DATATYPE_DESCRIPTION);
 		
 		UploadPortletRequest uploadPortletRequest = PortalUtil.getUploadPortletRequest(actionRequest);
-		String srcFileName = uploadPortletRequest.getFileName("uploadSampleFile");
+		String srcFileName = uploadPortletRequest.getFileName("sampleFile");
 		System.out.println("File Name To Be Uploaded: "+ srcFileName );
 		
 		System.out.println("Command: "+ command);
@@ -57,18 +56,10 @@ public class EditDataTypeMVCActionCommand extends BaseMVCActionCommand {
 		
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(DataType.class.getName(), actionRequest);
 		
-		Date date = serviceContext.getCreateDate();
-		if( Validator.isNull(date) ) {
-			System.out.println("No created date!!!");
-			date = new Date();
-			serviceContext.setCreateDate(date);
-			serviceContext.setModifiedDate(date);
-		}
-		System.out.println("Created Date: "+date.toString());
-		
-		//_dataTypeLocalService.addDataType(dataTypeName, dataTypeVersion, dataTypeDescription, "", serviceContext);
+		_dataTypeLocalService.addDataType(dataTypeName, dataTypeVersion, dataTypeDescription, "", serviceContext);
 		
 		MutableRenderParameters renderParameters = actionResponse.getRenderParameters();
+		
 		renderParameters.setValue("mvcRenderCommandName", OSPIcecapWebConstants.MVC_COMMAND_DATATYPE_ADMIN_EDIT);
 		renderParameters.setValue("showback", showback);
 	}

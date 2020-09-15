@@ -63,6 +63,7 @@ public class MetaDataWrapper
 		attributes.put("dataSetId", getDataSetId());
 		attributes.put("dataSectionId", getDataSectionId());
 		attributes.put("dataPackId", getDataPackId());
+		attributes.put("dataEntryId", getDataEntryId());
 
 		return attributes;
 	}
@@ -182,6 +183,12 @@ public class MetaDataWrapper
 		if (dataPackId != null) {
 			setDataPackId(dataPackId);
 		}
+
+		Long dataEntryId = (Long)attributes.get("dataEntryId");
+
+		if (dataEntryId != null) {
+			setDataEntryId(dataEntryId);
+		}
 	}
 
 	@Override
@@ -217,6 +224,16 @@ public class MetaDataWrapper
 	@Override
 	public long getDataCollectionId() {
 		return model.getDataCollectionId();
+	}
+
+	/**
+	 * Returns the data entry ID of this meta data.
+	 *
+	 * @return the data entry ID of this meta data
+	 */
+	@Override
+	public long getDataEntryId() {
+		return model.getDataEntryId();
 	}
 
 	/**
@@ -640,6 +657,16 @@ public class MetaDataWrapper
 	@Override
 	public void setDataCollectionId(long dataCollectionId) {
 		model.setDataCollectionId(dataCollectionId);
+	}
+
+	/**
+	 * Sets the data entry ID of this meta data.
+	 *
+	 * @param dataEntryId the data entry ID of this meta data
+	 */
+	@Override
+	public void setDataEntryId(long dataEntryId) {
+		model.setDataEntryId(dataEntryId);
 	}
 
 	/**

@@ -357,6 +357,31 @@ public class DataTypeLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.portal.kernel.json.JSONObject getDataTypeStructureJSON(
+			long dataTypeId)
+		throws com.liferay.portal.kernel.json.JSONException {
+
+		return _dataTypeLocalService.getDataTypeStructureJSON(dataTypeId);
+	}
+
+	@Override
+	public String getDataTypeStructureSTR(long dataTypeId) {
+		return _dataTypeLocalService.getDataTypeStructureSTR(dataTypeId);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.json.JSONArray getDataTypeVisualizersJSON(
+		long dataTypeId) {
+
+		return _dataTypeLocalService.getDataTypeVisualizersJSON(dataTypeId);
+	}
+
+	@Override
+	public String getDataTypeVisualizersSTR(long dataTypeId) {
+		return _dataTypeLocalService.getDataTypeVisualizersSTR(dataTypeId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
 		getExportActionableDynamicQuery(
 			com.liferay.exportimport.kernel.lar.PortletDataContext

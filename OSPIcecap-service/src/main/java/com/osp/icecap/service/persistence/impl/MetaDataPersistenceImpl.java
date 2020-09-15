@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import com.osp.icecap.exception.NoSuchMetaDataException;
 import com.osp.icecap.model.MetaData;
@@ -129,22 +130,19 @@ public class MetaDataPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataCollectionId(long, int, int, OrderByComparator)}
 	 * @param dataCollectionId the data collection ID
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
-	@Deprecated
 	@Override
 	public List<MetaData> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<MetaData> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<MetaData> orderByComparator) {
 
 		return findByDataCollectionId(
-			dataCollectionId, start, end, orderByComparator);
+			dataCollectionId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -158,12 +156,14 @@ public class MetaDataPersistenceImpl
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
 	@Override
 	public List<MetaData> findByDataCollectionId(
 		long dataCollectionId, int start, int end,
-		OrderByComparator<MetaData> orderByComparator) {
+		OrderByComparator<MetaData> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -183,15 +183,19 @@ public class MetaDataPersistenceImpl
 			};
 		}
 
-		List<MetaData> list = (List<MetaData>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<MetaData> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (MetaData metaData : list) {
-				if ((dataCollectionId != metaData.getDataCollectionId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<MetaData>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (MetaData metaData : list) {
+					if ((dataCollectionId != metaData.getDataCollectionId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -637,21 +641,18 @@ public class MetaDataPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSetId(long, int, int, OrderByComparator)}
 	 * @param dataSetId the data set ID
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
-	@Deprecated
 	@Override
 	public List<MetaData> findByDataSetId(
 		long dataSetId, int start, int end,
-		OrderByComparator<MetaData> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<MetaData> orderByComparator) {
 
-		return findByDataSetId(dataSetId, start, end, orderByComparator);
+		return findByDataSetId(dataSetId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -665,12 +666,14 @@ public class MetaDataPersistenceImpl
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
 	@Override
 	public List<MetaData> findByDataSetId(
 		long dataSetId, int start, int end,
-		OrderByComparator<MetaData> orderByComparator) {
+		OrderByComparator<MetaData> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -690,15 +693,19 @@ public class MetaDataPersistenceImpl
 			};
 		}
 
-		List<MetaData> list = (List<MetaData>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<MetaData> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (MetaData metaData : list) {
-				if ((dataSetId != metaData.getDataSetId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<MetaData>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (MetaData metaData : list) {
+					if ((dataSetId != metaData.getDataSetId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -1141,22 +1148,19 @@ public class MetaDataPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataSectionId(long, int, int, OrderByComparator)}
 	 * @param dataSectionId the data section ID
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
-	@Deprecated
 	@Override
 	public List<MetaData> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		OrderByComparator<MetaData> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<MetaData> orderByComparator) {
 
 		return findByDataSectionId(
-			dataSectionId, start, end, orderByComparator);
+			dataSectionId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -1170,12 +1174,14 @@ public class MetaDataPersistenceImpl
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
 	@Override
 	public List<MetaData> findByDataSectionId(
 		long dataSectionId, int start, int end,
-		OrderByComparator<MetaData> orderByComparator) {
+		OrderByComparator<MetaData> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1195,15 +1201,19 @@ public class MetaDataPersistenceImpl
 			};
 		}
 
-		List<MetaData> list = (List<MetaData>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<MetaData> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (MetaData metaData : list) {
-				if ((dataSectionId != metaData.getDataSectionId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<MetaData>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (MetaData metaData : list) {
+					if ((dataSectionId != metaData.getDataSectionId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -1648,21 +1658,19 @@ public class MetaDataPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByDataPackId(long, int, int, OrderByComparator)}
 	 * @param dataPackId the data pack ID
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
-	@Deprecated
 	@Override
 	public List<MetaData> findByDataPackId(
 		long dataPackId, int start, int end,
-		OrderByComparator<MetaData> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<MetaData> orderByComparator) {
 
-		return findByDataPackId(dataPackId, start, end, orderByComparator);
+		return findByDataPackId(
+			dataPackId, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -1676,12 +1684,14 @@ public class MetaDataPersistenceImpl
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
 	@Override
 	public List<MetaData> findByDataPackId(
 		long dataPackId, int start, int end,
-		OrderByComparator<MetaData> orderByComparator) {
+		OrderByComparator<MetaData> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1701,15 +1711,19 @@ public class MetaDataPersistenceImpl
 			};
 		}
 
-		List<MetaData> list = (List<MetaData>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<MetaData> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (MetaData metaData : list) {
-				if ((dataPackId != metaData.getDataPackId())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<MetaData>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (MetaData metaData : list) {
+					if ((dataPackId != metaData.getDataPackId())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -2111,6 +2125,214 @@ public class MetaDataPersistenceImpl
 	private static final String _FINDER_COLUMN_DATAPACKID_DATAPACKID_2 =
 		"metaData.dataPackId = ?";
 
+	private FinderPath _finderPathFetchByDataEntryId;
+	private FinderPath _finderPathCountByDataEntryId;
+
+	/**
+	 * Returns the meta data where dataEntryId = &#63; or throws a <code>NoSuchMetaDataException</code> if it could not be found.
+	 *
+	 * @param dataEntryId the data entry ID
+	 * @return the matching meta data
+	 * @throws NoSuchMetaDataException if a matching meta data could not be found
+	 */
+	@Override
+	public MetaData findByDataEntryId(long dataEntryId)
+		throws NoSuchMetaDataException {
+
+		MetaData metaData = fetchByDataEntryId(dataEntryId);
+
+		if (metaData == null) {
+			StringBundler msg = new StringBundler(4);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("dataEntryId=");
+			msg.append(dataEntryId);
+
+			msg.append("}");
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
+			}
+
+			throw new NoSuchMetaDataException(msg.toString());
+		}
+
+		return metaData;
+	}
+
+	/**
+	 * Returns the meta data where dataEntryId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param dataEntryId the data entry ID
+	 * @return the matching meta data, or <code>null</code> if a matching meta data could not be found
+	 */
+	@Override
+	public MetaData fetchByDataEntryId(long dataEntryId) {
+		return fetchByDataEntryId(dataEntryId, true);
+	}
+
+	/**
+	 * Returns the meta data where dataEntryId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param dataEntryId the data entry ID
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the matching meta data, or <code>null</code> if a matching meta data could not be found
+	 */
+	@Override
+	public MetaData fetchByDataEntryId(
+		long dataEntryId, boolean retrieveFromCache) {
+
+		Object[] finderArgs = new Object[] {dataEntryId};
+
+		Object result = null;
+
+		if (retrieveFromCache) {
+			result = finderCache.getResult(
+				_finderPathFetchByDataEntryId, finderArgs, this);
+		}
+
+		if (result instanceof MetaData) {
+			MetaData metaData = (MetaData)result;
+
+			if ((dataEntryId != metaData.getDataEntryId())) {
+				result = null;
+			}
+		}
+
+		if (result == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_SELECT_METADATA_WHERE);
+
+			query.append(_FINDER_COLUMN_DATAENTRYID_DATAENTRYID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(dataEntryId);
+
+				List<MetaData> list = q.list();
+
+				if (list.isEmpty()) {
+					finderCache.putResult(
+						_finderPathFetchByDataEntryId, finderArgs, list);
+				}
+				else {
+					if (list.size() > 1) {
+						Collections.sort(list, Collections.reverseOrder());
+
+						if (_log.isWarnEnabled()) {
+							_log.warn(
+								"MetaDataPersistenceImpl.fetchByDataEntryId(long, boolean) with parameters (" +
+									StringUtil.merge(finderArgs) +
+										") yields a result set with more than 1 result. This violates the logical unique restriction. There is no order guarantee on which result is returned by this finder.");
+						}
+					}
+
+					MetaData metaData = list.get(0);
+
+					result = metaData;
+
+					cacheResult(metaData);
+				}
+			}
+			catch (Exception e) {
+				finderCache.removeResult(
+					_finderPathFetchByDataEntryId, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		if (result instanceof List<?>) {
+			return null;
+		}
+		else {
+			return (MetaData)result;
+		}
+	}
+
+	/**
+	 * Removes the meta data where dataEntryId = &#63; from the database.
+	 *
+	 * @param dataEntryId the data entry ID
+	 * @return the meta data that was removed
+	 */
+	@Override
+	public MetaData removeByDataEntryId(long dataEntryId)
+		throws NoSuchMetaDataException {
+
+		MetaData metaData = findByDataEntryId(dataEntryId);
+
+		return remove(metaData);
+	}
+
+	/**
+	 * Returns the number of meta datas where dataEntryId = &#63;.
+	 *
+	 * @param dataEntryId the data entry ID
+	 * @return the number of matching meta datas
+	 */
+	@Override
+	public int countByDataEntryId(long dataEntryId) {
+		FinderPath finderPath = _finderPathCountByDataEntryId;
+
+		Object[] finderArgs = new Object[] {dataEntryId};
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(2);
+
+			query.append(_SQL_COUNT_METADATA_WHERE);
+
+			query.append(_FINDER_COLUMN_DATAENTRYID_DATAENTRYID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(dataEntryId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_DATAENTRYID_DATAENTRYID_2 =
+		"metaData.dataEntryId = ?";
+
 	private FinderPath _finderPathWithPaginationFindByCreator;
 	private FinderPath _finderPathWithoutPaginationFindByCreator;
 	private FinderPath _finderPathCountByCreator;
@@ -2151,21 +2373,18 @@ public class MetaDataPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findByCreator(String, int, int, OrderByComparator)}
 	 * @param creator the creator
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
-	@Deprecated
 	@Override
 	public List<MetaData> findByCreator(
 		String creator, int start, int end,
-		OrderByComparator<MetaData> orderByComparator, boolean useFinderCache) {
+		OrderByComparator<MetaData> orderByComparator) {
 
-		return findByCreator(creator, start, end, orderByComparator);
+		return findByCreator(creator, start, end, orderByComparator, true);
 	}
 
 	/**
@@ -2179,12 +2398,14 @@ public class MetaDataPersistenceImpl
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of matching meta datas
 	 */
 	@Override
 	public List<MetaData> findByCreator(
 		String creator, int start, int end,
-		OrderByComparator<MetaData> orderByComparator) {
+		OrderByComparator<MetaData> orderByComparator,
+		boolean retrieveFromCache) {
 
 		creator = Objects.toString(creator, "");
 
@@ -2204,15 +2425,19 @@ public class MetaDataPersistenceImpl
 			finderArgs = new Object[] {creator, start, end, orderByComparator};
 		}
 
-		List<MetaData> list = (List<MetaData>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<MetaData> list = null;
 
-		if ((list != null) && !list.isEmpty()) {
-			for (MetaData metaData : list) {
-				if (!creator.equals(metaData.getCreator())) {
-					list = null;
+		if (retrieveFromCache) {
+			list = (List<MetaData>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
-					break;
+			if ((list != null) && !list.isEmpty()) {
+				for (MetaData metaData : list) {
+					if (!creator.equals(metaData.getCreator())) {
+						list = null;
+
+						break;
+					}
 				}
 			}
 		}
@@ -2669,6 +2894,10 @@ public class MetaDataPersistenceImpl
 			entityCacheEnabled, MetaDataImpl.class, metaData.getPrimaryKey(),
 			metaData);
 
+		finderCache.putResult(
+			_finderPathFetchByDataEntryId,
+			new Object[] {metaData.getDataEntryId()}, metaData);
+
 		metaData.resetOriginalValues();
 	}
 
@@ -2722,6 +2951,8 @@ public class MetaDataPersistenceImpl
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
+
+		clearUniqueFindersCache((MetaDataModelImpl)metaData, true);
 	}
 
 	@Override
@@ -2733,6 +2964,41 @@ public class MetaDataPersistenceImpl
 			entityCache.removeResult(
 				entityCacheEnabled, MetaDataImpl.class,
 				metaData.getPrimaryKey());
+
+			clearUniqueFindersCache((MetaDataModelImpl)metaData, true);
+		}
+	}
+
+	protected void cacheUniqueFindersCache(
+		MetaDataModelImpl metaDataModelImpl) {
+
+		Object[] args = new Object[] {metaDataModelImpl.getDataEntryId()};
+
+		finderCache.putResult(
+			_finderPathCountByDataEntryId, args, Long.valueOf(1), false);
+		finderCache.putResult(
+			_finderPathFetchByDataEntryId, args, metaDataModelImpl, false);
+	}
+
+	protected void clearUniqueFindersCache(
+		MetaDataModelImpl metaDataModelImpl, boolean clearCurrent) {
+
+		if (clearCurrent) {
+			Object[] args = new Object[] {metaDataModelImpl.getDataEntryId()};
+
+			finderCache.removeResult(_finderPathCountByDataEntryId, args);
+			finderCache.removeResult(_finderPathFetchByDataEntryId, args);
+		}
+
+		if ((metaDataModelImpl.getColumnBitmask() &
+			 _finderPathFetchByDataEntryId.getColumnBitmask()) != 0) {
+
+			Object[] args = new Object[] {
+				metaDataModelImpl.getOriginalDataEntryId()
+			};
+
+			finderCache.removeResult(_finderPathCountByDataEntryId, args);
+			finderCache.removeResult(_finderPathFetchByDataEntryId, args);
 		}
 	}
 
@@ -3023,6 +3289,9 @@ public class MetaDataPersistenceImpl
 			entityCacheEnabled, MetaDataImpl.class, metaData.getPrimaryKey(),
 			metaData, false);
 
+		clearUniqueFindersCache(metaDataModelImpl, false);
+		cacheUniqueFindersCache(metaDataModelImpl);
+
 		metaData.resetOriginalValues();
 
 		return metaData;
@@ -3111,20 +3380,16 @@ public class MetaDataPersistenceImpl
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>MetaDataModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link #findAll(int, int, OrderByComparator)}
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of meta datas
 	 */
-	@Deprecated
 	@Override
 	public List<MetaData> findAll(
-		int start, int end, OrderByComparator<MetaData> orderByComparator,
-		boolean useFinderCache) {
+		int start, int end, OrderByComparator<MetaData> orderByComparator) {
 
-		return findAll(start, end, orderByComparator);
+		return findAll(start, end, orderByComparator, true);
 	}
 
 	/**
@@ -3137,11 +3402,13 @@ public class MetaDataPersistenceImpl
 	 * @param start the lower bound of the range of meta datas
 	 * @param end the upper bound of the range of meta datas (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
 	 * @return the ordered range of meta datas
 	 */
 	@Override
 	public List<MetaData> findAll(
-		int start, int end, OrderByComparator<MetaData> orderByComparator) {
+		int start, int end, OrderByComparator<MetaData> orderByComparator,
+		boolean retrieveFromCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3159,8 +3426,12 @@ public class MetaDataPersistenceImpl
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
-		List<MetaData> list = (List<MetaData>)finderCache.getResult(
-			finderPath, finderArgs, this);
+		List<MetaData> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<MetaData>)finderCache.getResult(
+				finderPath, finderArgs, this);
+		}
 
 		if (list == null) {
 			StringBundler query = null;
@@ -3388,6 +3659,17 @@ public class MetaDataPersistenceImpl
 			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDataPackId",
 			new String[] {Long.class.getName()});
 
+		_finderPathFetchByDataEntryId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, MetaDataImpl.class,
+			FINDER_CLASS_NAME_ENTITY, "fetchByDataEntryId",
+			new String[] {Long.class.getName()},
+			MetaDataModelImpl.DATAENTRYID_COLUMN_BITMASK);
+
+		_finderPathCountByDataEntryId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByDataEntryId",
+			new String[] {Long.class.getName()});
+
 		_finderPathWithPaginationFindByCreator = new FinderPath(
 			entityCacheEnabled, finderCacheEnabled, MetaDataImpl.class,
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByCreator",
@@ -3478,14 +3760,5 @@ public class MetaDataPersistenceImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		MetaDataPersistenceImpl.class);
-
-	static {
-		try {
-			Class.forName(ICECAPPersistenceConstants.class.getName());
-		}
-		catch (ClassNotFoundException cnfe) {
-			throw new ExceptionInInitializerError(cnfe);
-		}
-	}
 
 }

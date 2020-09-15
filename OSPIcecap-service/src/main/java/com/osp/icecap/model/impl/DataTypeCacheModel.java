@@ -65,7 +65,7 @@ public class DataTypeCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(27);
+		StringBundler sb = new StringBundler(29);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -89,6 +89,8 @@ public class DataTypeCacheModel
 		sb.append(name);
 		sb.append(", version=");
 		sb.append(version);
+		sb.append(", extension=");
+		sb.append(extension);
 		sb.append(", samplePath=");
 		sb.append(samplePath);
 		sb.append(", description=");
@@ -151,6 +153,13 @@ public class DataTypeCacheModel
 			dataTypeImpl.setVersion(version);
 		}
 
+		if (extension == null) {
+			dataTypeImpl.setExtension("");
+		}
+		else {
+			dataTypeImpl.setExtension(extension);
+		}
+
 		if (samplePath == null) {
 			dataTypeImpl.setSamplePath("");
 		}
@@ -188,6 +197,7 @@ public class DataTypeCacheModel
 		status = objectInput.readInt();
 		name = objectInput.readUTF();
 		version = objectInput.readUTF();
+		extension = objectInput.readUTF();
 		samplePath = objectInput.readUTF();
 		description = objectInput.readUTF();
 	}
@@ -235,6 +245,13 @@ public class DataTypeCacheModel
 			objectOutput.writeUTF(version);
 		}
 
+		if (extension == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(extension);
+		}
+
 		if (samplePath == null) {
 			objectOutput.writeUTF("");
 		}
@@ -261,6 +278,7 @@ public class DataTypeCacheModel
 	public int status;
 	public String name;
 	public String version;
+	public String extension;
 	public String samplePath;
 	public String description;
 
