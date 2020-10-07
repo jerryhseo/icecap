@@ -17,8 +17,6 @@ package com.osp.icecap.model.impl;
 import com.osp.icecap.model.DataTypeStructure;
 import com.osp.icecap.service.DataTypeStructureLocalServiceUtil;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * The extended model base implementation for the DataTypeStructure service. Represents a row in the &quot;ICECAP_DataTypeStructure&quot; database table, with each column mapped to a property of this class.
  *
@@ -31,7 +29,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataTypeStructure
  * @generated
  */
-@ProviderType
 public abstract class DataTypeStructureBaseImpl
 	extends DataTypeStructureModelImpl implements DataTypeStructure {
 

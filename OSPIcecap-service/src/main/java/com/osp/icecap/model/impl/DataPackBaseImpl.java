@@ -17,8 +17,6 @@ package com.osp.icecap.model.impl;
 import com.osp.icecap.model.DataPack;
 import com.osp.icecap.service.DataPackLocalServiceUtil;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * The extended model base implementation for the DataPack service. Represents a row in the &quot;ICECAP_DataPack&quot; database table, with each column mapped to a property of this class.
  *
@@ -31,7 +29,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataPack
  * @generated
  */
-@ProviderType
 public abstract class DataPackBaseImpl
 	extends DataPackModelImpl implements DataPack {
 

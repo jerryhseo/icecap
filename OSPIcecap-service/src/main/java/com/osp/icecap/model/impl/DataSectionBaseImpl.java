@@ -17,8 +17,6 @@ package com.osp.icecap.model.impl;
 import com.osp.icecap.model.DataSection;
 import com.osp.icecap.service.DataSectionLocalServiceUtil;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * The extended model base implementation for the DataSection service. Represents a row in the &quot;ICECAP_DataSection&quot; database table, with each column mapped to a property of this class.
  *
@@ -31,7 +29,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataSection
  * @generated
  */
-@ProviderType
 public abstract class DataSectionBaseImpl
 	extends DataSectionModelImpl implements DataSection {
 

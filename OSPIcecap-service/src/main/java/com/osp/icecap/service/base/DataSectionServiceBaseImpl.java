@@ -54,7 +54,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 public abstract class DataSectionServiceBaseImpl
 	extends BaseServiceImpl
-	implements DataSectionService, AopService, IdentifiableOSGiService {
+	implements AopService, DataSectionService, IdentifiableOSGiService {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -110,8 +110,8 @@ public abstract class DataSectionServiceBaseImpl
 
 			sqlUpdate.update();
 		}
-		catch (Exception e) {
-			throw new SystemException(e);
+		catch (Exception exception) {
+			throw new SystemException(exception);
 		}
 	}
 

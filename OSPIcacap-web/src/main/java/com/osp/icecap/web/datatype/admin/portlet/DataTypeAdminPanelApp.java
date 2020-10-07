@@ -11,8 +11,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 		 immediate = true,
 		    property = {
-		        "panel.app.order:Integer=300",
-		        "panel.category.key=" + "OSPControlPanelCategories"
+		        "panel.app.order:Integer=200",
+		        "panel.category.key=" + "OSPControlPanelCategoryIcecap"
 		    },
 		    service = PanelApp.class
 )

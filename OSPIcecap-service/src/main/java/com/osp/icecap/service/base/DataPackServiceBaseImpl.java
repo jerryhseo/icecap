@@ -54,7 +54,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 public abstract class DataPackServiceBaseImpl
 	extends BaseServiceImpl
-	implements DataPackService, AopService, IdentifiableOSGiService {
+	implements AopService, DataPackService, IdentifiableOSGiService {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -110,8 +110,8 @@ public abstract class DataPackServiceBaseImpl
 
 			sqlUpdate.update();
 		}
-		catch (Exception e) {
-			throw new SystemException(e);
+		catch (Exception exception) {
+			throw new SystemException(exception);
 		}
 	}
 

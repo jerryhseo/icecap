@@ -14,8 +14,6 @@
 
 package com.osp.icecap.service.http;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * Provides the SOAP utility for the
  * <code>com.osp.icecap.service.DataCollectionServiceUtil</code> service
@@ -55,6 +53,5 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataCollectionServiceHttp
  * @generated
  */
-@ProviderType
 public class DataCollectionServiceSoap {
 }

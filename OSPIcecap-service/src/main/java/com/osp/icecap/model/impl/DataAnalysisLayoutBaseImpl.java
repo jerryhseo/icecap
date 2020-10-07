@@ -17,8 +17,6 @@ package com.osp.icecap.model.impl;
 import com.osp.icecap.model.DataAnalysisLayout;
 import com.osp.icecap.service.DataAnalysisLayoutLocalServiceUtil;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * The extended model base implementation for the DataAnalysisLayout service. Represents a row in the &quot;ICECAP_DataAnalysisLayout&quot; database table, with each column mapped to a property of this class.
  *
@@ -31,7 +29,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataAnalysisLayout
  * @generated
  */
-@ProviderType
 public abstract class DataAnalysisLayoutBaseImpl
 	extends DataAnalysisLayoutModelImpl implements DataAnalysisLayout {
 

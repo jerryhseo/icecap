@@ -20,15 +20,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * This class is used by SOAP remote services, specifically {@link com.osp.icecap.service.http.DataSetServiceSoap}.
  *
  * @author Jerry H. Seo
  * @generated
  */
-@ProviderType
 public class DataSetSoap implements Serializable {
 
 	public static DataSetSoap toSoapModel(DataSet model) {

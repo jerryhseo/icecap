@@ -17,8 +17,6 @@ package com.osp.icecap.model.impl;
 import com.osp.icecap.model.MetaData;
 import com.osp.icecap.service.MetaDataLocalServiceUtil;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * The extended model base implementation for the MetaData service. Represents a row in the &quot;ICECAP_MetaData&quot; database table, with each column mapped to a property of this class.
  *
@@ -31,7 +29,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see MetaData
  * @generated
  */
-@ProviderType
 public abstract class MetaDataBaseImpl
 	extends MetaDataModelImpl implements MetaData {
 

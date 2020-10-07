@@ -14,8 +14,6 @@
 
 package com.osp.icecap.service.http;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * Provides the HTTP utility for the
  * <code>com.osp.icecap.service.DataSectionServiceUtil</code> service
@@ -43,6 +41,5 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataSectionServiceSoap
  * @generated
  */
-@ProviderType
 public class DataSectionServiceHttp {
 }

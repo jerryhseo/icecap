@@ -16,8 +16,6 @@ package com.osp.icecap.service;
 
 import com.liferay.portal.kernel.service.ServiceWrapper;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * Provides a wrapper for {@link DataPackService}.
  *
@@ -25,7 +23,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataPackService
  * @generated
  */
-@ProviderType
 public class DataPackServiceWrapper
 	implements DataPackService, ServiceWrapper<DataPackService> {
 

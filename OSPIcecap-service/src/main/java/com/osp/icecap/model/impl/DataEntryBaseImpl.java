@@ -17,8 +17,6 @@ package com.osp.icecap.model.impl;
 import com.osp.icecap.model.DataEntry;
 import com.osp.icecap.service.DataEntryLocalServiceUtil;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * The extended model base implementation for the DataEntry service. Represents a row in the &quot;ICECAP_DataEntry&quot; database table, with each column mapped to a property of this class.
  *
@@ -31,7 +29,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataEntry
  * @generated
  */
-@ProviderType
 public abstract class DataEntryBaseImpl
 	extends DataEntryModelImpl implements DataEntry {
 

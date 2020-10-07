@@ -17,8 +17,6 @@ package com.osp.icecap.model.impl;
 import com.osp.icecap.model.DataType;
 import com.osp.icecap.service.DataTypeLocalServiceUtil;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * The extended model base implementation for the DataType service. Represents a row in the &quot;ICECAP_DataType&quot; database table, with each column mapped to a property of this class.
  *
@@ -31,7 +29,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataType
  * @generated
  */
-@ProviderType
 public abstract class DataTypeBaseImpl
 	extends DataTypeModelImpl implements DataType {
 

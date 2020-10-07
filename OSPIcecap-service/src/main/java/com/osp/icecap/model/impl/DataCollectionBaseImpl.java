@@ -17,8 +17,6 @@ package com.osp.icecap.model.impl;
 import com.osp.icecap.model.DataCollection;
 import com.osp.icecap.service.DataCollectionLocalServiceUtil;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * The extended model base implementation for the DataCollection service. Represents a row in the &quot;ICECAP_DataCollection&quot; database table, with each column mapped to a property of this class.
  *
@@ -31,7 +29,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataCollection
  * @generated
  */
-@ProviderType
 public abstract class DataCollectionBaseImpl
 	extends DataCollectionModelImpl implements DataCollection {
 

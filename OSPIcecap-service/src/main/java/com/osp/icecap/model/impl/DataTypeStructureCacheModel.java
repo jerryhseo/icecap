@@ -25,15 +25,12 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * The cache model class for representing DataTypeStructure in entity cache.
  *
  * @author Jerry H. Seo
  * @generated
  */
-@ProviderType
 public class DataTypeStructureCacheModel
 	implements CacheModel<DataTypeStructure>, Externalizable {
 

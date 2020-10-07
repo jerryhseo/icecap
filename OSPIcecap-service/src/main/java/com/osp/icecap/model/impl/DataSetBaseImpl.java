@@ -17,8 +17,6 @@ package com.osp.icecap.model.impl;
 import com.osp.icecap.model.DataSet;
 import com.osp.icecap.service.DataSetLocalServiceUtil;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * The extended model base implementation for the DataSet service. Represents a row in the &quot;ICECAP_DataSet&quot; database table, with each column mapped to a property of this class.
  *
@@ -31,7 +29,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataSet
  * @generated
  */
-@ProviderType
 public abstract class DataSetBaseImpl
 	extends DataSetModelImpl implements DataSet {
 

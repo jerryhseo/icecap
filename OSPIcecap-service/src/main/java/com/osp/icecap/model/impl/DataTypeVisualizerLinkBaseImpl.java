@@ -17,8 +17,6 @@ package com.osp.icecap.model.impl;
 import com.osp.icecap.model.DataTypeVisualizerLink;
 import com.osp.icecap.service.DataTypeVisualizerLinkLocalServiceUtil;
 
-import org.osgi.annotation.versioning.ProviderType;
-
 /**
  * The extended model base implementation for the DataTypeVisualizerLink service. Represents a row in the &quot;ICECAP_DataTypeVisualizerLink&quot; database table, with each column mapped to a property of this class.
  *
@@ -31,7 +29,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * @see DataTypeVisualizerLink
  * @generated
  */
-@ProviderType
 public abstract class DataTypeVisualizerLinkBaseImpl
 	extends DataTypeVisualizerLinkModelImpl implements DataTypeVisualizerLink {
 
